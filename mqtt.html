@@ -90,5 +90,22 @@ mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</cod
     <p><a href="https://github.com/openfirenet">GitHub</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
   </div>
 </footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
 </body>
 </html>

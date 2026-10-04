@@ -146,3 +146,11 @@ details > :last-child { margin-bottom: 0; }
 .site-footer { border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.88rem; }
 .site-footer .inner { max-width: var(--max); margin: 0 auto; padding: 20px 16px 30px; }
 .site-footer p { margin: 0 0 6px; }
+
+/* Screenshots: click to see them full size. */
+img.shot { cursor: zoom-in; }
+img.shot:hover, img.shot:focus-visible { outline: 2px solid var(--primary, #f97316); outline-offset: 2px; }
+.lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(8, 10, 16, 0.92); display: flex; align-items: flex-start;
+            justify-content: center; padding: 24px; overflow: auto; cursor: zoom-out; }
+.lightbox[hidden] { display: none; }
+.lightbox img { max-width: min(100%, 1280px); height: auto; margin: auto; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); }
