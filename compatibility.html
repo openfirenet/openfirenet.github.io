@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stove compatibility - Open-Firenet</title>
+<meta name="description" content="Which RIKA pellet stoves and firmware versions work with Open-Firenet, and what can be read and controlled on each.">
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open-Firenet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="get-started.html">Get started</a>
+      <a href="compatibility.html" class="active" aria-current="page">Compatibility</a>
+      <a href="home-assistant.html">Home Assistant</a>
+      <a href="api.html">API</a>
+      <a href="troubleshooting.html">Troubleshooting</a>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Stove compatibility</h1>
+<p class="lead">Compatibility depends on the firmware version of the stove's mainboard, not on the model. Each firmware generation speaks its own variant of the protocol, and the bridge finds out by itself which one your stove uses.</p>
+
+<h2>By firmware version</h2>
+<p>The version is shown in the Info menu of the stove screen.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Stove firmware</th><th>Status</th><th>Read</th><th>Control</th></tr>
+  <tr>
+    <td><b>2.29</b><br>e.g. DOMO, DOMO BACK, PRIMO MULTIAIR</td>
+    <td><span class="badge ok">Supported</span></td>
+    <td>All values and settings</td>
+    <td>Everything: on/off, mode, power, temperature, schedule, frost protection, room sensor calibration, MultiAir fans, baking oven (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>e.g. INDUO</td>
+    <td><span class="badge ok">Supported</span></td>
+    <td>All values and settings</td>
+    <td>On/off, mode, power, temperature, schedule, frost protection, room sensor calibration</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>e.g. LIVO, INDUO II, SONO</td>
+    <td><span class="badge partial">Partial</span></td>
+    <td>All values (confirmed on a LIVO)</td>
+    <td>On/off, mode, power, temperature</td>
+  </tr>
+  <tr>
+    <td><b>2.25 and older</b></td>
+    <td><span class="badge unknown">Untested</span></td>
+    <td colspan="2">Nobody has reported a test yet. Feedback welcome.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>Firmware 2.28:</b> the link works on a LIVO. On one SONO it does not complete, and the stove shows the code UW29; the cause is still being investigated. RIKA publishes firmware 2.29 for all these models, and on 2.29 a SONO runs the same stick code as a DOMO.</p>
+</div>
+
+<h2>First start</h2>
+<p>On its first start with a stove, the bridge tries the three protocol variants in turn and keeps the one the stove answers. This takes about six seconds; afterwards it starts with the right one directly. There is nothing to configure.</p>
+
+<h2>MultiAir fans</h2>
+<p>The MultiAir controls appear on the page when the stove reports one of these models:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Model</th><th>MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Fans 1 and 2</td></tr>
+  <tr><td>DOMO</td><td>Fans 1 and 2</td></tr>
+  <tr><td>PARO</td><td>Fans 1 and 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Fans 1 and 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Fans 1 and 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Fans 1 and 2</td></tr>
+</table>
+</div>
+
+<h2>The board</h2>
+<p>The firmware is tested on the ESP32-S3. The board must expose the chip's native USB (USB OTG) on a connector: the stove acts as the USB host and the bridge as a USB serial device.</p>
+<ul>
+  <li>ESP32-S3 with native USB: works.</li>
+  <li>ESP32-S2: has native USB too and may work, untested.</li>
+  <li>ESP32, ESP32-C3 and boards with only a UART bridge chip: will not work.</li>
+</ul>
+
+<h2>Tell us about your stove</h2>
+<p>If your stove or firmware version is not listed, or behaves differently, open an <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> with the model, the firmware version, the log (CDC Logs tab) and the output of <code>http://open-firenet.local/api/state</code>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open-Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="https://github.com/openfirenet/open-firenet/issues">Issues</a> · <a href="https://community.home-assistant.io/t/open-firenet-local-usb-cdc-gateway-for-rika-pellet-stoves/1012233">Home Assistant forum thread</a></p>
+  </div>
+</footer>
+</body>
+</html>

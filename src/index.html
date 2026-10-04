@@ -1,0 +1,70 @@
+<!-- title: Open-Firenet: local control for RIKA pellet stoves -->
+<!-- description: Open-source Wi-Fi bridge for RIKA pellet stoves: local web page, REST API and Home Assistant integration, no cloud. -->
+<section class="hero">
+  <img class="logo" src="assets/img/brand-logo@2x.png" alt="Open-Firenet">
+  <h1>Local control for RIKA pellet stoves</h1>
+  <p class="lead">Open-Firenet replaces the RIKA Firenet stick with an ESP32-S3 board. Your stove gets a local web page, a REST API and a Home Assistant integration. No cloud account, no internet needed.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Get started</a>
+    <a class="btn ghost" href="compatibility.html">Is my stove supported?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-controls.png" alt="The Open-Firenet web page: stove state, temperatures, power, controls" width="760">
+  <figcaption>The page served by the bridge on your network, at <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>What you get</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Control from your network</h3>
+    <p>On/off, mode, heating power, target temperature, weekly schedule, frost protection, and the MultiAir fans on stoves that have them.</p>
+  </div>
+  <div class="card">
+    <h3>Everything the stove reports</h3>
+    <p>Temperatures, pellet consumption, running hours, service countdown, error and warning codes: up to 88 values, under their RIKA names.</p>
+  </div>
+  <div class="card">
+    <h3>Stays at home</h3>
+    <p>The bridge talks to the stove over USB and to you over your Wi-Fi. Nothing is sent to a server.</p>
+  </div>
+</div>
+
+<h2>Three pieces</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Runs on the ESP32-S3 plugged into the stove. Serves the web page and the API.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet on GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Installer</h3>
+    <p>Desktop app for Windows, macOS and Linux: flashes the board, sets up Wi-Fi, updates over the air.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Download the installer</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Thermostat, fans, schedule switch, sensors and diagnostics, installed through HACS.</p>
+    <p class="more"><a href="home-assistant.html">Home Assistant setup</a></p>
+  </div>
+</div>
+
+<h2>Which stoves</h2>
+<p>What matters is the firmware version of the stove's mainboard, shown in the Info menu of the stove screen. The bridge detects it by itself.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Stove firmware</th><th>Status</th><th>Notes</th></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Supported</span></td><td>All values and settings</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Supported</span></td><td>All values and settings</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge partial">Partial</span></td><td>Works on a LIVO; a SONO does not link yet</td></tr>
+  <tr><td><b>2.25 and older</b></td><td><span class="badge unknown">Untested</span></td><td>Feedback welcome</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Full compatibility details</a></p>
+
+<h2>A closer look</h2>
+<div class="shots">
+  <img class="shot" src="assets/img/ui-desktop-schedule.png" alt="Weekly heating schedule with two time slots per day">
+  <img class="shot" src="assets/img/dashboard-scan.png" alt="The installer finds the bridge on the network and shows the stove state">
+</div>

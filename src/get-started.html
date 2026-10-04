@@ -1,0 +1,69 @@
+<!-- title: Get started with Open-Firenet -->
+<!-- description: Hardware to buy, flashing the ESP32-S3 with the installer, Wi-Fi setup and plugging the bridge into a RIKA stove. -->
+<h1>Get started</h1>
+<p class="lead">From an empty board to a stove you control from your browser, in five steps. Count about half an hour.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Check your stove's firmware version</h3>
+    <p>On the stove screen, open the Info menu and read the mainboard software version (for example 2.27 or 2.29). Then look it up on the <a href="compatibility.html">compatibility page</a>.</p>
+  </li>
+  <li>
+    <h3>Get the hardware</h3>
+    <p>You need two things:</p>
+    <ul>
+      <li><b>An ESP32-S3 development board with native USB.</b> The chip must be an ESP32-S3: an ESP32, ESP32-C3 or a board with only a UART bridge chip (CH340, CP2102) will not work.</li>
+      <li><b>A USB data cable</b> from the board to the stove's USB-A socket. Charge-only cables do not work.</li>
+    </ul>
+    <div class="note">
+      <p><b>Boards with two USB ports:</b> the stove must be plugged into the port labelled "USB" or "USB OTG" (the chip's native USB). The port labelled "UART" or "COM" is only for flashing and logs. This is the most common mistake.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Flash the board with the installer</h3>
+    <p>Download the installer for your computer from the <a href="https://github.com/openfirenet/open-firenet-installer/releases">releases page</a>, plug the board into your computer and open the USB Flash tab. The installer downloads the latest official firmware, checks its signature and writes it to the board.</p>
+    <figure>
+      <img class="shot" src="assets/img/usb-flasher.png" alt="USB Flash tab of the installer" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>System</th><th>File</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> or the <code>.deb</code> package</td></tr>
+    </table>
+    </div>
+    <p>On Linux, your user must be in the <code>dialout</code> (or <code>uucp</code>) group to access USB serial ports. If the board is not found, hold its BOOT button while plugging it in.</p>
+  </li>
+  <li>
+    <h3>Connect the bridge to your Wi-Fi</h3>
+    <p>Either enter your Wi-Fi name and password in the installer's Wi-Fi Setup tab, or do it from your phone:</p>
+    <ol>
+      <li>Join the Wi-Fi network <code>Open-Firenet-Setup</code> that the board creates (no password).</li>
+      <li>The setup page opens by itself. If not, browse to <code>http://192.168.4.1</code>.</li>
+      <li>Pick your home network (2.4 GHz), enter its password and save. The board restarts on your network.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="assets/img/wifi-setup.png" alt="Wi-Fi Setup tab of the installer" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Plug it into the stove</h3>
+    <p>Connect the board's native USB port to the stove's USB socket, then switch the stove off and on at the mains. After about a minute, open <code>http://open-firenet.local</code> (or the address shown by the installer's Network Scan tab).</p>
+    <p>The page shows your stove model and its state. If a banner says the bridge is not connected to the stove, see <a href="troubleshooting.html">Troubleshooting</a>.</p>
+  </li>
+</ol>
+
+<h2>Updating later</h2>
+<p>Once the bridge is on your network, the installer's Wi-Fi Update tab installs new versions without unplugging anything. Your computer and the bridge must be on the same network; if the update times out, see the <a href="troubleshooting.html#ota">network requirements</a>.</p>
+
+<figure>
+  <img class="shot" src="assets/img/ota-update.png" alt="Wi-Fi Update tab of the installer" width="640">
+</figure>
+
+<h2>Next</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Add the stove as a thermostat with its sensors.</p><p class="more"><a href="home-assistant.html">Set up the integration</a></p></div>
+  <div class="card"><h3>REST API</h3><p>Read and control the stove from your own scripts.</p><p class="more"><a href="api.html">API overview</a></p></div>
+</div>

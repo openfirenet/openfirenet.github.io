@@ -1,0 +1,86 @@
+<!-- title: Troubleshooting - Open-Firenet -->
+<!-- description: What to check when the Open-Firenet bridge does not link with the stove, cannot be reached, or an update fails, and how to report a problem. -->
+<h1>Troubleshooting</h1>
+<p class="lead">Start with the bridge's own page at <code>http://open-firenet.local</code>: since version 3.2 it tells you why there is no link with the stove.</p>
+
+<h2>The stove is not connected</h2>
+
+<details open>
+  <summary>Banner: "The bridge is not connected to the stove over USB"</summary>
+  <p>The stove does not see the bridge at all. Check, in this order:</p>
+  <ul>
+    <li><b>The USB port on the board.</b> On boards with two USB ports, the stove must be on the one labelled "USB" or "USB OTG", not "UART" or "COM".</li>
+    <li><b>The cable.</b> It must carry data. Many short cables only carry power.</li>
+    <li><b>The stove.</b> It must be powered: its USB socket powers the board.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Banner: "The stove does not answer"</summary>
+  <p>The stove sees the bridge but has not sent anything. Switch the stove off at the mains for a minute, then on again, and wait two minutes. If nothing changes, download the log (CDC Logs tab) and <a href="#report">report it</a>.</p>
+</details>
+
+<details>
+  <summary>The stove screen shows a code UW29 (or another UW code)</summary>
+  <p>UW codes come from the stove's check of the stick. UW29 means the stove did not get a valid identification from the stick in time. Make sure the bridge runs the latest firmware: versions 3.0.0 and 3.1.0 could not link with stoves on firmware 2.28. If it persists on the latest version, <a href="#report">report it</a> with the log.</p>
+</details>
+
+<details>
+  <summary>The page says "Waiting for the stove" and the values are greyed out</summary>
+  <p>The bridge has not received any data from the stove yet. Right after power-up this is normal for a few seconds. If it stays, read the banner above it.</p>
+</details>
+
+<h2>The page cannot be reached</h2>
+
+<details>
+  <summary><code>http://open-firenet.local</code> does not open</summary>
+  <ul>
+    <li>Some networks and Android phones do not resolve <code>.local</code> names. Use the IP address instead: the installer's Network Scan tab shows it, and so does your router.</li>
+    <li>Your device must be on the same network as the bridge.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>The bridge is not on my network any more</summary>
+  <p>When it cannot join your Wi-Fi, the bridge goes back to setup mode and creates the network <code>Open-Firenet-Setup</code>. Join it and enter your Wi-Fi again. Only 2.4 GHz networks are supported.</p>
+</details>
+
+<h2 id="ota">Updates</h2>
+
+<details>
+  <summary>The wireless update times out</summary>
+  <p>A wireless update needs the computer and the bridge to reach each other both ways: the installer sends an invitation to the bridge (UDP port 3232), then the bridge connects back to the computer to download the firmware. On networks with separate segments (VLANs, guest Wi-Fi) or with a firewall on the computer, this is blocked.</p>
+  <ul>
+    <li>Put the computer on the same network as the bridge, or</li>
+    <li>allow incoming connections from the local network in the computer's firewall, or</li>
+    <li>update over USB instead.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>The version did not change after an update</summary>
+  <p>Check the version next to the title on the bridge's page. With a weak Wi-Fi signal an update can fail silently; update over USB with the installer.</p>
+</details>
+
+<h2>Values</h2>
+
+<details>
+  <summary>The room temperature shows "--"</summary>
+  <p>Your stove has no RIKA room sensor. In Home Assistant you can display another sensor on the thermostat, see <a href="home-assistant.html">Home Assistant</a>.</p>
+</details>
+
+<details>
+  <summary>The air flaps value looks ten times smaller than on the stove screen</summary>
+  <p>The stove screen shows the air flaps in per mille (‰), the bridge in percent: 50 ‰ on the screen is 5 % on the page.</p>
+</details>
+
+<h2 id="report">Report a problem</h2>
+<p>Open an <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> with:</p>
+<ul>
+  <li>the stove model and its firmware version (Info menu of the stove);</li>
+  <li>the bridge firmware version (next to the title on its page);</li>
+  <li>the log: CDC Logs tab, download, taken one to two minutes after switching the stove on;</li>
+  <li>the output of <code>http://open-firenet.local/api/state</code>;</li>
+  <li>what the stove screen shows, with any code.</li>
+</ul>
+<p>The log hides your Wi-Fi password. The state output contains your network name and the bridge's addresses: remove them if you prefer.</p>

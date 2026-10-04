@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Assistant integration - Open-Firenet</title>
+<meta name="description" content="Install the Open-Firenet integration in Home Assistant through HACS and control a RIKA pellet stove as a thermostat with its sensors.">
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open-Firenet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="get-started.html">Get started</a>
+      <a href="compatibility.html">Compatibility</a>
+      <a href="home-assistant.html" class="active" aria-current="page">Home Assistant</a>
+      <a href="api.html">API</a>
+      <a href="troubleshooting.html">Troubleshooting</a>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Home Assistant</h1>
+<p class="lead">The integration adds your stove to Home Assistant as a thermostat, with its fans, switches, sensors and diagnostics. It talks to the bridge on your network: no cloud.</p>
+
+<h2>Before you start</h2>
+<ul>
+  <li>A bridge running the Open-Firenet firmware, linked to the stove and reachable on your network (see <a href="get-started.html">Get started</a>).</li>
+  <li>Home Assistant 2024.1 or later.</li>
+  <li>HACS, recommended for installation and updates.</li>
+</ul>
+
+<h2>Install with HACS</h2>
+<ol class="steps">
+  <li><p>In HACS, open <b>Integrations</b>, then the menu at the top right, then <b>Custom repositories</b>.</p></li>
+  <li><p>Add <code>https://github.com/openfirenet/open-firenet-ha</code> with the category <b>Integration</b>.</p></li>
+  <li><p>Search for <b>Open Firenet</b> and click <b>Download</b>.</p></li>
+  <li><p>Restart Home Assistant.</p></li>
+</ol>
+<p>Without HACS: copy the folder <code>custom_components/open_firenet/</code> from the <a href="https://github.com/openfirenet/open-firenet-ha">repository</a> into your Home Assistant <code>config/custom_components/</code> folder and restart.</p>
+
+<h2>Add your stove</h2>
+<ol class="steps">
+  <li><p>Go to <b>Settings</b>, <b>Devices &amp; services</b>, <b>Add integration</b>.</p></li>
+  <li><p>Search for <b>Open Firenet</b>.</p></li>
+  <li><p>Enter the address of the bridge (<code>open-firenet.local</code> or its IP address) and the refresh interval (30 seconds by default).</p></li>
+</ol>
+
+<h2>What you get</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Type</th><th>Entities</th></tr>
+  <tr><td>Thermostat</td><td>On/off, target temperature (14 to 28 °C), mode (manual, auto, comfort), heating power (30 to 100 %)</td></tr>
+  <tr><td>Fans</td><td>MultiAir 1 and 2: on/off, auto or speeds 1 to 5, convection trim (MultiAir stoves only)</td></tr>
+  <tr><td>Switches</td><td>Weekly heating schedule, frost protection</td></tr>
+  <tr><td>Numbers</td><td>Setback temperature, frost protection temperature, room sensor calibration, baking oven temperature (DOMO BACK)</td></tr>
+  <tr><td>Sensors</td><td>Room, combustion chamber and mainboard temperatures, pellets consumed, running hours, service countdown, fan and auger speeds, stove state, Wi-Fi signal, air flaps</td></tr>
+  <tr><td>Diagnostics</td><td>Link with the stove, combustion active, stove error, hopper lid, error and warning codes</td></tr>
+</table>
+</div>
+
+<h2>Stove without a RIKA room sensor</h2>
+<p>If your stove has no room sensor, its room temperature is unknown. You can show the temperature of any Home Assistant sensor on the thermostat instead: open the integration's <b>Configure</b> dialog and pick the sensor.</p>
+<div class="note">
+  <p>This only changes what the thermostat displays. The stove keeps regulating with its own sensor. To switch the stove on and off from another sensor, use Home Assistant's Generic Thermostat or an automation.</p>
+</div>
+
+<h2>Problems</h2>
+<p>If the entities are unavailable, first check that <code>http://open-firenet.local</code> opens in your browser and shows the stove as connected. Then see <a href="troubleshooting.html">Troubleshooting</a>, or open an issue on the <a href="https://github.com/openfirenet/open-firenet-ha/issues">integration's repository</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open-Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="https://github.com/openfirenet/open-firenet/issues">Issues</a> · <a href="https://community.home-assistant.io/t/open-firenet-local-usb-cdc-gateway-for-rika-pellet-stoves/1012233">Home Assistant forum thread</a></p>
+  </div>
+</footer>
+</body>
+</html>

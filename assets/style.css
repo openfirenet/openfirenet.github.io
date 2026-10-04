@@ -1,0 +1,148 @@
+/* Open-Firenet site: one stylesheet for every page. Dark by default, light when the visitor's system asks for it. */
+:root {
+  --bg: #0b0f19;
+  --surface: #131b2e;
+  --surface-2: #1a2338;
+  --border: #26324d;
+  --text: #e6ebf5;
+  --text-dim: #a4b0c7;
+  --primary: #f97316;
+  --amber: #f59e0b;
+  --green: #10b981;
+  --red: #ef4444;
+  --code-bg: #0a0e17;
+  --radius: 14px;
+  --max: 1040px;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f8fb;
+    --surface: #ffffff;
+    --surface-2: #f0f3f9;
+    --border: #d9dfeb;
+    --text: #18202f;
+    --text-dim: #566179;
+    --code-bg: #eef1f7;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+
+/* Header and navigation */
+.site-header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .inner {
+  max-width: var(--max); margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); }
+.brand:hover { text-decoration: none; }
+.brand img { width: 30px; height: 30px; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a {
+  color: var(--text-dim); padding: 6px 10px; border-radius: 8px; font-size: 0.93rem; font-weight: 600;
+}
+.nav a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
+.nav a.active { color: var(--primary); background: rgba(249, 115, 22, 0.12); }
+
+/* Layout */
+main { max-width: var(--max); margin: 0 auto; padding: 28px 16px 56px; }
+h1 { font-size: clamp(1.7rem, 4.5vw, 2.5rem); line-height: 1.2; margin: 0 0 12px; text-wrap: balance; }
+h2 { font-size: 1.4rem; margin: 44px 0 12px; padding-top: 6px; }
+h3 { font-size: 1.08rem; margin: 26px 0 8px; }
+p { margin: 0 0 14px; }
+.lead { font-size: 1.12rem; color: var(--text-dim); max-width: 70ch; }
+ul, ol { padding-left: 22px; margin: 0 0 14px; }
+li { margin-bottom: 6px; }
+
+.hero { text-align: center; padding: 22px 0 6px; }
+.hero img.logo { width: min(340px, 80%); }
+.hero .lead { margin: 0 auto 20px; }
+.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
+.btn {
+  display: inline-block; padding: 10px 18px; border-radius: 10px; font-weight: 700;
+  background: var(--primary); color: #fff; border: 1px solid var(--primary);
+}
+.btn:hover { text-decoration: none; filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--text); border-color: var(--border); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px;
+}
+.card h3 { margin-top: 0; }
+.card p:last-child, .card ul:last-child { margin-bottom: 0; }
+.card .more { font-weight: 700; }
+
+.shot {
+  display: block; margin: 16px auto; border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.25);
+}
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; align-items: start; }
+.shots .shot { margin: 0; }
+figure { margin: 16px 0; }
+figcaption { color: var(--text-dim); font-size: 0.88rem; text-align: center; margin-top: 6px; }
+
+/* Tables scroll inside their own box on small screens */
+.table-wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; min-width: 520px; background: var(--surface); }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); }
+tr:last-child td { border-bottom: none; }
+
+.badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+.badge.ok { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+.badge.partial { background: rgba(245, 158, 11, 0.16); color: var(--amber); }
+.badge.unknown { background: var(--surface-2); color: var(--text-dim); }
+
+.note {
+  border-left: 4px solid var(--amber); background: rgba(245, 158, 11, 0.09);
+  padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 16px 0;
+}
+.note.ok { border-color: var(--green); background: rgba(16, 185, 129, 0.09); }
+.note p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em;
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+  overflow-x: auto; margin: 0 0 16px;
+}
+pre code { background: none; border: none; padding: 0; font-size: 0.88rem; }
+
+.steps { counter-reset: step; list-style: none; padding: 0; }
+.steps > li {
+  counter-increment: step; position: relative; padding: 2px 0 14px 50px; margin: 0;
+}
+.steps > li::before {
+  content: counter(step); position: absolute; left: 0; top: 0;
+  width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 800;
+}
+.steps > li > h3 { margin: 4px 0 6px; }
+
+details {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 16px; margin-bottom: 10px;
+}
+summary { cursor: pointer; font-weight: 700; }
+details[open] summary { margin-bottom: 10px; }
+details > :last-child { margin-bottom: 0; }
+
+.site-footer { border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.88rem; }
+.site-footer .inner { max-width: var(--max); margin: 0 auto; padding: 20px 16px 30px; }
+.site-footer p { margin: 0 0 6px; }

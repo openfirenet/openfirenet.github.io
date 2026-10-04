@@ -1,0 +1,66 @@
+<!-- title: REST API - Open-Firenet -->
+<!-- description: Overview of the local REST API of the Open-Firenet bridge: read the stove state and send controls with plain HTTP and JSON. -->
+<h1>REST API</h1>
+<p class="lead">The bridge serves a JSON API on your network, with natural units: temperatures in °C, power in percent, readable mode names. No key, no account.</p>
+
+<h2>Endpoints</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Purpose</th></tr>
+  <tr><td><code>/api/state</code></td><td>GET</td><td>Everything at once: bridge, stove, sensors, controls, link diagnostics</td></tr>
+  <tr><td><code>/api/controls</code></td><td>GET / POST</td><td>Read or change the settings (partial updates accepted)</td></tr>
+  <tr><td><code>/api/schedule</code></td><td>GET / POST</td><td>Weekly heating schedule: 14 time slots and the setback temperature</td></tr>
+  <tr><td><code>/api/version</code></td><td>GET</td><td>Firmware version and build date</td></tr>
+  <tr><td><code>/api/txgap</code></td><td>GET / POST</td><td>Delay between messages sent to the stove (50 to 600 ms, default 150)</td></tr>
+  <tr><td><code>/api/restart</code></td><td>POST</td><td>Restart the bridge</td></tr>
+  <tr><td><code>/api/forget</code></td><td>POST</td><td>Erase the Wi-Fi settings and go back to setup mode</td></tr>
+  <tr><td><code>/log</code></td><td>GET</td><td>Plain-text log of the dialogue with the stove</td></tr>
+</table>
+</div>
+
+<h2>Read the state</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>The answer is grouped by topic. The parts you will use most:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Field</th><th>Meaning</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>Operating state, model and firmware version of the stove</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Current error and warning, 0 when there is none</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Room temperature, <code>null</code> when no RIKA room sensor is connected</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Pellets burned in total, and what is left before the next service</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>The current settings</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Whether the stove accepted the bridge, and which protocol variant it answered: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Whether the stove sees the bridge over USB, and how many bytes it has sent</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Every value the stove reports, under its RIKA name</td></tr>
+</table>
+</div>
+
+<h2>Send controls</h2>
+<p>Post a JSON object with only the fields you want to change:</p>
+<pre><code># 21 °C in comfort mode
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21.0, "mode": "comfort"}'
+
+# switch on at 80 % power
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Field</th><th>Values</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>30 to 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>14.0 to 28.0 °C</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, 4 to 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>-4.0 to +4.0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (and <code>Fan2</code>)</td><td>MultiAir: on/off, 0 = auto or 1 to 5, trim -30 to +30 %</td></tr>
+</table>
+</div>
+<div class="note">
+  <p>On stove firmware 2.28, only <code>on</code>, <code>mode</code>, <code>power_percent</code> and <code>target_temperature</code> are applied for now.</p>
+</div>
+
+<h2>Full reference</h2>
+<p>The complete field list, the schedule format and the protocol notes are in the firmware repository: <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, REST API</a> and <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>
