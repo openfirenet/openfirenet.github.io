@@ -1,6 +1,6 @@
 # openfirenet.github.io
 
-Source of the Open-Firenet website, served by GitHub Pages at https://openfirenet.github.io.
+Source of the Open Firenet website, served by GitHub Pages at https://openfirenet.github.io.
 
 ## Editing
 
