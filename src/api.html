@@ -3,19 +3,25 @@
 <h1>REST API</h1>
 <p class="lead">The bridge serves a JSON API on your network, with natural units: temperatures in °C, power in percent, readable mode names. No key, no account.</p>
 
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Full API reference</a>
+  <a class="btn ghost" href="openapi.yaml">OpenAPI file</a>
+</div>
+
 <h2>Endpoints</h2>
+<p>Click an endpoint or a method for its details in the <a href="api-reference.html">API reference</a>.</p>
 <div class="table-wrap">
 <table>
   <tr><th>Endpoint</th><th>Method</th><th>Purpose</th></tr>
-  <tr><td><code>/api/state</code></td><td>GET</td><td>Everything at once: bridge, stove, sensors, controls, link diagnostics</td></tr>
-  <tr><td><code>/api/controls</code></td><td>GET / POST</td><td>Read or change the settings (partial updates accepted)</td></tr>
-  <tr><td><code>/api/schedule</code></td><td>GET / POST</td><td>Weekly heating schedule: 14 time slots and the setback temperature</td></tr>
-  <tr><td><code>/api/version</code></td><td>GET</td><td>Firmware version and build date</td></tr>
-  <tr><td><code>/api/mqtt</code></td><td>GET / POST</td><td>MQTT settings and connection status, see <a href="mqtt.html">MQTT</a></td></tr>
-  <tr><td><code>/api/txgap</code></td><td>GET / POST</td><td>Delay between messages sent to the stove (50 to 600 ms, default 150)</td></tr>
-  <tr><td><code>/api/restart</code></td><td>POST</td><td>Restart the bridge</td></tr>
-  <tr><td><code>/api/forget</code></td><td>POST</td><td>Erase the Wi-Fi settings and go back to setup mode</td></tr>
-  <tr><td><code>/log</code></td><td>GET</td><td>Plain-text log of the dialogue with the stove</td></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Everything at once: bridge, stove, sensors, controls, link diagnostics</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Read or change the settings (partial updates accepted)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Weekly heating schedule: 14 time slots and the setback temperature</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Firmware version and build date</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>MQTT settings and connection status, see <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Delay between messages sent to the stove (50 to 600 ms, default 150)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Restart the bridge</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>Erase the Wi-Fi settings and go back to setup mode</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Plain-text log of the dialogue with the stove</td></tr>
 </table>
 </div>
 
