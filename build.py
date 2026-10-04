@@ -14,6 +14,7 @@ PAGES = [
     ("get-started", "Get started"),
     ("compatibility", "Compatibility"),
     ("home-assistant", "Home Assistant"),
+    ("mqtt", "MQTT"),
     ("api", "API"),
     ("troubleshooting", "Troubleshooting"),
 ]

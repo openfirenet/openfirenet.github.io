@@ -17,6 +17,7 @@
       <a href="get-started.html">Get started</a>
       <a href="compatibility.html">Compatibility</a>
       <a href="home-assistant.html">Home Assistant</a>
+      <a href="mqtt.html">MQTT</a>
       <a href="api.html" class="active" aria-current="page">API</a>
       <a href="troubleshooting.html">Troubleshooting</a>
     </nav>
@@ -34,6 +35,7 @@
   <tr><td><code>/api/controls</code></td><td>GET / POST</td><td>Read or change the settings (partial updates accepted)</td></tr>
   <tr><td><code>/api/schedule</code></td><td>GET / POST</td><td>Weekly heating schedule: 14 time slots and the setback temperature</td></tr>
   <tr><td><code>/api/version</code></td><td>GET</td><td>Firmware version and build date</td></tr>
+  <tr><td><code>/api/mqtt</code></td><td>GET / POST</td><td>MQTT settings and connection status, see <a href="mqtt.html">MQTT</a></td></tr>
   <tr><td><code>/api/txgap</code></td><td>GET / POST</td><td>Delay between messages sent to the stove (50 to 600 ms, default 150)</td></tr>
   <tr><td><code>/api/restart</code></td><td>POST</td><td>Restart the bridge</td></tr>
   <tr><td><code>/api/forget</code></td><td>POST</td><td>Erase the Wi-Fi settings and go back to setup mode</td></tr>
@@ -63,7 +65,7 @@
 <pre><code># 21 °C in comfort mode
 curl -X POST http://open-firenet.local/api/controls \
   -H "Content-Type: application/json" \
-  -d '{"target_temperature": 21.0, "mode": "comfort"}'
+  -d '{"target_temperature": 21, "mode": "comfort"}'
 
 # switch on at 80 % power
 curl -X POST http://open-firenet.local/api/controls \
@@ -75,7 +77,7 @@ curl -X POST http://open-firenet.local/api/controls \
   <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
   <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
   <tr><td><code>power_percent</code></td><td>30 to 100</td></tr>
-  <tr><td><code>target_temperature</code></td><td>14.0 to 28.0 °C</td></tr>
+  <tr><td><code>target_temperature</code></td><td>14 to 28 °C, in whole degrees (a half degree is rounded)</td></tr>
   <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, 4 to 10 °C</td></tr>
   <tr><td><code>room_temperature_offset</code></td><td>-4.0 to +4.0 °C</td></tr>
   <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (and <code>Fan2</code>)</td><td>MultiAir: on/off, 0 = auto or 1 to 5, trim -30 to +30 %</td></tr>

@@ -17,7 +17,7 @@
 
 <details>
   <summary>Banner: "The stove does not answer"</summary>
-  <p>The stove sees the bridge but has not sent anything. Switch the stove off at the mains for a minute, then on again, and wait two minutes. If nothing changes, download the log (CDC Logs tab) and <a href="#report">report it</a>.</p>
+  <p>The stove sees the bridge but has not sent anything. Switch the stove off at the mains for a minute, then on again, and wait two minutes. If nothing changes, download the log (Diagnostics tab) and <a href="#report">report it</a>.</p>
 </details>
 
 <details>
@@ -74,12 +74,35 @@
   <p>The stove screen shows the air flaps in per mille (‰), the bridge in percent: 50 ‰ on the screen is 5 % on the page.</p>
 </details>
 
+<h2 id="diagnostics">The Diagnostics tab</h2>
+<p>The Diagnostics tab of the bridge's page (<code>http://open-firenet.local/#diagnostics</code>) gathers what is needed to understand a link problem: the state of the link with the stove, the log of the exchanges with its download button, and every value the stove reports.</p>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Diagnostics tab: link with the stove, exchange log, all values" width="760">
+</figure>
+
+<h2>MQTT</h2>
+
+<details>
+  <summary>The MQTT badge says "Refused: wrong user or password"</summary>
+  <p>The broker rejected the bridge. Enter the password again in the Bridge tab and save: the field is empty by design, and shows "Unchanged" once a password is stored.</p>
+</details>
+
+<details>
+  <summary>The MQTT badge says "Broker unreachable"</summary>
+  <p>Check the broker address and port (1883 by default), and that the broker accepts connections from your network. The bridge retries every 10 seconds; the link with the stove is not affected.</p>
+</details>
+
+<details>
+  <summary>A command sent over MQTT is ignored</summary>
+  <p>Commands are ignored while the stove is not linked, and when they are published with the retain flag. See <a href="mqtt.html">MQTT</a>.</p>
+</details>
+
 <h2 id="report">Report a problem</h2>
 <p>Open an <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> with:</p>
 <ul>
   <li>the stove model and its firmware version (Info menu of the stove);</li>
   <li>the bridge firmware version (next to the title on its page);</li>
-  <li>the log: CDC Logs tab, download, taken one to two minutes after switching the stove on;</li>
+  <li>the log: Diagnostics tab, "Download" in the exchange log, taken one to two minutes after switching the stove on (on firmware 3.2 and older: CDC Logs tab);</li>
   <li>the output of <code>http://open-firenet.local/api/state</code>;</li>
   <li>what the stove screen shows, with any code.</li>
 </ul>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open-Firenet: local control for RIKA pellet stoves</title>
-<meta name="description" content="Open-source Wi-Fi bridge for RIKA pellet stoves: local web page, REST API and Home Assistant integration, no cloud.">
+<meta name="description" content="Open-source Wi-Fi bridge for RIKA pellet stoves: local web page, REST API, MQTT and Home Assistant integration, no cloud.">
 <link rel="icon" href="assets/img/brand-icon.png">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -17,6 +17,7 @@
       <a href="get-started.html">Get started</a>
       <a href="compatibility.html">Compatibility</a>
       <a href="home-assistant.html">Home Assistant</a>
+      <a href="mqtt.html">MQTT</a>
       <a href="api.html">API</a>
       <a href="troubleshooting.html">Troubleshooting</a>
     </nav>
@@ -26,7 +27,7 @@
 <section class="hero">
   <img class="logo" src="assets/img/brand-logo@2x.png" alt="Open-Firenet">
   <h1>Local control for RIKA pellet stoves</h1>
-  <p class="lead">Open-Firenet replaces the RIKA Firenet stick with an ESP32-S3 board. Your stove gets a local web page, a REST API and a Home Assistant integration. No cloud account, no internet needed.</p>
+  <p class="lead">Open-Firenet replaces the RIKA Firenet stick with an ESP32-S3 board. Your stove gets a local web page, a REST API, MQTT and a Home Assistant integration. No cloud account, no internet needed.</p>
   <div class="actions">
     <a class="btn" href="get-started.html">Get started</a>
     <a class="btn ghost" href="compatibility.html">Is my stove supported?</a>
@@ -47,6 +48,10 @@
   <div class="card">
     <h3>Everything the stove reports</h3>
     <p>Temperatures, pellet consumption, running hours, service countdown, error and warning codes: up to 88 values, under their RIKA names.</p>
+  </div>
+  <div class="card">
+    <h3>Fits your home automation</h3>
+    <p>A Home Assistant integration, a REST API, and MQTT for Jeedom, openHAB, Node-RED, Domoticz and the others.</p>
   </div>
   <div class="card">
     <h3>Stays at home</h3>
@@ -89,6 +94,8 @@
 <h2>A closer look</h2>
 <div class="shots">
   <img class="shot" src="assets/img/ui-desktop-schedule.png" alt="Weekly heating schedule with two time slots per day">
+  <img class="shot" src="assets/img/ui-desktop-bridge.png" alt="Bridge tab: Wi-Fi, MQTT and restart">
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Diagnostics tab: link with the stove, exchange log and all values">
   <img class="shot" src="assets/img/dashboard-scan.png" alt="The installer finds the bridge on the network and shows the stove state">
 </div>
 </main>

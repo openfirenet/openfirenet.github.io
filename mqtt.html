@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQTT - Open-Firenet</title>
+<meta name="description" content="Publish the state of a RIKA pellet stove to an MQTT broker and control it from Jeedom, openHAB, Node-RED, Domoticz or any MQTT client.">
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open-Firenet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="get-started.html">Get started</a>
+      <a href="compatibility.html">Compatibility</a>
+      <a href="home-assistant.html">Home Assistant</a>
+      <a href="mqtt.html" class="active" aria-current="page">MQTT</a>
+      <a href="api.html">API</a>
+      <a href="troubleshooting.html">Troubleshooting</a>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>MQTT</h1>
+<p class="lead">The bridge can publish the stove state to your MQTT broker and accept commands from it. It is the way in for home automation systems other than Home Assistant: Jeedom, openHAB, Node-RED, Domoticz and any MQTT client.</p>
+
+<div class="note">
+  <p>MQTT is optional and off by default. It needs bridge firmware 3.3 or newer, and a broker on your network (Mosquitto, for example). For Home Assistant, the <a href="home-assistant.html">integration</a> remains the recommended way.</p>
+</div>
+
+<h2>Set it up</h2>
+<ol>
+  <li>Open the bridge's page and go to the <b>Bridge</b> tab (<code>http://open-firenet.local/#bridge</code>).</li>
+  <li>In the MQTT card, enter the broker address and port (1883 by default), and the user and password if your broker asks for them.</li>
+  <li>Tick <b>Enable MQTT</b> and save. The badge turns to "Connected" within a few seconds.</li>
+</ol>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge.png" alt="Bridge tab with the MQTT settings" width="760">
+</figure>
+
+<h2>What the bridge publishes</h2>
+<p>All topics start with a base topic, <code>openfirenet</code> by default. Change it in the settings if you have several bridges.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Content</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> or <code>offline</code>. The broker sets it to <code>offline</code> by itself when the bridge disappears.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>One JSON message with the <code>device</code>, <code>stove</code>, <code>sensors</code> and <code>controls</code> objects, same names and units as the <a href="api.html">REST API</a>. Sent when something changes, at most every 5 seconds and at least every minute.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>The same values, one per topic, for systems that prefer plain values: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Everything is published with the retain flag, so a client gets the current values as soon as it subscribes. <code>openfirenet/device/connected</code> tells whether the bridge is linked to the stove; until it is, only the <code>device</code> values are published.</p>
+
+<h2>Send commands</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Payload</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, or <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> or <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>30 to 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>14 to 28, in whole degrees</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Several settings at once, as JSON: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>The other settings of the <a href="api.html">REST API</a> (frost protection, MultiAir fans, schedule...) are accepted the same way, under the same names.</p>
+<pre><code># 21 °C, with the Mosquitto command line client
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# watch everything the bridge publishes
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Do not publish commands with the retain flag.</b> The broker would replay them at every reconnection, and could switch the stove on by itself; the bridge ignores them for that reason. Commands are also ignored while the stove is not linked.</p>
+</div>
+
+<h2>Good to know</h2>
+<ul>
+  <li>The connection is not encrypted (no TLS yet): use a broker on your local network.</li>
+  <li>If the broker is unreachable, the bridge retries every 10 seconds on its own. The link with the stove is not affected.</li>
+  <li>Home Assistant MQTT discovery is not available yet: the stove does not appear by itself in Home Assistant through MQTT.</li>
+</ul>
+<p>Something does not work? See <a href="troubleshooting.html">Troubleshooting</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open-Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
+  </div>
+</footer>
+</body>
+</html>
