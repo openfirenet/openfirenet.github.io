@@ -1,0 +1,530 @@
+openapi: 3.0.3
+info:
+  title: Open Firenet bridge API
+  version: 3.3.1
+  description: |
+    Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your
+    network at `http://open-firenet.local` (or the bridge's IP address), without key or account.
+
+    Units are natural ones: temperatures in °C, power in percent, readable mode names.
+
+    **Field names.** Only the recommended names are described here, the ones used by the Home Assistant integration
+    and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example
+    `tempRoomTarget` for `target_temperature`, or the plain-text form `onOff=1; heatingPower=70;`), and
+    `GET /api/controls` also returns the settings under the stove's own names and units (`onOff`, `tempRoomTarget`
+    in tenths of a degree...). New code should not rely on them.
+
+    **Before the stove is linked.** Until the stove has answered, `version_ack` is `false`, the stove model and
+    firmware version are `null`, and the other values are defaults, not measurements.
+  license:
+    name: AGPL-3.0
+    url: https://github.com/openfirenet/open-firenet/blob/main/LICENSE
+servers:
+  - url: http://open-firenet.local
+    description: The bridge, by its mDNS name
+  - url: http://{ip}
+    description: The bridge, by its IP address
+    variables:
+      ip:
+        default: 192.168.1.50
+tags:
+  - name: Stove
+    description: Read the stove and change its settings
+  - name: Bridge
+    description: Settings and maintenance of the bridge itself
+  - name: Diagnostics
+paths:
+  /api/state:
+    get:
+      tags: [Stove]
+      summary: Everything at once
+      description: Bridge, stove, sensors, settings and link diagnostics. This is what the web page and the Home Assistant integration poll.
+      responses:
+        "200":
+          description: Current state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+  /api/controls:
+    get:
+      tags: [Stove]
+      summary: Current settings
+      responses:
+        "200":
+          description: The settings, under the recommended names (the stove's own names and units are returned too)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Controls"
+    post:
+      tags: [Stove]
+      summary: Change settings
+      description: |
+        Send only the fields to change; the others keep their value. Ignored while the stove is not linked.
+        On stove firmware 2.28 only `on`, `mode`, `power_percent` and `target_temperature` are applied.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlsCommand"
+            examples:
+              comfort21:
+                summary: 21 °C in comfort mode
+                value: { target_temperature: 21, mode: comfort }
+              on80:
+                summary: Switch on at 80 % power
+                value: { "on": true, power_percent: 80 }
+      responses:
+        "200":
+          description: The base settings sent to the stove
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlsResult"
+  /api/schedule:
+    get:
+      tags: [Stove]
+      summary: Weekly heating schedule
+      responses:
+        "200":
+          description: The 14 time slots and the setback temperature
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedule"
+    post:
+      tags: [Stove]
+      summary: Change the weekly heating schedule
+      description: Same handling as `POST /api/controls`; send the slots to change under their names.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleCommand"
+            example: { heating_times_active: true, setback_temperature: 16, heatTimeMon1: 6000800, heatTimeMon2: 17002200 }
+      responses:
+        "200":
+          description: The base settings sent to the stove
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlsResult"
+  /api/mqtt:
+    get:
+      tags: [Bridge]
+      summary: MQTT settings and connection status
+      responses:
+        "200":
+          description: The settings (the password is never returned) and the status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mqtt"
+    post:
+      tags: [Bridge]
+      summary: Change the MQTT settings
+      description: A field left out keeps its value. The client restarts with the new settings; the status follows at the next GET.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MqttCommand"
+      responses:
+        "200":
+          description: The saved settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mqtt"
+  /api/txgap:
+    get:
+      tags: [Diagnostics]
+      summary: Delay between frames sent to the stove
+      responses:
+        "200":
+          description: Current delay and its bounds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TxGap"
+    post:
+      tags: [Diagnostics]
+      summary: Change the delay between frames sent to the stove
+      description: Diagnostic setting, kept after a restart. Too low, the stove may only process one frame out of two.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ms]
+              properties:
+                ms: { type: integer, minimum: 50, maximum: 600, description: Delay in milliseconds }
+      responses:
+        "200":
+          description: The delay now in use
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TxGap"
+  /api/version:
+    get:
+      tags: [Bridge]
+      summary: Firmware version of the bridge
+      responses:
+        "200":
+          description: Version and build date
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Version"
+  /api/scan:
+    get:
+      tags: [Bridge]
+      summary: Wi-Fi networks seen by the bridge
+      description: The first call starts a scan and answers 202; call again a few seconds later for the list.
+      responses:
+        "200":
+          description: Networks found (2.4 GHz), each name once
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [ssid, rssi]
+                  properties:
+                    ssid: { type: string }
+                    rssi: { type: integer, description: Signal strength in dBm }
+        "202":
+          description: Scan in progress
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [scanning] }
+  /api/wifi:
+    post:
+      tags: [Bridge]
+      summary: Set the Wi-Fi network, then restart
+      description: Sent by the setup form. Answers an HTML confirmation page (it has to work in captive portal browsers), then the bridge restarts on that network.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [ssid]
+              properties:
+                ssid: { type: string }
+                pass: { type: string, description: Empty for an open network }
+      responses:
+        "200":
+          description: Saved; the bridge restarts
+          content:
+            text/html:
+              schema: { type: string }
+        "400":
+          description: Missing network name
+          content:
+            text/html:
+              schema: { type: string }
+  /api/forget:
+    post:
+      tags: [Bridge]
+      summary: Erase the saved settings, then restart in setup mode
+      description: Erases the Wi-Fi network, the MQTT settings and the frame delay. The bridge then creates the `Open-Firenet-Setup` network.
+      responses:
+        "200":
+          description: Erased; the bridge restarts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+  /api/restart:
+    get:
+      tags: [Bridge]
+      summary: Restart the bridge
+      description: Any method is accepted; the web page uses POST. The stove keeps running; the link comes back in about a minute.
+      responses:
+        "200":
+          $ref: "#/components/responses/Restarting"
+    post:
+      tags: [Bridge]
+      summary: Restart the bridge
+      responses:
+        "200":
+          $ref: "#/components/responses/Restarting"
+  /log:
+    get:
+      tags: [Diagnostics]
+      summary: Log of the exchanges with the stove
+      description: |
+        Plain text, one line per frame: `[uptime in ms][rx|tx] content`. Identical consecutive lines are merged
+        (`xN`). The Wi-Fi password is masked. Kept in memory only (about the last 48 kB).
+      responses:
+        "200":
+          description: The log
+          content:
+            text/plain:
+              schema: { type: string }
+components:
+  responses:
+    Restarting:
+      description: The bridge restarts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok: { type: boolean }
+              reboot: { type: boolean }
+  schemas:
+    Mode:
+      type: string
+      enum: [manual, auto, comfort]
+      description: "`manual`: fixed power. `auto`: follows the weekly schedule. `comfort`: follows the room temperature."
+    State:
+      type: object
+      required: [device, stove, sensors, controls, version_ack, usb, raw_sensors]
+      properties:
+        device: { $ref: "#/components/schemas/Device" }
+        stove: { $ref: "#/components/schemas/Stove" }
+        sensors: { $ref: "#/components/schemas/Sensors" }
+        controls: { $ref: "#/components/schemas/ControlsState" }
+        wifi_mode: { type: string, enum: [STA, AP], description: "`AP` while the bridge is in setup mode" }
+        ip: { type: string }
+        wifi_connected: { type: boolean }
+        uptime_seconds: { type: integer }
+        write_enabled: { type: boolean, description: Always true }
+        version_ack: { type: boolean, description: Whether the stove accepted the bridge (the link is up) }
+        version_frame:
+          type: string
+          enum: [V3, V28, V1, "?"]
+          description: "Protocol variant the stove answered: `V3` (firmware 2.29), `V28` (2.28), `V1` (2.26 / 2.27)"
+        generation: { type: integer }
+        usb:
+          type: object
+          description: USB link diagnostics
+          properties:
+            host_connected: { type: boolean, description: The stove sees the bridge on its native USB port }
+            rx_bytes: { type: integer, description: Bytes received from the stove since boot }
+        mqtt:
+          type: object
+          properties:
+            enabled: { type: boolean }
+            connected: { type: boolean }
+        frames_in: { type: integer, description: Frames received from the stove since boot }
+        frames_out: { type: integer, description: Frames sent to the stove since boot }
+        revision: { type: integer }
+        state_label: { type: string }
+        raw_sensors:
+          type: object
+          description: Every value the stove reports, under its RIKA name, in the stove's units (temperatures often in tenths of a degree). Empty until the stove is linked.
+          additionalProperties: { type: integer }
+        status:
+          type: object
+          description: Status record exchanged with the stove (the Wi-Fi password is masked)
+          additionalProperties: { type: string }
+        sensors_pos:
+          type: array
+          description: The sensor records by position (diagnostics)
+          items: { type: integer }
+        controls_pos:
+          type: array
+          description: The control records by position (diagnostics)
+          items: { type: integer }
+    Device:
+      type: object
+      description: The bridge
+      properties:
+        name: { type: string }
+        version: { type: string, description: Firmware version of the bridge }
+        app_version: { type: string, description: Same as `version` }
+        firmware_version: { type: string, description: Same as `version` }
+        ip: { type: string }
+        mac: { type: string }
+        wifi_ssid: { type: string }
+        wifi_rssi: { type: integer, description: Wi-Fi signal in dBm }
+        uptime_seconds: { type: integer }
+        free_heap: { type: integer, description: Free memory in bytes }
+        connected: { type: boolean, description: Same as `version_ack` }
+    Stove:
+      type: object
+      properties:
+        state:
+          type: string
+          enum: ["off", standby, ignition, flame_start, heating, cleaning, burn_off, splitlog, unknown]
+        state_code: { type: integer }
+        state_label: { type: string }
+        sub_state: { type: integer }
+        is_burning: { type: boolean }
+        has_error: { type: boolean }
+        error_code: { type: integer, description: 0 when there is no error }
+        error_sub: { type: integer }
+        warning_code: { type: integer, description: 0 when there is no warning }
+        model: { type: integer, nullable: true, description: "RIKA model number, null until the stove has sent it" }
+        model_name: { type: string, nullable: true, description: "For example `DOMO`; null until the stove has sent it" }
+        mainboard_version: { type: string, nullable: true, description: "Stove firmware, for example `2.29`; null until the stove has sent it" }
+        firmware_build: { type: string, nullable: true }
+    Sensors:
+      type: object
+      properties:
+        room_temperature: { type: number, nullable: true, description: °C; null when no RIKA room sensor is connected }
+        room_sensor_connected: { type: boolean }
+        combustion_temperature: { type: number, description: °C }
+        board_temperature: { type: number, description: °C }
+        pellets_total_kg: { type: integer }
+        pellet_hours: { type: integer, description: Running hours }
+        service_countdown_kg: { type: integer, description: Pellets left before the next service }
+        fan_speed_rpm: { type: integer }
+        auger_speed_rpm: { type: integer }
+        air_flaps_percent: { type: number, nullable: true }
+        air_flaps_target_percent: { type: number, nullable: true }
+    ControlsState:
+      type: object
+      description: The current settings
+      properties:
+        "on": { type: boolean }
+        mode: { $ref: "#/components/schemas/Mode" }
+        mode_code: { type: integer, description: "0 = manual, 1 = auto, 2 = comfort" }
+        target_temperature: { type: number, description: °C }
+        power_percent: { type: integer }
+        heating_times_active: { type: boolean, description: Weekly schedule on / off }
+        setback_temperature: { type: number, description: °C outside the scheduled slots }
+        convection_fan1_active: { type: boolean }
+        convection_fan1_level: { type: integer, description: "0 = automatic, 1 to 5" }
+        convection_fan1_area: { type: integer, description: "Trim in percent, -30 to +30" }
+        convection_fan2_active: { type: boolean }
+        convection_fan2_level: { type: integer }
+        convection_fan2_area: { type: integer }
+        frost_protection_active: { type: boolean }
+        frost_protection_temperature: { type: number, description: °C }
+        bake_target_temperature: { type: integer, description: °C (DOMO BACK only) }
+        room_temperature_offset: { type: number, description: Room sensor calibration in °C }
+        eco_mode: { type: boolean }
+        eco_mode_possible: { type: boolean, description: Whether the stove allows eco mode right now }
+    Controls:
+      type: object
+      description: The current settings. The stove's own names (`onOff`, `tempRoomTarget`...) are returned as well and are not described here.
+      properties:
+        "on": { type: boolean }
+        mode: { $ref: "#/components/schemas/Mode" }
+        mode_code: { type: integer }
+        target_temperature: { type: number }
+        power_percent: { type: integer }
+        heating_times_active: { type: boolean }
+        setback_temperature: { type: number }
+        frost_protection_active: { type: boolean }
+        frost_protection_temperature: { type: number }
+        bake_target_temperature: { type: integer }
+        room_temperature_offset: { type: number }
+        eco_mode: { type: boolean }
+      additionalProperties: true
+    ControlsCommand:
+      type: object
+      description: Any subset of these fields
+      properties:
+        "on": { type: boolean }
+        mode: { $ref: "#/components/schemas/Mode" }
+        power_percent: { type: integer, minimum: 30, maximum: 100 }
+        target_temperature: { type: number, minimum: 14, maximum: 28, description: "°C, in whole degrees: a half degree is rounded" }
+        heating_times_active: { type: boolean }
+        setback_temperature: { type: number, description: °C }
+        frost_protection_active: { type: boolean }
+        frost_protection_temperature: { type: number, minimum: 4, maximum: 10, description: °C }
+        room_temperature_offset: { type: number, minimum: -4, maximum: 4, description: °C }
+        bake_target_temperature: { type: integer, minimum: 130, maximum: 340, description: °C (DOMO BACK only) }
+        eco_mode: { type: boolean }
+        convection_fan1_active: { type: boolean }
+        convection_fan1_level: { type: integer, minimum: 0, maximum: 5, description: "0 = automatic" }
+        convection_fan1_area: { type: integer, minimum: -30, maximum: 30 }
+        convection_fan2_active: { type: boolean }
+        convection_fan2_level: { type: integer, minimum: 0, maximum: 5 }
+        convection_fan2_area: { type: integer, minimum: -30, maximum: 30 }
+    ControlsResult:
+      type: object
+      properties:
+        ok: { type: boolean }
+        "on": { type: boolean }
+        mode: { $ref: "#/components/schemas/Mode" }
+        mode_code: { type: integer }
+        target_temperature: { type: number }
+        power_percent: { type: integer }
+    TimeSlot:
+      type: integer
+      description: |
+        A heating slot as one number: start `HHMM` times 10000, plus end `HHMM`. `6000800` is 06:00 to 08:00,
+        `17002200` is 17:00 to 22:00, `0` is an unused slot.
+      example: 6000800
+    Schedule:
+      type: object
+      properties:
+        ok: { type: boolean }
+        active: { type: boolean, description: Weekly schedule on / off }
+        heatingTimesActive: { type: integer, description: "Same as `active`, as 0 / 1" }
+        setback_temperature: { type: number, description: °C outside the scheduled slots }
+        setBackTemp: { type: integer, description: "Same, in tenths of a degree" }
+        slots:
+          type: object
+          description: Two slots per day, `heatTime<Day><1|2>` with Day in Mon, Tue, Wed, Thu, Fri, Sat, Sun
+          additionalProperties: { $ref: "#/components/schemas/TimeSlot" }
+    ScheduleCommand:
+      type: object
+      description: "`heating_times_active`, `setback_temperature`, and any of the 14 slots `heatTime<Day><1|2>`"
+      properties:
+        heating_times_active: { type: boolean }
+        setback_temperature: { type: number }
+      additionalProperties: { $ref: "#/components/schemas/TimeSlot" }
+    Mqtt:
+      type: object
+      properties:
+        enabled: { type: boolean }
+        host: { type: string }
+        port: { type: integer }
+        user: { type: string }
+        password_set: { type: boolean, description: Whether a password is stored (it is never returned) }
+        base_topic: { type: string }
+        connected: { type: boolean }
+        status:
+          type: string
+          enum:
+            - disabled
+            - connected
+            - connecting
+            - waiting for Wi-Fi
+            - broker unreachable
+            - connection lost
+            - "refused: wrong user or password"
+            - refused by the broker
+    MqttCommand:
+      type: object
+      properties:
+        enabled: { type: boolean }
+        host: { type: string, description: Broker address }
+        port: { type: integer, default: 1883 }
+        user: { type: string }
+        password: { type: string, description: Empty to erase the stored one }
+        base_topic: { type: string, default: openfirenet }
+    TxGap:
+      type: object
+      properties:
+        ms: { type: integer }
+        default: { type: integer }
+        min: { type: integer }
+        max: { type: integer }
+    Version:
+      type: object
+      properties:
+        app: { type: string }
+        version: { type: string }
+        build_date: { type: string }
+        build_time: { type: string }
+        target: { type: string }

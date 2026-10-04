@@ -154,3 +154,16 @@ img.shot:hover, img.shot:focus-visible { outline: 2px solid var(--primary, #f973
             justify-content: center; padding: 24px; overflow: auto; cursor: zoom-out; }
 .lightbox[hidden] { display: none; }
 .lightbox img { max-width: min(100%, 1280px); height: auto; margin: auto; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); }
+
+/* API reference (generated from the OpenAPI description) */
+.method { display: inline-block; min-width: 46px; text-align: center; padding: 2px 8px; border-radius: 6px; font-size: 0.74rem;
+          font-weight: 800; letter-spacing: 0.4px; color: #fff; vertical-align: 2px; }
+.method.get { background: #2563eb; }
+.method.post { background: #16a34a; }
+.endpoint { border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 18px 14px; margin: 18px 0; }
+.endpoint h3 { margin-top: 14px; }
+.endpoint h4, h4 { font-size: 0.95rem; margin: 18px 0 6px; }
+h4 small { font-weight: 400; color: var(--text-dim); margin-left: 6px; }
+table.fields td:first-child { white-space: nowrap; }
+.req { font-size: 0.7rem; font-weight: 700; color: var(--amber); margin-left: 6px; text-transform: uppercase; }
+:target { scroll-margin-top: 80px; }

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API reference - Open Firenet</title>
+<meta name="description" content="Every endpoint of the Open Firenet bridge, with its fields, types, units and ranges.">
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="get-started.html">Get started</a>
+      <a href="compatibility.html">Compatibility</a>
+      <a href="home-assistant.html">Home Assistant</a>
+      <a href="mqtt.html">MQTT</a>
+      <a href="api.html" class="active" aria-current="page">API</a>
+      <a href="troubleshooting.html">Troubleshooting</a>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>API reference</h1>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.3.1.</p>
+<p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
+<p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
+<p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
+<p><b>Before the stove is linked.</b> Until the stove has answered, <code>version_ack</code> is <code>false</code>, the stove model and firmware version are <code>null</code>, and the other values are defaults, not measurements.</p>
+<h2>Endpoints</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Purpose</th></tr>
+  <tr><td><a href="#get-api-state"><span class="method get">GET</span> <code>/api/state</code></a></td><td>Everything at once</td></tr>
+  <tr><td><a href="#get-api-controls"><span class="method get">GET</span> <code>/api/controls</code></a></td><td>Current settings</td></tr>
+  <tr><td><a href="#post-api-controls"><span class="method post">POST</span> <code>/api/controls</code></a></td><td>Change settings</td></tr>
+  <tr><td><a href="#get-api-schedule"><span class="method get">GET</span> <code>/api/schedule</code></a></td><td>Weekly heating schedule</td></tr>
+  <tr><td><a href="#post-api-schedule"><span class="method post">POST</span> <code>/api/schedule</code></a></td><td>Change the weekly heating schedule</td></tr>
+  <tr><td><a href="#get-api-mqtt"><span class="method get">GET</span> <code>/api/mqtt</code></a></td><td>MQTT settings and connection status</td></tr>
+  <tr><td><a href="#post-api-mqtt"><span class="method post">POST</span> <code>/api/mqtt</code></a></td><td>Change the MQTT settings</td></tr>
+  <tr><td><a href="#get-api-version"><span class="method get">GET</span> <code>/api/version</code></a></td><td>Firmware version of the bridge</td></tr>
+  <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Wi-Fi networks seen by the bridge</td></tr>
+  <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>Set the Wi-Fi network, then restart</td></tr>
+  <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Erase the saved settings, then restart in setup mode</td></tr>
+  <tr><td><a href="#get-api-restart"><span class="method get">GET</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
+  <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
+  <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Delay between frames sent to the stove</td></tr>
+  <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Change the delay between frames sent to the stove</td></tr>
+  <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Log of the exchanges with the stove</td></tr>
+</table>
+</div>
+<h2 id="stove">Stove</h2>
+<p>Read the stove and change its settings</p>
+<div class="endpoint" id="get-api-state">
+<h3><span class="method get">GET</span> <code>/api/state</code></h3>
+<p><b>Everything at once</b></p>
+<p>Bridge, stove, sensors, settings and link diagnostics. This is what the web page and the Home Assistant integration poll.</p>
+<h4>Answer 200 <small>Current state</small></h4>
+<p>Fields: see <a href="#schema-state">State</a>.</p>
+</div>
+<div class="endpoint" id="get-api-controls">
+<h3><span class="method get">GET</span> <code>/api/controls</code></h3>
+<p><b>Current settings</b></p>
+<h4>Answer 200 <small>The settings, under the recommended names (the stove's own names and units are returned too)</small></h4>
+<p>Fields: see <a href="#schema-controls">Controls</a>.</p>
+</div>
+<div class="endpoint" id="post-api-controls">
+<h3><span class="method post">POST</span> <code>/api/controls</code></h3>
+<p><b>Change settings</b></p>
+<p>Send only the fields to change; the others keep their value. Ignored while the stove is not linked. On stove firmware 2.28 only <code>on</code>, <code>mode</code>, <code>power_percent</code> and <code>target_temperature</code> are applied.</p>
+<h4>Request body <small>application/json</small></h4>
+<p>Fields: see <a href="#schema-controlscommand">ControlsCommand</a>.</p>
+<p>21 °C in comfort mode:</p>
+<pre><code>{"target_temperature": 21, "mode": "comfort"}</code></pre>
+<p>Switch on at 80 % power:</p>
+<pre><code>{"on": true, "power_percent": 80}</code></pre>
+<h4>Answer 200 <small>The base settings sent to the stove</small></h4>
+<p>Fields: see <a href="#schema-controlsresult">ControlsResult</a>.</p>
+</div>
+<div class="endpoint" id="get-api-schedule">
+<h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
+<p><b>Weekly heating schedule</b></p>
+<h4>Answer 200 <small>The 14 time slots and the setback temperature</small></h4>
+<p>Fields: see <a href="#schema-schedule">Schedule</a>.</p>
+</div>
+<div class="endpoint" id="post-api-schedule">
+<h3><span class="method post">POST</span> <code>/api/schedule</code></h3>
+<p><b>Change the weekly heating schedule</b></p>
+<p>Same handling as <code>POST /api/controls</code>; send the slots to change under their names.</p>
+<h4>Request body <small>application/json</small></h4>
+<p>Fields: see <a href="#schema-schedulecommand">ScheduleCommand</a>.</p>
+<p>Example:</p>
+<pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
+<h4>Answer 200 <small>The base settings sent to the stove</small></h4>
+<p>Fields: see <a href="#schema-controlsresult">ControlsResult</a>.</p>
+</div>
+<h2 id="bridge">Bridge</h2>
+<p>Settings and maintenance of the bridge itself</p>
+<div class="endpoint" id="get-api-mqtt">
+<h3><span class="method get">GET</span> <code>/api/mqtt</code></h3>
+<p><b>MQTT settings and connection status</b></p>
+<h4>Answer 200 <small>The settings (the password is never returned) and the status</small></h4>
+<p>Fields: see <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="post-api-mqtt">
+<h3><span class="method post">POST</span> <code>/api/mqtt</code></h3>
+<p><b>Change the MQTT settings</b></p>
+<p>A field left out keeps its value. The client restarts with the new settings; the status follows at the next GET.</p>
+<h4>Request body <small>application/json</small></h4>
+<p>Fields: see <a href="#schema-mqttcommand">MqttCommand</a>.</p>
+<h4>Answer 200 <small>The saved settings</small></h4>
+<p>Fields: see <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="get-api-version">
+<h3><span class="method get">GET</span> <code>/api/version</code></h3>
+<p><b>Firmware version of the bridge</b></p>
+<h4>Answer 200 <small>Version and build date</small></h4>
+<p>Fields: see <a href="#schema-version">Version</a>.</p>
+</div>
+<div class="endpoint" id="get-api-scan">
+<h3><span class="method get">GET</span> <code>/api/scan</code></h3>
+<p><b>Wi-Fi networks seen by the bridge</b></p>
+<p>The first call starts a scan and answers 202; call again a few seconds later for the list.</p>
+<h4>Answer 200 <small>Networks found (2.4 GHz), each name once</small></h4>
+<p>A list of:</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ssid</code> <span class="req">required</span></td><td>string</td><td></td></tr>
+  <tr><td><code>rssi</code> <span class="req">required</span></td><td>integer</td><td>Signal strength in dBm</td></tr>
+</table>
+</div>
+<h4>Answer 202 <small>Scan in progress</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>status</code></td><td><code>scanning</code></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-wifi">
+<h3><span class="method post">POST</span> <code>/api/wifi</code></h3>
+<p><b>Set the Wi-Fi network, then restart</b></p>
+<p>Sent by the setup form. Answers an HTML confirmation page (it has to work in captive portal browsers), then the bridge restarts on that network.</p>
+<h4>Request body <small>application/x-www-form-urlencoded</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ssid</code> <span class="req">required</span></td><td>string</td><td></td></tr>
+  <tr><td><code>pass</code></td><td>string</td><td>Empty for an open network</td></tr>
+</table>
+</div>
+<h4>Answer 200 <small>Saved; the bridge restarts</small></h4>
+<p><code>text/html</code></p>
+<h4>Answer 400 <small>Missing network name</small></h4>
+<p><code>text/html</code></p>
+</div>
+<div class="endpoint" id="post-api-forget">
+<h3><span class="method post">POST</span> <code>/api/forget</code></h3>
+<p><b>Erase the saved settings, then restart in setup mode</b></p>
+<p>Erases the Wi-Fi network, the MQTT settings and the frame delay. The bridge then creates the <code>Open-Firenet-Setup</code> network.</p>
+<h4>Answer 200 <small>Erased; the bridge restarts</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-restart">
+<h3><span class="method get">GET</span> <code>/api/restart</code></h3>
+<p><b>Restart the bridge</b></p>
+<p>Any method is accepted; the web page uses POST. The stove keeps running; the link comes back in about a minute.</p>
+<h4>Answer 200 <small>The bridge restarts</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-restart">
+<h3><span class="method post">POST</span> <code>/api/restart</code></h3>
+<p><b>Restart the bridge</b></p>
+<h4>Answer 200 <small>The bridge restarts</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="diagnostics">Diagnostics</h2>
+<div class="endpoint" id="get-api-txgap">
+<h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
+<p><b>Delay between frames sent to the stove</b></p>
+<h4>Answer 200 <small>Current delay and its bounds</small></h4>
+<p>Fields: see <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="post-api-txgap">
+<h3><span class="method post">POST</span> <code>/api/txgap</code></h3>
+<p><b>Change the delay between frames sent to the stove</b></p>
+<p>Diagnostic setting, kept after a restart. Too low, the stove may only process one frame out of two.</p>
+<h4>Request body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ms</code> <span class="req">required</span></td><td>integer, 50 to 600</td><td>Delay in milliseconds</td></tr>
+</table>
+</div>
+<h4>Answer 200 <small>The delay now in use</small></h4>
+<p>Fields: see <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="get-log">
+<h3><span class="method get">GET</span> <code>/log</code></h3>
+<p><b>Log of the exchanges with the stove</b></p>
+<p>Plain text, one line per frame: <code>[uptime in ms][rx|tx] content</code>. Identical consecutive lines are merged (<code>xN</code>). The Wi-Fi password is masked. Kept in memory only (about the last 48 kB).</p>
+<h4>Answer 200 <small>The log</small></h4>
+<p><code>text/plain</code></p>
+</div>
+<h2 id="schemas">Objects</h2>
+<p>The objects exchanged with the bridge, referred to above.</p>
+<h3 id="schema-state">State</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>device</code> <span class="req">required</span></td><td><a href="#schema-device">Device</a></td><td></td></tr>
+  <tr><td><code>stove</code> <span class="req">required</span></td><td><a href="#schema-stove">Stove</a></td><td></td></tr>
+  <tr><td><code>sensors</code> <span class="req">required</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
+  <tr><td><code>controls</code> <span class="req">required</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
+  <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code> while the bridge is in setup mode</td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>write_enabled</code></td><td>boolean</td><td>Always true</td></tr>
+  <tr><td><code>version_ack</code> <span class="req">required</span></td><td>boolean</td><td>Whether the stove accepted the bridge (the link is up)</td></tr>
+  <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Protocol variant the stove answered: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>usb</code> <span class="req">required</span></td><td>object</td><td>USB link diagnostics</td></tr>
+  <tr><td><code>mqtt</code></td><td>object</td><td></td></tr>
+  <tr><td><code>frames_in</code></td><td>integer</td><td>Frames received from the stove since boot</td></tr>
+  <tr><td><code>frames_out</code></td><td>integer</td><td>Frames sent to the stove since boot</td></tr>
+  <tr><td><code>revision</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>raw_sensors</code> <span class="req">required</span></td><td>object, any name → integer</td><td>Every value the stove reports, under its RIKA name, in the stove's units (temperatures often in tenths of a degree). Empty until the stove is linked.</td></tr>
+  <tr><td><code>status</code></td><td>object, any name → string</td><td>Status record exchanged with the stove (the Wi-Fi password is masked)</td></tr>
+  <tr><td><code>sensors_pos</code></td><td>list of integer</td><td>The sensor records by position (diagnostics)</td></tr>
+  <tr><td><code>controls_pos</code></td><td>list of integer</td><td>The control records by position (diagnostics)</td></tr>
+</table>
+</div>
+<h3 id="schema-device">Device</h3>
+<p>The bridge</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td>Firmware version of the bridge</td></tr>
+  <tr><td><code>app_version</code></td><td>string</td><td>Same as <code>version</code></td></tr>
+  <tr><td><code>firmware_version</code></td><td>string</td><td>Same as <code>version</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>mac</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_ssid</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Wi-Fi signal in dBm</td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>free_heap</code></td><td>integer</td><td>Free memory in bytes</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td>Same as <code>version_ack</code></td></tr>
+</table>
+</div>
+<h3 id="schema-stove">Stove</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>is_burning</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>has_error</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error_code</code></td><td>integer</td><td>0 when there is no error</td></tr>
+  <tr><td><code>error_sub</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>warning_code</code></td><td>integer</td><td>0 when there is no warning</td></tr>
+  <tr><td><code>model</code></td><td>integer or <code>null</code></td><td>RIKA model number, null until the stove has sent it</td></tr>
+  <tr><td><code>model_name</code></td><td>string or <code>null</code></td><td>For example <code>DOMO</code>; null until the stove has sent it</td></tr>
+  <tr><td><code>mainboard_version</code></td><td>string or <code>null</code></td><td>Stove firmware, for example <code>2.29</code>; null until the stove has sent it</td></tr>
+  <tr><td><code>firmware_build</code></td><td>string or <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-sensors">Sensors</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>room_temperature</code></td><td>number or <code>null</code></td><td>°C; null when no RIKA room sensor is connected</td></tr>
+  <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer</td><td>Running hours</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer</td><td>Pellets left before the next service</td></tr>
+  <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>air_flaps_percent</code></td><td>number or <code>null</code></td><td></td></tr>
+  <tr><td><code>air_flaps_target_percent</code></td><td>number or <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsstate">ControlsState</h3>
+<p>The current settings</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: fixed power. <code>auto</code>: follows the weekly schedule. <code>comfort</code>: follows the room temperature.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td>0 = manual, 1 = auto, 2 = comfort</td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td>Weekly schedule on / off</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C outside the scheduled slots</td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer</td><td>0 = automatic, 1 to 5</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer</td><td>Trim in percent, -30 to +30</td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td>°C (DOMO BACK only)</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td>Room sensor calibration in °C</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>eco_mode_possible</code></td><td>boolean</td><td>Whether the stove allows eco mode right now</td></tr>
+</table>
+</div>
+<h3 id="schema-controls">Controls</h3>
+<p>The current settings. The stove's own names (<code>onOff</code>, <code>tempRoomTarget</code>...) are returned as well and are not described here.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: fixed power. <code>auto</code>: follows the weekly schedule. <code>comfort</code>: follows the room temperature.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td></td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><i>other fields</i></td><td></td><td>Not described here.</td></tr>
+</table>
+</div>
+<h3 id="schema-controlscommand">ControlsCommand</h3>
+<p>Any subset of these fields</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: fixed power. <code>auto</code>: follows the weekly schedule. <code>comfort</code>: follows the room temperature.</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer, 30 to 100</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number, 14 to 28</td><td>°C, in whole degrees: a half degree is rounded</td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number, 4 to 10</td><td>°C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number, -4 to 4</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer, 130 to 340</td><td>°C (DOMO BACK only)</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer, 0 to 5</td><td>0 = automatic</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer, -30 to 30</td><td></td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer, 0 to 5</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer, -30 to 30</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsresult">ControlsResult</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: fixed power. <code>auto</code>: follows the weekly schedule. <code>comfort</code>: follows the room temperature.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-schedule">Schedule</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>active</code></td><td>boolean</td><td>Weekly schedule on / off</td></tr>
+  <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Same as <code>active</code>, as 0 / 1</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C outside the scheduled slots</td></tr>
+  <tr><td><code>setBackTemp</code></td><td>integer</td><td>Same, in tenths of a degree</td></tr>
+  <tr><td><code>slots</code></td><td>object, any name → integer</td><td>Two slots per day, <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code> with Day in Mon, Tue, Wed, Thu, Fri, Sat, Sun</td></tr>
+</table>
+</div>
+<h3 id="schema-schedulecommand">ScheduleCommand</h3>
+<p><code>heating_times_active</code>, <code>setback_temperature</code>, and any of the 14 slots <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code></p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><i>any other name</i></td><td>integer</td><td>A heating slot as one number: start <code>HHMM</code> times 10000, plus end <code>HHMM</code>. <code>6000800</code> is 06:00 to 08:00, <code>17002200</code> is 17:00 to 22:00, <code>0</code> is an unused slot.</td></tr>
+</table>
+</div>
+<h3 id="schema-mqtt">Mqtt</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td></td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password_set</code></td><td>boolean</td><td>Whether a password is stored (it is never returned)</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-mqttcommand">MqttCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Broker address</td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td>Default: <code>1883</code>.</td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password</code></td><td>string</td><td>Empty to erase the stored one</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td>Default: <code>openfirenet</code>.</td></tr>
+</table>
+</div>
+<h3 id="schema-txgap">TxGap</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ms</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>default</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>min</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>max</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-version">Version</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>app</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
+  <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
