@@ -23,16 +23,16 @@
 <table>
   <tr><th>Board</th><th>Status</th><th>Connector</th><th>Notes</th></tr>
   <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, N16R8 module</td>
+    <td><span class="badge ok">Tested</span></td>
+    <td>2 × USB-C</td>
+    <td>The common development board with two USB-C ports and 44 pins, sold under many brands. It is the board Open Firenet is developed on. Plug the stove into the "USB" port, not "UART" / "COM". A user also reports the version with an external antenna working.</td>
+  </tr>
+  <tr>
     <td><b>LilyGO T-Dongle-S3</b> (with screen)</td>
     <td><span class="badge ok">Tested</span></td>
     <td>USB-A plug</td>
     <td>A stick with its own USB-A plug: no cable needed, although it was tested through a short USB extension cable. The screen is not used by the firmware. To flash it, plug it into your computer.</td>
-  </tr>
-  <tr>
-    <td><b>ESP32-S3-DevKitC-1</b> type, N16R8 module</td>
-    <td><span class="badge ok">Reported</span></td>
-    <td>2 × USB-C</td>
-    <td>The common development board with two USB-C ports and 44 pins, here in a version with an external antenna, in a printed case. Reported working by a user. Plug the stove into the "USB" port, not "UART" / "COM".</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (without screen)</td>
@@ -54,7 +54,7 @@
   </tr>
 </table>
 </div>
-<p><span class="badge ok">Tested</span> by the project on a stove. <span class="badge ok">Reported</span> working by a user. <span class="badge partial">Expected</span> to work from its specifications, without a confirmed report.</p>
+<p><span class="badge ok">Tested</span> by the project on a stove. <span class="badge partial">Expected</span> to work from its specifications, without a confirmed report.</p>
 
 <h3>Boards with native USB only</h3>
 <p>Sticks and small boards such as the T-Dongle-S3, the M5Stamp S3 or the XIAO have a single USB port, the native one. It is used both to flash the board from your computer and to talk to the stove. If the installer does not find the board, hold its BOOT button while plugging it in.</p>
