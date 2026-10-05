@@ -124,6 +124,16 @@
 </details>
 
 <details>
+  <summary>The stove appears twice in Home Assistant</summary>
+  <p>The Open Firenet integration and MQTT discovery are both active. Keep one: untick "Home Assistant discovery" in the MQTT card of the Bridge tab (its entities are then removed), or remove the integration.</p>
+</details>
+
+<details>
+  <summary>I ticked "Home Assistant discovery" and nothing appears</summary>
+  <p>Check that "Enable MQTT" is ticked too and that the badge says "Connected", and that Home Assistant's own MQTT integration is set up on the same broker.</p>
+</details>
+
+<details>
   <summary>A command sent over MQTT is ignored</summary>
   <p>Commands are ignored while the stove is not linked, and when they are published with the retain flag. See <a href="mqtt.html">MQTT</a>.</p>
 </details>

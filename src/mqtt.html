@@ -4,7 +4,7 @@
 <p class="lead">The bridge can publish the stove state to your MQTT broker and accept commands from it. It is the way in for home automation systems other than Home Assistant: Jeedom, openHAB, Node-RED, Domoticz and any MQTT client.</p>
 
 <div class="note">
-  <p>MQTT is optional and off by default. It needs bridge firmware 3.3 or newer, and a broker on your network (Mosquitto, for example). For Home Assistant, the <a href="home-assistant.html">integration</a> remains the recommended way.</p>
+  <p>MQTT is optional and off by default. It needs bridge firmware 3.3 or newer, and a broker on your network (Mosquitto, for example). For Home Assistant, the <a href="home-assistant.html">integration</a> remains the most complete way; <a href="#discovery">MQTT discovery</a> is the alternative that needs nothing installed.</p>
 </div>
 
 <h2>Set it up</h2>
@@ -52,10 +52,22 @@ mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</cod
   <p><b>Do not publish commands with the retain flag.</b> The broker would replay them at every reconnection, and could switch the stove on by itself; the bridge ignores them for that reason. Commands are also ignored while the stove is not linked.</p>
 </div>
 
+<h2 id="discovery">Home Assistant discovery</h2>
+<p>Since firmware 3.4, the bridge can also announce the stove to Home Assistant's own MQTT integration: tick <b>Home Assistant discovery</b> in the MQTT card and save. The stove then appears by itself in Home Assistant, as one device with:</p>
+<ul>
+  <li>a thermostat: on / off, target temperature, and the manual / auto / comfort modes as presets;</li>
+  <li>the heating power, the setback and frost protection temperatures, the room sensor calibration;</li>
+  <li>switches for the heating schedule, frost protection and eco mode;</li>
+  <li>the sensors: temperatures, pellets burned, service countdown, state, error and warning codes.</li>
+</ul>
+<p>Home Assistant needs its MQTT integration connected to the same broker. Unticking the option removes the entities.</p>
+<div class="note">
+  <p><b>Use one or the other.</b> If you already use the <a href="home-assistant.html">Open Firenet integration</a>, leave discovery off: you would get the stove twice. The integration remains the most complete way: it also has the MultiAir fans, the slots of the weekly schedule and the external temperature sensor.</p>
+</div>
+
 <h2>Good to know</h2>
 <ul>
   <li>The connection is not encrypted (no TLS yet): use a broker on your local network.</li>
   <li>If the broker is unreachable, the bridge retries every 10 seconds on its own. The link with the stove is not affected.</li>
-  <li>Home Assistant MQTT discovery is not available yet: the stove does not appear by itself in Home Assistant through MQTT.</li>
 </ul>
 <p>Something does not work? See <a href="troubleshooting.html">Troubleshooting</a>.</p>
