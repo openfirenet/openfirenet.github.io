@@ -1,0 +1,69 @@
+<!-- title: Hardware - Open Firenet -->
+<!-- description: Which ESP32-S3 boards work as an Open Firenet bridge for RIKA pellet stoves: what to look for, and the boards tested so far. -->
+<h1>Hardware</h1>
+<p class="lead">The bridge is an ESP32-S3 board plugged into the stove's USB socket. Many boards fit; this page tells what to look for, and lists the ones that are known to work.</p>
+
+<h2>What the board must have</h2>
+<ul>
+  <li><b>An ESP32-S3 chip.</b> Not an ESP32, an ESP32-C3 or an ESP32-S2: the firmware is built for the S3 only.</li>
+  <li><b>The chip's native USB on a connector.</b> The stove talks to the bridge over USB, so the board's USB port must be wired to the ESP32-S3 itself, not to a serial adapter chip (CH340, CP2102...).</li>
+  <li><b>At least 4 MB of flash memory.</b> Nearly every ESP32-S3 board has that or more.</li>
+</ul>
+<p>Not needed: extra memory (PSRAM), a screen, a battery. An external antenna helps when the stove is far from your Wi-Fi access point.</p>
+
+<div class="note">
+  <p><b>Boards with two USB ports:</b> the stove must be plugged into the port labelled "USB" or "USB OTG" (the chip's native USB). The port labelled "UART" or "COM" is only for flashing and logs. This is the most common mistake; the bridge's page tells you when it happens.</p>
+</div>
+
+<h2>The cable</h2>
+<p>The stove has a USB-A socket, the one the RIKA Firenet stick plugs into. Use a cable or an adapter from your board's connector to USB-A male, and make sure it carries data: many short cables only carry power.</p>
+
+<h2>Boards</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Board</th><th>Status</th><th>Connector</th><th>Notes</th></tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (with screen)</td>
+    <td><span class="badge ok">Tested</span></td>
+    <td>USB-A plug</td>
+    <td>A stick with its own USB-A plug: no cable needed, although it was tested through a short USB extension cable. The screen is not used by the firmware. To flash it, plug it into your computer.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3-DevKitC-1</b> type, N16R8 module</td>
+    <td><span class="badge ok">Reported</span></td>
+    <td>2 × USB-C</td>
+    <td>The common development board with two USB-C ports and 44 pins, here in a version with an external antenna, in a printed case. Reported working by a user. Plug the stove into the "USB" port, not "UART" / "COM".</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (without screen)</td>
+    <td><span class="badge partial">Expected</span></td>
+    <td>USB-A plug</td>
+    <td>Same hardware as the version with a screen; not tested.</td>
+  </tr>
+  <tr>
+    <td><b>M5Stamp S3</b></td>
+    <td><span class="badge partial">Expected</span></td>
+    <td>USB-C</td>
+    <td>Native USB only. No report from a stove yet.</td>
+  </tr>
+  <tr>
+    <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td><span class="badge partial">Expected</span></td>
+    <td>USB-C</td>
+    <td>Native USB only. No report from a stove yet.</td>
+  </tr>
+</table>
+</div>
+<p><span class="badge ok">Tested</span> by the project on a stove. <span class="badge ok">Reported</span> working by a user. <span class="badge partial">Expected</span> to work from its specifications, without a confirmed report.</p>
+
+<h3>Boards with native USB only</h3>
+<p>Sticks and small boards such as the T-Dongle-S3, the M5Stamp S3 or the XIAO have a single USB port, the native one. It is used both to flash the board from your computer and to talk to the stove. If the installer does not find the board, hold its BOOT button while plugging it in.</p>
+
+<h2>Your board works? Tell us</h2>
+<p>This list grows with your reports. If your board works, or does not, open a <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">"It works on my stove" report</a> with the board's exact name and your stove model: it helps the next person choose.</p>
+
+<h2>Next</h2>
+<div class="grid">
+  <div class="card"><h3>Get started</h3><p>Flash the board and plug it into the stove.</p><p class="more"><a href="get-started.html">Step by step</a></p></div>
+  <div class="card"><h3>Compatibility</h3><p>Which stoves and firmware versions are supported.</p><p class="more"><a href="compatibility.html">Stove compatibility</a></p></div>
+</div>

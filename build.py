@@ -15,6 +15,7 @@ SRC = ROOT / "src"
 PAGES = [
     ("index", "Home"),
     ("get-started", "Get started"),
+    ("hardware", "Hardware"),
     ("compatibility", "Compatibility"),
     ("home-assistant", "Home Assistant"),
     ("mqtt", "MQTT"),
