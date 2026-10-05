@@ -56,6 +56,40 @@ img { max-width: 100%; height: auto; }
 }
 .nav a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
 .nav a.active { color: var(--primary); background: rgba(249, 115, 22, 0.12); }
+/* Drop-down groups of the navigation bar */
+.nav { align-items: center; }
+.nav-group { position: relative; border: 0; padding: 0; margin: 0; background: none; }
+.nav-group > summary {
+  list-style: none; cursor: pointer; color: var(--text-dim); padding: 6px 10px; border-radius: 8px; font-size: 0.93rem;
+  font-weight: 600; user-select: none; white-space: nowrap; margin: 0;
+}
+.nav-group > summary::-webkit-details-marker { display: none; }
+.nav-group > summary::after { content: "▾"; margin-left: 5px; font-size: 0.8em; opacity: 0.7; }
+.nav-group > summary:hover, .nav-group[open] > summary { color: var(--text); background: var(--surface-2); }
+.nav-group.active > summary { color: var(--primary); background: rgba(249, 115, 22, 0.12); }
+.nav-group[open] > summary { margin: 0; }
+.nav-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 60; min-width: 200px; padding: 6px; display: flex;
+  flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+.nav-menu a { white-space: nowrap; }
+.nav-toggle {
+  display: none; font: inherit; font-size: 0.93rem; font-weight: 600; color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+/* Phone: the bar folds behind the Menu button and opens as a list, with the groups laid out in full. */
+@media (max-width: 760px) {
+  .nav-toggle { display: inline-block; }
+  .nav { display: none; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 2px; padding-top: 6px; }
+  .nav.open { display: flex; }
+  .nav a, .nav-group > summary { padding: 9px 10px; }
+  .nav-group > summary { pointer-events: none; color: var(--text-muted, var(--text-dim)); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .nav-group > summary::after { content: ""; }
+  .nav-group.active > summary, .nav-group[open] > summary { background: none; }
+  .nav-group[open]:not(.active) > summary { color: var(--text-dim); }
+  .nav-group > .nav-menu { position: static; display: flex; border: 0; box-shadow: none; background: none; padding: 0 0 0 10px; min-width: 0; }
+}
 
 /* Layout */
 main { max-width: var(--max); margin: 0 auto; padding: 28px 16px 56px; }

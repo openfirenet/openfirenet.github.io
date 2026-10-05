@@ -12,14 +12,24 @@
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
-    <nav class="nav" aria-label="Main">
-      <a href="index.html">Home</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Main">
       <a href="get-started.html">Get started</a>
-      <a href="hardware.html" class="active" aria-current="page">Hardware</a>
-      <a href="compatibility.html">Compatibility</a>
-      <a href="home-assistant.html">Home Assistant</a>
-      <a href="mqtt.html">MQTT</a>
-      <a href="api.html">API</a>
+      <details class="nav-group active">
+        <summary>Stove & board</summary>
+        <div class="nav-menu">
+          <a href="compatibility.html">Stove compatibility</a>
+          <a href="hardware.html" class="active" aria-current="page">Hardware</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrations</summary>
+        <div class="nav-menu">
+          <a href="home-assistant.html">Home Assistant</a>
+          <a href="mqtt.html">MQTT</a>
+          <a href="api.html">REST API</a>
+        </div>
+      </details>
       <a href="troubleshooting.html">Troubleshooting</a>
       <a href="contribute.html">Contribute</a>
     </nav>
@@ -121,6 +131,22 @@
 </footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 <script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
 // Screenshots open full size on click; click again or press Escape to close.
 (function () {
   var box = document.getElementById('lightbox'), big = box.querySelector('img');

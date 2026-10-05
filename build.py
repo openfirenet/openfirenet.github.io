@@ -11,18 +11,37 @@ import apiref
 
 ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
-# (file name, label in the navigation bar)
-PAGES = [
-    ("index", "Home"),
+# Every page built from src/<name>.html.
+PAGES = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
+         "contribute"]
+# The navigation bar: a page (file name, label), or a group (label, [pages]) shown as a drop-down menu. The home
+# page is reached through the logo.
+NAV = [
     ("get-started", "Get started"),
-    ("hardware", "Hardware"),
-    ("compatibility", "Compatibility"),
-    ("home-assistant", "Home Assistant"),
-    ("mqtt", "MQTT"),
-    ("api", "API"),
+    ("Stove & board", [("compatibility", "Stove compatibility"), ("hardware", "Hardware")]),
+    ("Integrations", [("home-assistant", "Home Assistant"), ("mqtt", "MQTT"), ("api", "REST API")]),
     ("troubleshooting", "Troubleshooting"),
     ("contribute", "Contribute"),
 ]
+
+
+def nav_html(active_name):
+    active = ' class="active" aria-current="page"'
+    out = []
+    for entry in NAV:
+        if isinstance(entry[1], str):
+            name, label = entry
+            out.append(f'      <a href="{name}.html"{active if name == active_name else ""}>{label}</a>')
+        else:
+            label, pages = entry
+            inside = any(name == active_name for name, _ in pages)
+            out.append(f'      <details class="nav-group{" active" if inside else ""}">')
+            out.append(f'        <summary>{label}</summary>')
+            out.append('        <div class="nav-menu">')
+            out += [f'          <a href="{name}.html"{active if name == active_name else ""}>{sub}</a>' for name, sub in pages]
+            out.append('        </div>')
+            out.append('      </details>')
+    return "\n".join(out)
 
 
 # Pages generated from data instead of src/<name>.html: (file name, navigation entry shown as active, title,
@@ -50,7 +69,7 @@ def sync(source):
 def build(check=False):
     layout = (SRC / "layout.html").read_text()
     stale = []
-    sources = [(name, name, None, None, None) for name, _ in PAGES] + GENERATED
+    sources = [(name, name, None, None, None) for name in PAGES] + GENERATED
     for name, active_name, title, description, make in sources:
         if make:
             page = f"<!-- title: {title} -->\n<!-- description: {description} -->\n{make()}\n"
@@ -60,10 +79,7 @@ def build(check=False):
         m = re.match(r"<!-- title: (.*?) -->\n<!-- description: (.*?) -->\n", page)
         if not m:
             sys.exit(f"src/{name}.html must start with the title and description comment lines")
-        active = ' class="active" aria-current="page"'
-        nav = "\n".join(
-            f'      <a href="{n}.html"{active if n == active_name else ""}>{label}</a>' for n, label in PAGES
-        )
+        nav = nav_html(active_name)
         html = (layout.replace("{{title}}", m.group(1)).replace("{{description}}", m.group(2))
                 .replace("{{nav}}", nav).replace("{{content}}", page[m.end():].rstrip("\n")))
         out = ROOT / f"{name}.html"
