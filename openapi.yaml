@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Firenet bridge API
-  version: 3.3.1
+  version: 3.4.0
   description: |
     Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your
     network at `http://open-firenet.local` (or the bridge's IP address), without key or account.
@@ -492,6 +492,7 @@ components:
         user: { type: string }
         password_set: { type: boolean, description: Whether a password is stored (it is never returned) }
         base_topic: { type: string }
+        discovery: { type: boolean, description: Whether the Home Assistant discovery messages are published }
         connected: { type: boolean }
         status:
           type: string
@@ -513,6 +514,7 @@ components:
         user: { type: string }
         password: { type: string, description: Empty to erase the stored one }
         base_topic: { type: string, default: openfirenet }
+        discovery: { type: boolean, default: false, description: "Home Assistant MQTT discovery: the stove appears by itself in Home Assistant. Leave it off when the Open Firenet integration is used" }
     TxGap:
       type: object
       properties:

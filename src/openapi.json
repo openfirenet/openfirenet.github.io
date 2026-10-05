@@ -2,7 +2,7 @@
  "openapi": "3.0.3",
  "info": {
   "title": "Open Firenet bridge API",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your\nnetwork at `http://open-firenet.local` (or the bridge's IP address), without key or account.\n\nUnits are natural ones: temperatures in °C, power in percent, readable mode names.\n\n**Field names.** Only the recommended names are described here, the ones used by the Home Assistant integration\nand by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example\n`tempRoomTarget` for `target_temperature`, or the plain-text form `onOff=1; heatingPower=70;`), and\n`GET /api/controls` also returns the settings under the stove's own names and units (`onOff`, `tempRoomTarget`\nin tenths of a degree...). New code should not rely on them.\n\n**Before the stove is linked.** Until the stove has answered, `version_ack` is `false`, the stove model and\nfirmware version are `null`, and the other values are defaults, not measurements.\n",
   "license": {
    "name": "AGPL-3.0",
@@ -1099,6 +1099,10 @@
      "base_topic": {
       "type": "string"
      },
+     "discovery": {
+      "type": "boolean",
+      "description": "Whether the Home Assistant discovery messages are published"
+     },
      "connected": {
       "type": "boolean"
      },
@@ -1141,6 +1145,11 @@
      "base_topic": {
       "type": "string",
       "default": "openfirenet"
+     },
+     "discovery": {
+      "type": "boolean",
+      "default": false,
+      "description": "Home Assistant MQTT discovery: the stove appears by itself in Home Assistant. Leave it off when the Open Firenet integration is used"
      }
     }
    },
