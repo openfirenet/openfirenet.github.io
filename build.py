@@ -21,6 +21,7 @@ PAGES = [
     ("mqtt", "MQTT"),
     ("api", "API"),
     ("troubleshooting", "Troubleshooting"),
+    ("contribute", "Contribute"),
 ]
 
 

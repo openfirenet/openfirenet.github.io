@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contribute - Open Firenet</title>
+<meta name="description" content="How to help Open Firenet: report what works on your stove, test, translate, improve the documentation or the code.">
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="get-started.html">Get started</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="compatibility.html">Compatibility</a>
+      <a href="home-assistant.html">Home Assistant</a>
+      <a href="mqtt.html">MQTT</a>
+      <a href="api.html">API</a>
+      <a href="troubleshooting.html">Troubleshooting</a>
+      <a href="contribute.html" class="active" aria-current="page">Contribute</a>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Contribute</h1>
+<p class="lead">Open Firenet is a community project. You do not need to write code to help: the most useful contributions so far were reports and tests from people with a stove we do not have.</p>
+
+<h2>Tell us what works on your stove</h2>
+<p>We can only test on the stoves we own. If the bridge works on yours, a two-minute report adds your stove model, its firmware version and your board to the lists, and helps the next person decide.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Open an "It works on my stove" report</a></p>
+<p>Reports are most wanted for:</p>
+<ul>
+  <li>stoves on firmware <b>2.28</b> (it works on a LIVO; a SONO does not link yet) and on <b>2.25 or older</b>, which nobody has tested;</li>
+  <li>models that are not in the <a href="compatibility.html">compatibility list</a>;</li>
+  <li>boards that are not in the <a href="hardware.html">hardware list</a>.</li>
+</ul>
+
+<h2>Report a problem</h2>
+<p>A good report saves several round trips: the stove model and firmware version, the bridge version, the log and the output of <code>/api/state</code>. The issue form asks for each of them, and <a href="troubleshooting.html#report">Troubleshooting</a> tells where to find them.</p>
+<p>If you are willing to try a test build on your stove when we look for a fix, say so in the issue: that is how firmware 2.26, 2.27 and 2.28 got supported.</p>
+
+<h2>Translate</h2>
+<p>The bridge's web page, the Home Assistant integration and the installer are in English, French and German. Adding a language needs no programming: you copy the English texts, translate them, and a check tells you what is missing.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Translation guide</a></p>
+
+<h2>Improve the documentation</h2>
+<p>This website lives in its own repository, <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. The pages are plain HTML files in <code>src/</code>; its README explains how to rebuild them. A correction, a clearer explanation or a missing step is welcome as a pull request, or simply as an issue describing what confused you.</p>
+
+<h2>Contribute code</h2>
+<p>The project has three repositories:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Repository</th><th>What it is</th><th>Written in</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>The firmware of the bridge, with its web page and API</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>The Home Assistant integration</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>The desktop installer</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>How we work:</p>
+<ol>
+  <li><b>Open an issue first</b>, or comment on an existing one, to agree on what to do before you spend time on it.</li>
+  <li><b>One branch per change</b>, named after the issue: <code>fix/42-short-description</code> or <code>feat/42-short-description</code>.</li>
+  <li><b>Run the tests.</b> In the firmware repository, <code>./test/build_and_test.sh</code> runs them all on your computer, without any hardware: the protocol, a simulated stove, the API description and the translations.</li>
+  <li><b>Add a line to <code>CHANGELOG.md</code></b> under "Non publié", in English, written for users: what changes for them, not how it is coded.</li>
+  <li><b>Open a pull request</b> whose description starts with <code>Fixes #42</code> (or <code>Refs #42</code> for a partial change). The checks run by themselves.</li>
+</ol>
+<p>Commit messages start with <code>feat:</code>, <code>fix:</code>, <code>docs:</code> or <code>chore:</code>: the release script reads them to choose the next version number.</p>
+<div class="note">
+  <p><b>About the stove protocol:</b> it was reverse-engineered, and a wrong message can make a stove refuse the bridge. A change in the dialogue with the stove needs a test on a real stove, ideally on each firmware family, before it is merged. Say in your pull request what you could test and what you could not.</p>
+</div>
+
+<h2>Questions</h2>
+<p>Not sure where to start, or whether an idea fits? <a href="https://github.com/openfirenet/open-firenet/issues">Open an issue</a> and ask: there is no wrong question.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribute</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
