@@ -32,13 +32,13 @@
     <td><b>LilyGO T-Dongle-S3</b> (with screen)</td>
     <td><span class="badge ok">Tested</span></td>
     <td>USB-A plug</td>
-    <td>A stick with its own USB-A plug: no cable needed, although it was tested through a short USB extension cable. The screen is not used by the firmware. To flash it, plug it into your computer.</td>
+    <td><b>Needs a USB extension cable</b> between the stove and the stick, see below. The screen is not used by the firmware. To flash it, plug it into your computer.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (without screen)</td>
     <td><span class="badge partial">Expected</span></td>
     <td>USB-A plug</td>
-    <td>Same hardware as the version with a screen; not tested.</td>
+    <td>Same board as the version with a screen; not tested. Without the screen it may not need the extension cable.</td>
   </tr>
   <tr>
     <td><b>M5Stamp S3</b></td>
@@ -55,6 +55,13 @@
 </table>
 </div>
 <p><span class="badge ok">Tested</span> by the project on a stove. <span class="badge partial">Expected</span> to work from its specifications, without a confirmed report.</p>
+
+<div class="note">
+  <p><b>LilyGO T-Dongle-S3 with screen: use a USB extension cable.</b> Plugged straight into the stove, the stick draws too much current when it starts, because of its screen, and the stove restarts. With a USB extension cable between the stove and the stick, it works: the cable limits that inrush of current.</p>
+</div>
+
+<h3 id="power">If the stove restarts when you plug the bridge in</h3>
+<p>The stove's USB socket only delivers a limited current. A board that draws a lot at start-up (a screen, LEDs, extra modules) can make the stove restart. Put a USB extension cable between the stove and the board, or choose a board without a screen.</p>
 
 <h3>Boards with native USB only</h3>
 <p>Sticks and small boards such as the T-Dongle-S3, the M5Stamp S3 or the XIAO have a single USB port, the native one. It is used both to flash the board from your computer and to talk to the stove. If the installer does not find the board, hold its BOOT button while plugging it in.</p>
