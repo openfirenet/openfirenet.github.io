@@ -101,10 +101,20 @@ mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</cod
   <p><b>Use one or the other.</b> If you already use the <a href="home-assistant.html">Open Firenet integration</a>, leave discovery off: you would get the stove twice. The integration remains the most complete way: it also has the MultiAir fans, the slots of the weekly schedule and the external temperature sensor.</p>
 </div>
 
+<h2 id="tls">Encrypted connection (TLS)</h2>
+<p>Since firmware 3.5, the bridge can reach a broker that listens with TLS, usually on port 8883: tick <b>Encrypted connection (TLS)</b> in the MQTT card. The bridge then checks the broker's certificate, in one of two ways:</p>
+<ul>
+  <li><b>Nothing else to enter</b> when the certificate is signed by a public authority, for the name you entered as broker address: a hosted broker, or a home broker with a Let's Encrypt certificate.</li>
+  <li><b>Paste the certificate of your own authority</b> in the field that appears, for a home broker with a self-made certificate. It is the text starting with <code>-----BEGIN CERTIFICATE-----</code>. The name in the broker's certificate is then not checked, as such a broker is usually reached by its IP address.</li>
+</ul>
+<div class="note">
+  <p><b>Only when you need it.</b> Encryption is demanding for this small chip: it takes about 50 kB of its memory while connected. On a broker of your own network, plain MQTT remains the simplest choice. Use TLS when the broker requires it, or is outside your network.</p>
+</div>
+
 <h2>Good to know</h2>
 <ul>
-  <li>The connection is not encrypted (no TLS yet): use a broker on your local network.</li>
-  <li>If the broker is unreachable, the bridge retries every 10 seconds on its own. The link with the stove is not affected.</li>
+  <li>Without TLS the connection is not encrypted: fine for a broker on your local network, not beyond it.</li>
+  <li>If the broker is unreachable, the bridge retries on its own, every 10 seconds (every 30 seconds with TLS). The link with the stove is not affected.</li>
 </ul>
 <p>Something does not work? See <a href="troubleshooting.html">Troubleshooting</a>.</p>
 </main>
