@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Firenet bridge API
-  version: 3.4.0
+  version: 3.5.0
   description: |
     Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your
     network at `http://open-firenet.local` (or the bridge's IP address), without key or account.
@@ -268,7 +268,7 @@ paths:
       summary: Log of the exchanges with the stove
       description: |
         Plain text, one line per frame: `[uptime in ms][rx|tx] content`. Identical consecutive lines are merged
-        (`xN`). The Wi-Fi password is masked. Kept in memory only (about the last 48 kB).
+        (`xN`). The Wi-Fi password is masked. Kept in memory only (about the last 32 kB).
       responses:
         "200":
           description: The log
@@ -493,6 +493,9 @@ components:
         password_set: { type: boolean, description: Whether a password is stored (it is never returned) }
         base_topic: { type: string }
         discovery: { type: boolean, description: Whether the Home Assistant discovery messages are published }
+        tls: { type: boolean, description: Whether the connection to the broker is encrypted (MQTT over TLS) }
+        ca_set: { type: boolean, description: "Whether an authority certificate is stored (it is not returned)" }
+        tls_error: { type: integer, description: "Last error code of the TLS layer, 0 when none (diagnostics)" }
         connected: { type: boolean }
         status:
           type: string
@@ -503,6 +506,8 @@ components:
             - waiting for Wi-Fi
             - broker unreachable
             - connection lost
+            - certificate not trusted
+            - secure connection failed
             - "refused: wrong user or password"
             - refused by the broker
     MqttCommand:
@@ -515,6 +520,8 @@ components:
         password: { type: string, description: Empty to erase the stored one }
         base_topic: { type: string, default: openfirenet }
         discovery: { type: boolean, default: false, description: "Home Assistant MQTT discovery: the stove appears by itself in Home Assistant. Leave it off when the Open Firenet integration is used" }
+        tls: { type: boolean, default: false, description: "Encrypted connection (MQTT over TLS, usually port 8883). The broker's certificate must be signed by a public authority, or by the one given in ca_certificate" }
+        ca_certificate: { type: string, description: "Certificate (PEM) of your own authority, for a broker whose certificate is not signed by a public one; the name in the broker's certificate is then not checked. Empty to erase the stored one. Refused with a 400 answer when it is not a PEM certificate" }
     TxGap:
       type: object
       properties:

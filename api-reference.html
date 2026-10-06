@@ -37,7 +37,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.4.0.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.5.0.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -231,7 +231,7 @@
 <div class="endpoint" id="get-log">
 <h3><span class="method get">GET</span> <code>/log</code></h3>
 <p><b>Log of the exchanges with the stove</b></p>
-<p>Plain text, one line per frame: <code>[uptime in ms][rx|tx] content</code>. Identical consecutive lines are merged (<code>xN</code>). The Wi-Fi password is masked. Kept in memory only (about the last 48 kB).</p>
+<p>Plain text, one line per frame: <code>[uptime in ms][rx|tx] content</code>. Identical consecutive lines are merged (<code>xN</code>). The Wi-Fi password is masked. Kept in memory only (about the last 32 kB).</p>
 <h4>Answer 200 <small>The log</small></h4>
 <p><code>text/plain</code></p>
 </div>
@@ -434,8 +434,11 @@
   <tr><td><code>password_set</code></td><td>boolean</td><td>Whether a password is stored (it is never returned)</td></tr>
   <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
   <tr><td><code>discovery</code></td><td>boolean</td><td>Whether the Home Assistant discovery messages are published</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Whether the connection to the broker is encrypted (MQTT over TLS)</td></tr>
+  <tr><td><code>ca_set</code></td><td>boolean</td><td>Whether an authority certificate is stored (it is not returned)</td></tr>
+  <tr><td><code>tls_error</code></td><td>integer</td><td>Last error code of the TLS layer, 0 when none (diagnostics)</td></tr>
   <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
-  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>certificate not trusted</code> | <code>secure connection failed</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
 </table>
 </div>
 <h3 id="schema-mqttcommand">MqttCommand</h3>
@@ -449,6 +452,8 @@
   <tr><td><code>password</code></td><td>string</td><td>Empty to erase the stored one</td></tr>
   <tr><td><code>base_topic</code></td><td>string</td><td>Default: <code>openfirenet</code>.</td></tr>
   <tr><td><code>discovery</code></td><td>boolean</td><td>Home Assistant MQTT discovery: the stove appears by itself in Home Assistant. Leave it off when the Open Firenet integration is used Default: <code>False</code>.</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Encrypted connection (MQTT over TLS, usually port 8883). The broker's certificate must be signed by a public authority, or by the one given in ca_certificate Default: <code>False</code>.</td></tr>
+  <tr><td><code>ca_certificate</code></td><td>string</td><td>Certificate (PEM) of your own authority, for a broker whose certificate is not signed by a public one; the name in the broker's certificate is then not checked. Empty to erase the stored one. Refused with a 400 answer when it is not a PEM certificate</td></tr>
 </table>
 </div>
 <h3 id="schema-txgap">TxGap</h3>
