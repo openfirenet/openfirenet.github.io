@@ -99,6 +99,16 @@
 </details>
 
 <details>
+  <summary>The firmware is too large for a wireless update</summary>
+  <p>A bridge first flashed from the Arduino IDE with the default partition scheme has update slots of 1,310,720 bytes. Firmware 3.5.0 and later is larger than that: the bridge refuses the update without a word and the installer times out. Installer 1.6.0 names this cause, and refuses at once when the bridge runs firmware 3.6.0 or later.</p>
+  <ul>
+    <li>Flash the bridge once over USB with the installer. This rewrites the partition table, and wireless updates work again afterwards. You will have to enter your Wi-Fi again.</li>
+    <li>If you build from source in the Arduino IDE, select Tools &gt; Partition Scheme &gt; "Minimal SPIFFS (1.9MB APP with OTA)".</li>
+  </ul>
+  <p>A bridge flashed with the installer is not concerned.</p>
+</details>
+
+<details>
   <summary>The version did not change after an update</summary>
   <p>Check the version next to the title on the bridge's page. With a weak Wi-Fi signal an update can fail silently; update over USB with the installer.</p>
 </details>
