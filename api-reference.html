@@ -37,7 +37,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.6.1.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.7.0.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -237,6 +237,21 @@
 </div>
 <h2 id="schemas">Objects</h2>
 <p>The objects exchanged with the bridge, referred to above.</p>
+<h3 id="schema-health">Health</h3>
+<p>How the bridge itself is doing. The counters live in memory and restart from zero at each boot. Also published over MQTT under <code>&lt;base&gt;/health/&lt;name&gt;</code>, except <code>stove_last_frame_seconds</code>.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>software</code> | <code>unknown</code></td><td>Cause of the last restart: <code>power_on</code> (the stove powered the bridge), <code>brownout</code> (supply voltage too low), <code>crash</code>, <code>watchdog</code> (the program froze), <code>reset_button</code>, <code>usb</code> (reset over USB), <code>user</code> (restart asked through the page or the API), <code>wifi_change</code>, <code>update</code> (wireless update), <code>stove_silent</code> (nothing received from the stove for 60 seconds), <code>software</code> (another restart asked by the firmware)</td></tr>
+  <tr><td><code>min_free_heap</code></td><td>integer</td><td>Lowest free memory since boot, in bytes</td></tr>
+  <tr><td><code>chip_temperature</code></td><td>number or <code>null</code></td><td>Temperature of the chip in °C</td></tr>
+  <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Wi-Fi connections lost since boot</td></tr>
+  <tr><td><code>stove_last_frame_seconds</code></td><td>integer or <code>null</code></td><td>Seconds since the last byte received from the stove; null when nothing was ever received</td></tr>
+  <tr><td><code>stove_detections</code></td><td>integer</td><td>Times the stove accepted the bridge since boot (1 on a stable link)</td></tr>
+  <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Times the stove dropped an established link since boot</td></tr>
+  <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Connections to the broker lost since boot</td></tr>
+</table>
+</div>
 <h3 id="schema-state">State</h3>
 <div class="table-wrap">
 <table class="fields">
@@ -255,6 +270,7 @@
   <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
   <tr><td><code>usb</code> <span class="req">required</span></td><td>object</td><td>USB link diagnostics</td></tr>
   <tr><td><code>mqtt</code></td><td>object</td><td></td></tr>
+  <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
   <tr><td><code>frames_in</code></td><td>integer</td><td>Frames received from the stove since boot</td></tr>
   <tr><td><code>frames_out</code></td><td>integer</td><td>Frames sent to the stove since boot</td></tr>
   <tr><td><code>revision</code></td><td>integer</td><td></td></tr>

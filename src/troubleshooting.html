@@ -90,9 +90,9 @@
 </details>
 
 <h2 id="diagnostics">The Diagnostics tab</h2>
-<p>The Diagnostics tab of the bridge's page (<code>http://open-firenet.local/#diagnostics</code>) gathers what is needed to understand a link problem: the state of the link with the stove, the log of the exchanges with its download button, and every value the stove reports.</p>
+<p>The Diagnostics tab of the bridge's page (<code>http://open-firenet.local/#diagnostics</code>) gathers what is needed to understand a problem: the health of the bridge itself (cause of its last restart, memory, Wi-Fi, how many times the link with the stove was established and lost), the state of the link, the log of the exchanges, and every value the stove reports. The "Diagnostic file" button puts all of it in one file to attach to a report.</p>
 <figure>
-  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Diagnostics tab: link with the stove, exchange log, all values" width="760">
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Diagnostics tab: bridge health, link with the stove, exchange log" width="760">
 </figure>
 
 <h2>MQTT</h2>
@@ -137,8 +137,8 @@
 <ul>
   <li>the stove model and its firmware version (Info menu of the stove);</li>
   <li>the bridge firmware version (next to the title on its page);</li>
-  <li>the log: Diagnostics tab, "Download" in the exchange log, taken one to two minutes after switching the stove on (on firmware 3.2 and older: CDC Logs tab);</li>
-  <li>the output of <code>http://open-firenet.local/api/state</code>;</li>
+  <li>the diagnostic file: Diagnostics tab, "Diagnostic file", taken one to two minutes after switching the stove on, or right after the problem shows;</li>
   <li>what the stove screen shows, with any code.</li>
 </ul>
-<p>The log hides your Wi-Fi password. The state output contains your network name and the bridge's addresses: remove them if you prefer.</p>
+<p>The diagnostic file holds the bridge health, the link, every value and the exchange log. Your Wi-Fi name and the bridge's MAC address are masked in it, and the Wi-Fi password is never included.</p>
+<p>On bridge firmware 3.6.1 and older there is no such button: send the output of <code>http://open-firenet.local/api/state</code> and the log (Diagnostics tab, "Download" in the exchange log).</p>

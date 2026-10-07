@@ -27,7 +27,8 @@
   <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>The same values, one per topic, for systems that prefer plain values: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
 </table>
 </div>
-<p>Everything is published with the retain flag, so a client gets the current values as soon as it subscribes. <code>openfirenet/device/connected</code> tells whether the bridge is linked to the stove; until it is, only the <code>device</code> values are published.</p>
+<p>Everything is published with the retain flag, so a client gets the current values as soon as it subscribes. <code>openfirenet/device/connected</code> tells whether the bridge is linked to the stove; until it is, only the <code>device</code> and <code>health</code> values are published.</p>
+<p>Since firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> tells how the bridge itself is doing: <code>restart_reason</code> (cause of its last restart), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> and <code>mqtt_disconnects</code>. The counters restart from zero at each boot. An alert on <code>stove_link_losses</code> or on a change of <code>restart_reason</code> tells you when something went wrong.</p>
 
 <h2>Send commands</h2>
 <div class="table-wrap">
