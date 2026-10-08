@@ -99,7 +99,7 @@ mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</cod
 </ul>
 <p>Home Assistant needs its MQTT integration connected to the same broker. Unticking the option removes the entities.</p>
 <div class="note">
-  <p><b>Use one or the other.</b> If you already use the <a href="home-assistant.html">Open Firenet integration</a>, leave discovery off: you would get the stove twice. The integration remains the most complete way: it also has the MultiAir fans, the slots of the weekly schedule and the external temperature sensor.</p>
+  <p><b>Use one or the other.</b> If you already use the <a href="home-assistant.html">Open Firenet integration</a>, leave discovery off: you would get the stove twice. The integration remains the most complete way: it also has the MultiAir fans, the weekly schedule (copied from a Home Assistant schedule) and the external temperature sensor. Over MQTT the slots can be written but are not published.</p>
 </div>
 
 <h2 id="tls">Encrypted connection (TLS)</h2>

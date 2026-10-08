@@ -46,8 +46,26 @@
 </details>
 
 <details>
+  <summary>The page says "The bridge does not answer under this name"</summary>
+  <p>Since firmware 4.0 the bridge only answers at its IP address and at <code>open-firenet.local</code>. If you open it under another name, for example the one your router gives it (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) or a domain of your own, its page shows this message with a link to its IP address.</p>
+  <ul>
+    <li>Follow the link, open the Bridge tab, section "Access to the page", and add the name you use (one per line, 8 at most). It then works under that name too, at once.</li>
+    <li>A name must contain a dot. Adding <code>example.org</code> also accepts <code>stove.example.org</code>.</li>
+  </ul>
+  <p>This is what keeps a page of another website, opened in a browser on your network, from reading or commanding the bridge.</p>
+</details>
+
+<details>
   <summary>The bridge is not on my network any more</summary>
-  <p>When it cannot join your Wi-Fi, the bridge goes back to setup mode and creates the network <code>Open-Firenet-Setup</code>. Join it and enter your Wi-Fi again. Only 2.4 GHz networks are supported.</p>
+  <p>When it cannot join your Wi-Fi, the bridge goes to setup mode and creates the network <code>Open-Firenet-Setup</code>. Join it and enter your Wi-Fi again. Only 2.4 GHz networks are supported.</p>
+  <p>Since firmware 4.0 the bridge rejoins your network by itself: after a drop it keeps trying, and when it starts before your router (after a power cut) it leaves setup mode as soon as the network answers. With an earlier firmware it stays off the network until it is restarted: unplug it and plug it back, then update.</p>
+  <p>Since firmware 4.0, when a Wi-Fi password is set the bridge only joins an encrypted network (WPA or later): it no longer joins an open network, or one still protected by the old WEP, that carries the same name.</p>
+</details>
+
+<details>
+  <summary>The bridge often loses the Wi-Fi, or its page is slow to answer</summary>
+  <p>Since firmware 4.0, the Bridge tab has a "Wi-Fi power saving" switch. It is on by default: the bridge runs cooler and draws less power, and an answer can wait up to a quarter of a second. Switch it off if the bridge often loses the Wi-Fi or if you want it to answer faster; the change applies at once.</p>
+  <p>The "Bridge health" card of the Diagnostics tab counts the Wi-Fi disconnections since the last start, which tells whether the change helps.</p>
 </details>
 
 <h2 id="ota">Updates</h2>
@@ -73,6 +91,22 @@
 </details>
 
 <details>
+  <summary>After updating to firmware 4.0, something stopped working</summary>
+  <p>Firmware 4.0 closes the bridge to pages of other websites. Three things change:</p>
+  <ul>
+    <li><b>Home Assistant shows the stove as unavailable, or the page stays empty:</b> the bridge was set up or opened under a name given by your router. Use its IP address or <code>open-firenet.local</code>, or add the name on the bridge's page (see "The bridge does not answer under this name" above). Update the Home Assistant integration to 2.6.0 or later: it tells you this in plain words.</li>
+    <li><b>A dashboard of your own, served from another address, no longer reads the bridge from the browser:</b> the bridge no longer allows requests from other pages. Call it from a program instead (a script, Home Assistant, Node-RED), or use MQTT.</li>
+    <li><b>A script that restarted the bridge with a GET request:</b> <code>/api/restart</code> now needs a POST.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>The installer asks for an update password, or I forgot it</summary>
+  <p>Since firmware 4.0 you can protect wireless updates with a password. It is set, or removed, with the installer while the bridge is plugged into your computer (Wi-Fi tab, "Update password"), never over the network. The installer then asks for it at each wireless update and does not keep it.</p>
+  <p>If you forgot it: flash the bridge once over USB in "Full Reset (Factory Image)" mode. That removes the password, and you enter your Wi-Fi again.</p>
+</details>
+
+<details>
   <summary>The version did not change after an update</summary>
   <p>Check the version next to the title on the bridge's page. With a weak Wi-Fi signal an update can fail silently; update over USB with the installer.</p>
 </details>
@@ -87,6 +121,11 @@
 <details>
   <summary>The air flaps value looks ten times smaller than on the stove screen</summary>
   <p>The stove screen shows the air flaps in per mille (‰), the bridge in percent: 50 ‰ on the screen is 5 % on the page.</p>
+</details>
+
+<details>
+  <summary>I changed a MultiAir setting and the stove screen still shows the old value</summary>
+  <p>The setting is applied at once, but we have seen on several firmware versions that the stove's own screen does not refresh its MultiAir menu while it is open: leave the menu and open it again, and the new value is there. Other settings, such as the heating power, refresh on the screen right away.</p>
 </details>
 
 <h2 id="diagnostics">The Diagnostics tab</h2>
@@ -129,7 +168,7 @@
 
 <details>
   <summary>A command sent over MQTT is ignored</summary>
-  <p>Commands are ignored while the stove is not linked, and when they are published with the retain flag. See <a href="mqtt.html">MQTT</a>.</p>
+  <p>Commands are ignored while the stove is not linked, during the few seconds after the link comes up while the bridge does not know the stove's settings yet, and when they are published with the retain flag. See <a href="mqtt.html">MQTT</a>.</p>
 </details>
 
 <h2 id="report">Report a problem</h2>

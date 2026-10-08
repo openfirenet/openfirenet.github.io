@@ -41,6 +41,7 @@
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
+<p><b>Who can call it.</b> Programs on your network (Home Assistant, scripts, <code>curl</code>) and the bridge's own web page. A page of another website opened in a browser cannot: the bridge sends no cross-origin permission and answers 403 to a request that names another page as its origin, or that was addressed to a name other than its IP address, a name without a dot, a <code>.local</code> name, or a domain you added in the Bridge tab, section Access (<code>/api/access</code>). The 403 is JSON: <code>refused</code> tells which check refused (<code>host</code> or <code>origin</code>) and <code>ip</code> gives the address that always works.</p>
 <p><b>Before the stove is linked.</b> Until the stove has answered, <code>version_ack</code> is <code>false</code>, the stove model and firmware version are <code>null</code>, and the other values are defaults, not measurements.</p>
 <h2>Endpoints</h2>
 <div class="table-wrap">
@@ -57,7 +58,10 @@
   <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Wi-Fi networks seen by the bridge</td></tr>
   <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>Set the Wi-Fi network, then restart</td></tr>
   <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Erase the saved settings, then restart in setup mode</td></tr>
-  <tr><td><a href="#get-api-restart"><span class="method get">GET</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
+  <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Domains under which the bridge accepts to answer</td></tr>
+  <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Set the added domains</td></tr>
+  <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Whether Wi-Fi power saving is on</td></tr>
+  <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Switch Wi-Fi power saving on or off</td></tr>
   <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
   <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Delay between frames sent to the stove</td></tr>
   <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Change the delay between frames sent to the stove</td></tr>
@@ -91,6 +95,15 @@
 <pre><code>{"on": true, "power_percent": 80}</code></pre>
 <h4>Answer 200 <small>The base settings sent to the stove</small></h4>
 <p>Fields: see <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Answer 503 <small>The stove is not linked, or has not sent its settings yet (a few seconds after the link comes up). Nothing was sent; try again.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
 </div>
 <div class="endpoint" id="get-api-schedule">
 <h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
@@ -108,6 +121,15 @@
 <pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
 <h4>Answer 200 <small>The base settings sent to the stove</small></h4>
 <p>Fields: see <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Answer 503 <small>The stove is not linked, or has not sent its settings yet (a few seconds after the link comes up). Nothing was sent; try again.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
 </div>
 <h2 id="bridge">Bridge</h2>
 <p>Settings and maintenance of the bridge itself</p>
@@ -182,22 +204,51 @@
 </table>
 </div>
 </div>
-<div class="endpoint" id="get-api-restart">
-<h3><span class="method get">GET</span> <code>/api/restart</code></h3>
-<p><b>Restart the bridge</b></p>
-<p>Any method is accepted; the web page uses POST. The stove keeps running; the link comes back in about a minute.</p>
-<h4>Answer 200 <small>The bridge restarts</small></h4>
+<div class="endpoint" id="get-api-access">
+<h3><span class="method get">GET</span> <code>/api/access</code></h3>
+<p><b>Domains under which the bridge accepts to answer</b></p>
+<p>Besides its IP address and <code>open-firenet.local</code>, see "Who can call it" above.</p>
+<h4>Answer 200 <small>The added domains</small></h4>
+<p>Fields: see <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="post-api-access">
+<h3><span class="method post">POST</span> <code>/api/access</code></h3>
+<p><b>Set the added domains</b></p>
+<h4>Request body <small>application/json</small></h4>
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
-  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>string</td><td>One domain per line (commas and spaces also separate them); an empty text removes them all. An entry needs at least one dot inside (<code>example.org</code>, not <code>org</code>), and also covers the names under it. At most 8 entries of 63 characters; entries that do not fit these rules are dropped.</td></tr>
 </table>
 </div>
+<h4>Answer 200 <small>The domains as saved</small></h4>
+<p>Fields: see <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="get-api-wifi-power-saving">
+<h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Whether Wi-Fi power saving is on</b></p>
+<p>On by default: the bridge runs cooler and draws less power, and an answer can wait up to a quarter of a second. Off: it answers at once; for networks on which the bridge keeps losing the Wi-Fi.</p>
+<h4>Answer 200 <small>The setting</small></h4>
+<p>Fields: see <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="post-api-wifi-power-saving">
+<h3><span class="method post">POST</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Switch Wi-Fi power saving on or off</b></p>
+<p>Saved, and applied at once without a restart.</p>
+<h4>Request body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Answer 200 <small>The setting as saved</small></h4>
+<p>Fields: see <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
 </div>
 <div class="endpoint" id="post-api-restart">
 <h3><span class="method post">POST</span> <code>/api/restart</code></h3>
 <p><b>Restart the bridge</b></p>
+<p>The stove keeps running; the link comes back in about a minute.</p>
 <h4>Answer 200 <small>The bridge restarts</small></h4>
 <div class="table-wrap">
 <table class="fields">
@@ -237,6 +288,24 @@
 </div>
 <h2 id="schemas">Objects</h2>
 <p>The objects exchanged with the bridge, referred to above.</p>
+<h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-access">Access</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>list of string</td><td>Domains added by the owner</td></tr>
+  <tr><td><code>max_extra_hosts</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Name this request was addressed to</td></tr>
+</table>
+</div>
 <h3 id="schema-health">Health</h3>
 <p>How the bridge itself is doing. The counters live in memory and restart from zero at each boot. Also published over MQTT under <code>&lt;base&gt;/health/&lt;name&gt;</code>, except <code>stove_last_frame_seconds</code>.</p>
 <div class="table-wrap">
@@ -261,6 +330,7 @@
   <tr><td><code>sensors</code> <span class="req">required</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
   <tr><td><code>controls</code> <span class="req">required</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
   <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code> while the bridge is in setup mode</td></tr>
+  <tr><td><code>wifi_power_saving</code></td><td>boolean</td><td>Whether Wi-Fi power saving is on, see <code>/api/wifi_power_saving</code></td></tr>
   <tr><td><code>ip</code></td><td>string</td><td></td></tr>
   <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
   <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
@@ -297,6 +367,7 @@
   <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
   <tr><td><code>free_heap</code></td><td>integer</td><td>Free memory in bytes</td></tr>
   <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Size in bytes of the slot a wireless update is written to. A firmware larger than this must be installed over USB</td></tr>
+  <tr><td><code>ota_password_set</code></td><td>boolean</td><td>A password is asked for wireless updates. It is set or removed over USB with the installer, never over the network</td></tr>
   <tr><td><code>connected</code></td><td>boolean</td><td>Same as <code>version_ack</code></td></tr>
 </table>
 </div>

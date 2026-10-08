@@ -14,6 +14,13 @@ info:
     `GET /api/controls` also returns the settings under the stove's own names and units (`onOff`, `tempRoomTarget`
     in tenths of a degree...). New code should not rely on them.
 
+    **Who can call it.** Programs on your network (Home Assistant, scripts, `curl`) and the bridge's own web page.
+    A page of another website opened in a browser cannot: the bridge sends no cross-origin permission and answers
+    403 to a request that names another page as its origin, or that was addressed to a name other than its IP
+    address, a name without a dot, a `.local` name, or a domain you added in the Bridge tab, section Access
+    (`/api/access`). The 403 is JSON: `refused` tells which check refused (`host` or `origin`) and `ip` gives the
+    address that always works.
+
     **Before the stove is linked.** Until the stove has answered, `version_ack` is `false`, the stove model and
     firmware version are `null`, and the other values are defaults, not measurements.
   license:
@@ -83,6 +90,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlsResult"
+        "503":
+          $ref: "#/components/responses/StoveNotReady"
   /api/schedule:
     get:
       tags: [Stove]
@@ -112,6 +121,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlsResult"
+        "503":
+          $ref: "#/components/responses/StoveNotReady"
   /api/mqtt:
     get:
       tags: [Bridge]
@@ -248,17 +259,70 @@ paths:
                 type: object
                 properties:
                   ok: { type: boolean }
-  /api/restart:
+  /api/access:
     get:
       tags: [Bridge]
-      summary: Restart the bridge
-      description: Any method is accepted; the web page uses POST. The stove keeps running; the link comes back in about a minute.
+      summary: Domains under which the bridge accepts to answer
+      description: Besides its IP address and `open-firenet.local`, see "Who can call it" above.
       responses:
         "200":
-          $ref: "#/components/responses/Restarting"
+          description: The added domains
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Access" }
+    post:
+      tags: [Bridge]
+      summary: Set the added domains
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                extra_hosts:
+                  type: string
+                  description: "One domain per line (commas and spaces also separate them); an empty text removes them all. An entry needs at least one dot inside (`example.org`, not `org`), and also covers the names under it. At most 8 entries of 63 characters; entries that do not fit these rules are dropped."
+      responses:
+        "200":
+          description: The domains as saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Access" }
+  /api/wifi_power_saving:
+    get:
+      tags: [Bridge]
+      summary: Whether Wi-Fi power saving is on
+      description: "On by default: the bridge runs cooler and draws less power, and an answer can wait up to a quarter of a second. Off: it answers at once; for networks on which the bridge keeps losing the Wi-Fi."
+      responses:
+        "200":
+          description: The setting
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WifiPowerSaving" }
+    post:
+      tags: [Bridge]
+      summary: Switch Wi-Fi power saving on or off
+      description: Saved, and applied at once without a restart.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled: { type: boolean }
+      responses:
+        "200":
+          description: The setting as saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WifiPowerSaving" }
+  /api/restart:
     post:
       tags: [Bridge]
       summary: Restart the bridge
+      description: The stove keeps running; the link comes back in about a minute.
       responses:
         "200":
           $ref: "#/components/responses/Restarting"
@@ -277,6 +341,20 @@ paths:
               schema: { type: string }
 components:
   responses:
+    StoveNotReady:
+      description: The stove is not linked, or has not sent its settings yet (a few seconds after the link comes up). Nothing was sent; try again.
+      headers:
+        Retry-After:
+          schema: { type: integer }
+          description: Seconds to wait before trying again
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok: { type: boolean }
+              error: { type: string, enum: [stove_not_ready] }
+              message: { type: string }
     Restarting:
       description: The bridge restarts
       content:
@@ -291,6 +369,21 @@ components:
       type: string
       enum: [manual, auto, comfort]
       description: "`manual`: fixed power. `auto`: follows the weekly schedule. `comfort`: follows the room temperature."
+    WifiPowerSaving:
+      type: object
+      properties:
+        ok: { type: boolean }
+        enabled: { type: boolean }
+    Access:
+      type: object
+      properties:
+        ok: { type: boolean }
+        extra_hosts:
+          type: array
+          items: { type: string }
+          description: Domains added by the owner
+        max_extra_hosts: { type: integer }
+        host: { type: string, description: Name this request was addressed to }
     Health:
       type: object
       description: How the bridge itself is doing. The counters live in memory and restart from zero at each boot. Also published over MQTT under `<base>/health/<name>`, except `stove_last_frame_seconds`.
@@ -315,6 +408,7 @@ components:
         sensors: { $ref: "#/components/schemas/Sensors" }
         controls: { $ref: "#/components/schemas/ControlsState" }
         wifi_mode: { type: string, enum: [STA, AP], description: "`AP` while the bridge is in setup mode" }
+        wifi_power_saving: { type: boolean, description: "Whether Wi-Fi power saving is on, see `/api/wifi_power_saving`" }
         ip: { type: string }
         wifi_connected: { type: boolean }
         uptime_seconds: { type: integer }
@@ -372,6 +466,7 @@ components:
         uptime_seconds: { type: integer }
         free_heap: { type: integer, description: Free memory in bytes }
         ota_slot_bytes: { type: integer, description: Size in bytes of the slot a wireless update is written to. A firmware larger than this must be installed over USB }
+        ota_password_set: { type: boolean, description: "A password is asked for wireless updates. It is set or removed over USB with the installer, never over the network" }
         connected: { type: boolean, description: Same as `version_ack` }
     Stove:
       type: object

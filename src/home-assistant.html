@@ -24,7 +24,7 @@
 <ol class="steps">
   <li><p>Go to <b>Settings</b>, <b>Devices &amp; services</b>, <b>Add integration</b>.</p></li>
   <li><p>Search for <b>Open Firenet</b>.</p></li>
-  <li><p>Enter the address of the bridge (<code>open-firenet.local</code> or its IP address) and the refresh interval (30 seconds by default).</p></li>
+  <li><p>Enter the address of the bridge (<code>open-firenet.local</code> or its IP address) and the refresh interval (30 seconds by default). A name given by your router only works once you have added it on the bridge's page (Bridge tab, section "Access to the page").</p></li>
 </ol>
 
 <h2>What you get</h2>
@@ -34,11 +34,53 @@
   <tr><td>Thermostat</td><td>On/off, target temperature (14 to 28 °C), mode (manual, auto, comfort), heating power (30 to 100 %)</td></tr>
   <tr><td>Fans</td><td>MultiAir 1 and 2: on/off, auto or speeds 1 to 5, convection trim (MultiAir stoves only)</td></tr>
   <tr><td>Switches</td><td>Weekly heating schedule, frost protection</td></tr>
+  <tr><td>Heating schedule</td><td>A button that copies a Home Assistant schedule to the stove; a start and an end time for each slot, disabled by default</td></tr>
   <tr><td>Numbers</td><td>Setback temperature, frost protection temperature, room sensor calibration, baking oven temperature (DOMO BACK)</td></tr>
   <tr><td>Sensors</td><td>Room, combustion chamber and mainboard temperatures, pellets consumed, running hours, service countdown, fan and auger speeds, stove state, Wi-Fi signal, air flaps</td></tr>
   <tr><td>Diagnostics</td><td>Link with the stove, combustion active, stove error, hopper lid, error and warning codes</td></tr>
 </table>
 </div>
+
+<h2 id="schedule">Heating schedule</h2>
+<p>The stove keeps its own weekly schedule: two time ranges per day, during which it heats. Since version 2.6 of the integration you fill it from Home Assistant, by drawing your week on Home Assistant's schedule grid and copying it to the stove. The schedule then runs in the stove itself: it keeps working when Home Assistant or the Wi-Fi is down.</p>
+
+<h3>1. Draw your week</h3>
+<ol>
+  <li>In Home Assistant, open <b>Settings &gt; Devices &amp; services &gt; Helpers</b> and press <b>Create helper</b>.</li>
+  <li>Choose <b>Schedule</b> and give it a name, for example "Stove".</li>
+  <li>On the weekly grid, drag on a day to draw a time range. Click a range to set its exact start and end, or to delete it.</li>
+  <li>Draw at most <b>two ranges per day</b>, which is what the stove can hold. A day left empty means no heating range that day.</li>
+</ol>
+
+<h3>2. Tell the integration which schedule to use</h3>
+<ol>
+  <li>Open <b>Settings &gt; Devices &amp; services &gt; Open Firenet</b> and press <b>Configure</b>.</li>
+  <li>Under "Schedule to copy to the stove", choose the schedule you created, and submit.</li>
+</ol>
+<p>This is done once.</p>
+
+<h3>3. Copy it to the stove</h3>
+<ol>
+  <li>Open the stove's device page (<b>Settings &gt; Devices &amp; services &gt; Open Firenet</b>, then the device).</li>
+  <li>In the "Configuration" block, press <b>Copy schedule to the stove</b>.</li>
+</ol>
+<p>The whole week is sent in one command and replaces what the stove held, empty days included. You can check the result on the bridge's page, Stove tab, "Schedule".</p>
+
+<h3>4. Switch the schedule on</h3>
+<p>The copy fills the stove's schedule; the switch <b>Heating Schedule</b> decides whether the stove follows it. Switch it on from the device page, or from an automation.</p>
+
+<div class="note">
+  <p><b>After each change of the grid, press the button again.</b> The copy is not automatic: the stove keeps the last schedule it received.</p>
+</div>
+
+<h3>Good to know</h3>
+<ul>
+  <li><b>More than two ranges in a day:</b> the copy is refused with a message naming the day, and nothing is sent to the stove.</li>
+  <li><b>A range that ends at midnight</b> is sent as ending at 23:59.</li>
+  <li><b>To clear the stove's schedule:</b> empty the grid and press the button.</li>
+  <li><b>The Home Assistant schedule itself switches nothing.</b> It only serves as the drawing board; its own on/off state is not used.</li>
+  <li><b>For automations,</b> each of the stove's slots also exists as a start and an end time entity, with "Send schedule to the stove" and "Discard schedule changes" buttons. They are disabled by default: enable the ones you need on the device page. A changed time is kept in Home Assistant until the send button is pressed.</li>
+</ul>
 
 <h2>Stove without a RIKA room sensor</h2>
 <p>If your stove has no room sensor, its room temperature is unknown. You can show the temperature of any Home Assistant sensor on the thermostat instead: open the integration's <b>Configure</b> dialog and pick the sensor.</p>
