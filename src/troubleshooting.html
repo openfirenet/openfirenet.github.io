@@ -71,6 +71,16 @@
 <h2 id="ota">Updates</h2>
 
 <details>
+  <summary>Windows says "Windows protected your PC", or macOS refuses to open the installer</summary>
+  <p>The installer is not signed with a paid publisher certificate, so the system does not know it and warns you. This is expected, and it is not a sign that the file is harmful.</p>
+  <ul>
+    <li><b>Windows:</b> on the blue Microsoft Defender SmartScreen screen, click <b>More info</b>, then <b>Run anyway</b>.</li>
+    <li><b>macOS:</b> open <b>System Settings &gt; Privacy &amp; Security</b> and click <b>Open Anyway</b> next to the installer's name.</li>
+  </ul>
+  <p>Download it only from the <a href="https://github.com/openfirenet/open-firenet-installer/releases">releases page</a>. To be sure of the file, compare its SHA-256 with the <code>SHA256SUMS</code> file published there.</p>
+</details>
+
+<details>
   <summary>The wireless update times out</summary>
   <p>A wireless update needs the computer and the bridge to reach each other both ways: the installer sends an invitation to the bridge (UDP port 3232), then the bridge connects back to the computer to download the firmware. On networks with separate segments (VLANs, guest Wi-Fi) or with a firewall on the computer, this is blocked.</p>
   <ul>

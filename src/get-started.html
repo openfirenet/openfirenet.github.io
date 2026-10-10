@@ -35,6 +35,14 @@
       <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> or the <code>.deb</code> package</td></tr>
     </table>
     </div>
+    <div class="note">
+      <p><b>Your computer may warn you at the first start.</b> The installer is not signed with a paid publisher certificate, so Windows and macOS do not know it. This is expected.</p>
+      <ul>
+        <li><b>Windows:</b> a blue screen "Windows protected your PC" (Microsoft Defender SmartScreen). Click <b>More info</b>, then <b>Run anyway</b>.</li>
+        <li><b>macOS:</b> the file is a plain program. In the Terminal, make it executable with <code>chmod +x</code> followed by its name, then start it. If macOS says it cannot be opened or that its developer cannot be verified, open <b>System Settings &gt; Privacy &amp; Security</b> and click <b>Open Anyway</b>.</li>
+      </ul>
+      <p>To check that the file is the genuine one, compare its SHA-256 with the <code>SHA256SUMS</code> file published with each release.</p>
+    </div>
     <p>On Linux, your user must be in the <code>dialout</code> (or <code>uucp</code>) group to access USB serial ports. If the board is not found, hold its BOOT button while plugging it in.</p>
   </li>
   <li>
