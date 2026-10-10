@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Firenet bridge API
-  version: 3.7.0
+  version: 4.1.0
   description: |
     Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your
     network at `http://open-firenet.local` (or the bridge's IP address), without key or account.
@@ -473,7 +473,7 @@ components:
       properties:
         state:
           type: string
-          enum: ["off", standby, ignition, flame_start, heating, cleaning, burn_off, splitlog, unknown]
+          enum: ["off", standby, ignition, flame_start, heating, cleaning, burn_off, splitlog, splitlog_check, splitlog_refuel, splitlog_no_refuel, unknown]
         state_code: { type: integer }
         state_label: { type: string }
         sub_state: { type: integer }

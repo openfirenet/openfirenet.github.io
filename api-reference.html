@@ -37,7 +37,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 3.7.0.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.1.0.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -375,7 +375,7 @@
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>splitlog_check</code> | <code>splitlog_refuel</code> | <code>splitlog_no_refuel</code> | <code>unknown</code></td><td></td></tr>
   <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
   <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
   <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>

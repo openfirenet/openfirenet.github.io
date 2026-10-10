@@ -101,6 +101,11 @@
 </details>
 
 <details>
+  <summary>After updating to firmware 4.1, an automation on the stove's state no longer fires</summary>
+  <p>Since firmware 4.1 a stove that is switched off is reported as "Off" (state <code>off</code>). "Standby" (<code>standby</code>) is kept for a stove that is switched on and waits for a heat demand. Earlier versions reported both as "Standby": an automation or a script that tests <code>standby</code> to know that the stove is off must now test <code>off</code>.</p>
+</details>
+
+<details>
   <summary>The installer asks for an update password, or I forgot it</summary>
   <p>Since firmware 4.0 you can protect wireless updates with a password. It is set, or removed, with the installer while the bridge is plugged into your computer (Wi-Fi tab, "Update password"), never over the network. The installer then asks for it at each wireless update and does not keep it.</p>
   <p>If you forgot it: flash the bridge once over USB in "Full Reset (Factory Image)" mode. That removes the password, and you enter your Wi-Fi again.</p>
