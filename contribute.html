@@ -44,10 +44,21 @@
 <p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Open an "It works on my stove" report</a></p>
 <p>Reports are most wanted for:</p>
 <ul>
-  <li>stoves on firmware <b>2.28</b> (two reports so far) and on <b>2.25 or older</b>, which nobody has tested;</li>
+  <li>stoves on firmware <b>2.30</b> (one report so far) and on <b>2.25 or older</b>, which nobody has tested;</li>
   <li>models that are not in the <a href="compatibility.html">compatibility list</a>;</li>
   <li>boards that are not in the <a href="hardware.html">hardware list</a>.</li>
 </ul>
+
+<h2 id="heating-cycle">Record a heating cycle</h2>
+<p>The bridge shows what the stove reports: its state, its temperatures, its power. How a stove goes through a cycle differs between models and firmware versions, and we only know ours. A recording of your stove tells us what really happens, so that the page and Home Assistant show it faithfully.</p>
+<ol>
+  <li>Open the <a href="https://github.com/openfirenet/open-firenet-installer/releases">installer</a> (version 1.10.0 or later) on a computer of your network, tab <b>Record</b>, and press <b>Start</b> before you switch the stove on.</li>
+  <li>While it heats, type what the stove's screen shows at the notable moments ("Cleaning", "Put on split logs"...).</li>
+  <li>Press <b>Stop</b> after the cycle, then <b>Send us this file</b>.</li>
+</ol>
+<p>The stove is only read, nothing is sent to it, and the file holds neither your Wi-Fi name nor your addresses. Keep the computer awake while it records. On a machine that stays on, such as a Raspberry Pi, the command <code>open-firenet-installer record --ip</code> followed by the bridge's address does the same.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Share a heating cycle</a></p>
+<p>Most wanted: a whole cycle from a cold start, wood operation on a combined stove, and any model or firmware version other than a DOMO on 2.29.</p>
 
 <h2>Report a problem</h2>
 <p>A good report saves several round trips: the stove model and firmware version, the bridge version and the diagnostic file of the bridge. The issue form asks for each of them, and <a href="troubleshooting.html#report">Troubleshooting</a> tells where to find them.</p>
