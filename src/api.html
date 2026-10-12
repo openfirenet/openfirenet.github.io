@@ -27,7 +27,7 @@
 
 <h2>Who can call it</h2>
 <p>Programs on your network: Home Assistant, scripts, <code>curl</code>, Node-RED. And the bridge's own web page. Since firmware 4.0, a page of another website opened in a browser cannot: the bridge answers 403 to a request that names another page as its origin, and sends no cross-origin permission.</p>
-<p>The bridge answers at its IP address, at a name without a dot and at <code>open-firenet.local</code>. Another name must first be added in the Bridge tab, section "Access to the page" (or with <code>/api/access</code>); until then the bridge answers 403 with a JSON body that gives its IP address.</p>
+<p>The bridge answers at its IP address, at a name without a dot and at <code>open-firenet.local</code>. Another name must first be added in the Bridge tab, Network, section "Access to the page" (or with <code>/api/access</code>); until then the bridge answers 403 with a JSON body that gives its IP address.</p>
 
 <h2>Read the state</h2>
 <pre><code>curl http://open-firenet.local/api/state</code></pre>

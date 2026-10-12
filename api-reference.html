@@ -37,7 +37,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.2.0.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.3.0.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -318,6 +318,7 @@
   <tr><td><code>stove_last_frame_seconds</code></td><td>integer or <code>null</code></td><td>Seconds since the last byte received from the stove; null when nothing was ever received</td></tr>
   <tr><td><code>stove_detections</code></td><td>integer</td><td>Times the stove accepted the bridge since boot (1 on a stable link)</td></tr>
   <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Times the stove dropped an established link since boot</td></tr>
+  <tr><td><code>stove_rx_dropped_bytes</code></td><td>integer</td><td>Bytes sent by the stove that the bridge had no room to receive since boot (0 on a healthy bridge)</td></tr>
   <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Connections to the broker lost since boot</td></tr>
 </table>
 </div>

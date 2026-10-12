@@ -85,7 +85,7 @@
   <summary>The page says "The bridge does not answer under this name"</summary>
   <p>Since firmware 4.0 the bridge only answers at its IP address and at <code>open-firenet.local</code>. If you open it under another name, for example the one your router gives it (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) or a domain of your own, its page shows this message with a link to its IP address.</p>
   <ul>
-    <li>Follow the link, open the Bridge tab, section "Access to the page", and add the name you use (one per line, 8 at most). It then works under that name too, at once.</li>
+    <li>Follow the link, open the Bridge tab, Network, section "Access to the page", and add the name you use (one per line, 8 at most). It then works under that name too, at once.</li>
     <li>A name must contain a dot. Adding <code>example.org</code> also accepts <code>stove.example.org</code>.</li>
   </ul>
   <p>This is what keeps a page of another website, opened in a browser on your network, from reading or commanding the bridge.</p>
@@ -100,7 +100,7 @@
 
 <details>
   <summary>The bridge often loses the Wi-Fi, or its page is slow to answer</summary>
-  <p>Since firmware 4.0, the Bridge tab has a "Wi-Fi power saving" switch. It is on by default: the bridge runs cooler and draws less power, and an answer can wait up to a quarter of a second. Switch it off if the bridge often loses the Wi-Fi or if you want it to answer faster; the change applies at once.</p>
+  <p>Since firmware 4.0, the Bridge tab has a "Wi-Fi power saving" switch (under Network). It is on by default: the bridge runs cooler and draws less power, and an answer can wait up to a quarter of a second. Switch it off if the bridge often loses the Wi-Fi or if you want it to answer faster; the change applies at once.</p>
   <p>The "Bridge health" card of the Diagnostics tab counts the Wi-Fi disconnections since the last start, which tells whether the change helps.</p>
 </details>
 
@@ -209,7 +209,7 @@
 
 <details>
   <summary>The stove appears twice in Home Assistant</summary>
-  <p>The Open Firenet integration and MQTT discovery are both active. Keep one: untick "Home Assistant discovery" in the MQTT card of the Bridge tab (its entities are then removed), or remove the integration.</p>
+  <p>The Open Firenet integration and MQTT discovery are both active. Keep one: untick "Home Assistant discovery" in the MQTT tab of the Bridge page (its entities are then removed), or remove the integration.</p>
 </details>
 
 <details>

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Firenet bridge API
-  version: 4.2.0
+  version: 4.3.0
   description: |
     Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your
     network at `http://open-firenet.local` (or the bridge's IP address), without key or account.
@@ -398,6 +398,7 @@ components:
         stove_last_frame_seconds: { type: integer, nullable: true, description: Seconds since the last byte received from the stove; null when nothing was ever received }
         stove_detections: { type: integer, description: Times the stove accepted the bridge since boot (1 on a stable link) }
         stove_link_losses: { type: integer, description: Times the stove dropped an established link since boot }
+        stove_rx_dropped_bytes: { type: integer, description: Bytes sent by the stove that the bridge had no room to receive since boot (0 on a healthy bridge) }
         mqtt_disconnects: { type: integer, description: Connections to the broker lost since boot }
     State:
       type: object
