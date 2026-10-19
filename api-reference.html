@@ -20,6 +20,7 @@
         <div class="nav-menu">
           <a href="compatibility.html">Stove compatibility</a>
           <a href="hardware.html">Hardware</a>
+          <a href="screen.html">Stick screen</a>
         </div>
       </details>
       <details class="nav-group active">
@@ -37,7 +38,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.3.0.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.5.0.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -60,9 +61,13 @@
   <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Erase the saved settings, then restart in setup mode</td></tr>
   <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Domains under which the bridge accepts to answer</td></tr>
   <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Set the added domains</td></tr>
+  <tr><td><a href="#get-api-display"><span class="method get">GET</span> <code>/api/display</code></a></td><td>Screens of the bridge's small display</td></tr>
+  <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Choose the board of the display, and order its screens</td></tr>
   <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Whether Wi-Fi power saving is on</td></tr>
   <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Switch Wi-Fi power saving on or off</td></tr>
   <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
+  <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>Firmware update status</td></tr>
+  <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Trigger an update check, installation, or change auto-check settings</td></tr>
   <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Delay between frames sent to the stove</td></tr>
   <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Change the delay between frames sent to the stove</td></tr>
   <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Log of the exchanges with the stove</td></tr>
@@ -224,6 +229,34 @@
 <h4>Answer 200 <small>The domains as saved</small></h4>
 <p>Fields: see <a href="#schema-access">Access</a>.</p>
 </div>
+<div class="endpoint" id="get-api-display">
+<h3><span class="method get">GET</span> <code>/api/display</code></h3>
+<p><b>Screens of the bridge's small display</b></p>
+<p>The small display of boards that have one: which board the owner says it is (<code>board</code>, default <code>none</code>), and, while it runs, which screens it shows, in which order, and for how long each.</p>
+<h4>Answer 200 <small>The setting</small></h4>
+<p>Fields: see <a href="#schema-display">Display</a>.</p>
+</div>
+<div class="endpoint" id="post-api-display">
+<h3><span class="method post">POST</span> <code>/api/display</code></h3>
+<p><b>Choose the board of the display, and order its screens</b></p>
+<p>Saved and kept after a restart. <code>screens</code> and <code>seconds</code> apply at once: the screens listed come first, in that order; those left out follow in their previous order. <code>board</code> applies at the next restart. Any field may be left out.</p>
+<h4>Request body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 to 30</td><td>Seconds each screen stays</td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 to 100</td><td></td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 to 3600</td><td></td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 to 50</td><td></td></tr>
+  <tr><td><code>screens</code></td><td>list of object</td><td></td></tr>
+</table>
+</div>
+<h4>Answer 200 <small>The setting as saved</small></h4>
+<p>Fields: see <a href="#schema-display">Display</a>.</p>
+<h4>Answer 400 <small>Unknown board, unknown or repeated screen id, or seconds out of range</small></h4>
+</div>
 <div class="endpoint" id="get-api-wifi-power-saving">
 <h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
 <p><b>Whether Wi-Fi power saving is on</b></p>
@@ -258,6 +291,45 @@
 </table>
 </div>
 </div>
+<div class="endpoint" id="get-api-update">
+<h3><span class="method get">GET</span> <code>/api/update</code></h3>
+<p><b>Firmware update status</b></p>
+<p>Returns the current self-update state, installed and available versions, progress, and settings.</p>
+<h4>Answer 200 <small>Update status</small></h4>
+<p>Fields: see <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+</div>
+<div class="endpoint" id="post-api-update">
+<h3><span class="method post">POST</span> <code>/api/update</code></h3>
+<p><b>Trigger an update check, installation, or change auto-check settings</b></p>
+<p>Send <code>{"action": "check"}</code> to check GitHub releases, <code>{"action": "install"}</code> to download and flash the available release (only permitted when the stove is off), or <code>{"auto_check": true, "check_hours": 24}</code> to configure periodic checks.</p>
+<h4>Request body <small>application/json</small></h4>
+<p>Fields: see <a href="#schema-updatecommand">UpdateCommand</a>.</p>
+<h4>Answer 200 <small>Settings updated (when auto_check was sent)</small></h4>
+<p>Fields: see <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+<h4>Answer 202 <small>Action accepted and running in the background</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Answer 400 <small>Invalid request payload</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h4>Answer 409 <small>Busy, nothing to install, or the stove is not off</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
 <h2 id="diagnostics">Diagnostics</h2>
 <div class="endpoint" id="get-api-txgap">
 <h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
@@ -288,6 +360,22 @@
 </div>
 <h2 id="schemas">Objects</h2>
 <p>The objects exchanged with the bridge, referred to above.</p>
+<h3 id="schema-display">Display</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>available</code></td><td>boolean</td><td>True while the display is running (decided at boot by <code>board</code>); the screens below can then be set</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>The board the owner says has a screen: <code>none</code> (default), <code>tdongle</code> (LilyGO T-Dongle-S3, screen running) or <code>tdongle_off</code> (the same board, screen and backlight switched off). Stored; applies at the next restart</td></tr>
+  <tr><td><code>boards</code></td><td>list of string</td><td>Boards this firmware can drive</td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>True when <code>board</code> differs from what is running now</td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 to 30</td><td></td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 to 100</td><td>Backlight, in percent</td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td>Lower the backlight after a while without a press of BOOT or an alert</td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 to 3600</td><td>Seconds without activity before dimming</td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 to 50</td><td>Backlight while dimmed, percent (0 = off)</td></tr>
+  <tr><td><code>screens</code></td><td>list of object</td><td>Every screen once, in the order they are shown</td></tr>
+</table>
+</div>
 <h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
 <div class="table-wrap">
 <table class="fields">
@@ -387,6 +475,7 @@
   <tr><td><code>warning_code</code></td><td>integer</td><td>0 when there is no warning</td></tr>
   <tr><td><code>model</code></td><td>integer or <code>null</code></td><td>RIKA model number, null until the stove has sent it</td></tr>
   <tr><td><code>model_name</code></td><td>string or <code>null</code></td><td>For example <code>DOMO</code>; null until the stove has sent it</td></tr>
+  <tr><td><code>brand</code></td><td><code>RIKA</code> | <code>ANIMO</code> or <code>null</code></td><td>Make the stove is set to (sensor <code>fabNumber</code>: 1 = RIKA, 2 = ANIMO); null until the stove has sent its model</td></tr>
   <tr><td><code>mainboard_version</code></td><td>string or <code>null</code></td><td>Stove firmware, for example <code>2.29</code>; null until the stove has sent it</td></tr>
   <tr><td><code>firmware_build</code></td><td>string or <code>null</code></td><td></td></tr>
 </table>
@@ -565,6 +654,30 @@
   <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
   <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
   <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-updatestatus">UpdateStatus</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>state</code> <span class="req">required</span></td><td><code>idle</code> | <code>checking</code> | <code>available</code> | <code>downloading</code> | <code>verifying</code> | <code>installing</code> | <code>error</code> | <code>restarting</code></td><td>Current lifecycle state of the update task</td></tr>
+  <tr><td><code>current</code> <span class="req">required</span></td><td>string</td><td>Version currently installed on the bridge (e.g. 4.3.1)</td></tr>
+  <tr><td><code>latest</code> <span class="req">required</span></td><td>string</td><td>Latest version found on GitHub releases, if any</td></tr>
+  <tr><td><code>percent</code> <span class="req">required</span></td><td>integer</td><td>Progress percentage (0 to 100) during download or flash</td></tr>
+  <tr><td><code>error</code> <span class="req">required</span></td><td>string</td><td>Description of the last error, if state is error</td></tr>
+  <tr><td><code>stove_blocks</code> <span class="req">required</span></td><td>boolean</td><td>True if the stove state prevents installation (must be strictly switched off)</td></tr>
+  <tr><td><code>auto_check</code> <span class="req">required</span></td><td>boolean</td><td>Whether periodic background checks are enabled</td></tr>
+  <tr><td><code>check_hours</code> <span class="req">required</span></td><td>integer</td><td>Interval between checks in hours (12, 24, or 168)</td></tr>
+  <tr><td><code>last_check</code> <span class="req">required</span></td><td>integer</td><td>Seconds elapsed since the last check that reached GitHub (-1 if none)</td></tr>
+</table>
+</div>
+<h3 id="schema-updatecommand">UpdateCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>action</code></td><td><code>check</code> | <code>install</code></td><td>Action to run in the background</td></tr>
+  <tr><td><code>auto_check</code></td><td>boolean</td><td>Enable or disable periodic checks</td></tr>
+  <tr><td><code>check_hours</code></td><td><code>12</code> | <code>24</code> | <code>168</code></td><td>Check interval in hours</td></tr>
 </table>
 </div>
 </main>
