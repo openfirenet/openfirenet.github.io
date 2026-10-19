@@ -1,0 +1,47 @@
+<!-- title: Stick screen - Open Firenet -->
+<!-- description: The LilyGO T-Dongle-S3 shows the stove state, temperatures and the bridge's address on its own small screen. How to switch it on and set it up. -->
+<h1>The screen of the LilyGO T-Dongle-S3</h1>
+<p class="lead">The LilyGO T-Dongle-S3 has a small colour screen. With Open Firenet 4.5 it shows what the stove is doing, at a glance, without opening the page.</p>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="The key's screen: the logo at start, then the stove state, the room temperature and the power" width="760">
+  <figcaption>The screen of the stick, drawn here by the firmware's own drawing code (not a photo)</figcaption>
+</figure>
+
+<h2>What it shows</h2>
+<p>An animated logo at start, then one value per screen, one after the other: the stove state, the room temperature with its target, the flame temperature, the heating power (or the comfort target), the bridge's address, the pellets left until service, the running hours, the Wi-Fi signal, the MQTT connection and the firmware version. A screen with nothing to tell (for example the hours on a stove that does not report them) is skipped.</p>
+<p>An alert takes the screen over until it is gone: a stove error, the hopper lid open, the stove no longer answering, or the Wi-Fi lost.</p>
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-all.png" alt="All the screens of the stick: logo, state, room, flame, power, address, service, running hours, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>All the screens, with example values</figcaption>
+</figure>
+
+<h2>Switch it on</h2>
+<p>The screen is <b>off by default</b>: other boards may have something else wired to the pins it uses, and driving them could disturb it. Only switch it on with a LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Open the bridge's page, then <b>Bridge</b> and the <b>Screen</b> tab.</li>
+  <li>Choose <b>LilyGO T-Dongle-S3</b> as the board with a screen, and confirm (you are asked twice).</li>
+  <li>Restart the bridge when the page offers it. The screen starts with the logo.</li>
+</ol>
+<p>The <b>Screen on</b> switch turns the screen and its backlight off completely, while keeping your settings.</p>
+
+<h2>Set it up</h2>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-screen.png" alt="The Screen tab of the bridge page: hardware, display settings and the screens shown" width="760">
+  <figcaption>Bridge &gt; Screen</figcaption>
+</figure>
+<ul>
+  <li><b>Screens shown</b>: tick the ones you want, and drag them (or use the arrows) to set their order.</li>
+  <li><b>Time per screen</b>: from 2 to 30 seconds.</li>
+  <li><b>Backlight</b>: from 5 to 100 %.</li>
+  <li><b>Dim after inactivity</b>: lower the backlight to a chosen level (0 to 50 %) after a delay (30 seconds to 1 hour) without a press. At 0 % the screen is dark.</li>
+  <li><b>BOOT button</b> of the stick: lights the screen up again when it is dimmed, and moves to the next screen when it is lit. An alert also lights it up.</li>
+</ul>
+<p>Changes are kept until you press <b>Apply</b>, and are stored in the stick, so they survive a restart.</p>
+
+<h2>Good to know</h2>
+<ul>
+  <li>In our test the screen made the stick draw too much current when it started, and the stove restarted when the stick was plugged straight in. <a href="hardware.html#power">A USB extension cable</a> solved it.</li>
+  <li>Open Firenet does not drive the screens of other boards.</li>
+</ul>
+<p>Questions or a problem with the screen: <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">open an issue</a>.</p>

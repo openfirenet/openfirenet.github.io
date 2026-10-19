@@ -13,12 +13,12 @@ ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
 # Every page built from src/<name>.html.
 PAGES = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
-         "contribute"]
+         "contribute", "screen"]
 # The navigation bar: a page (file name, label), or a group (label, [pages]) shown as a drop-down menu. The home
 # page is reached through the logo.
 NAV = [
     ("get-started", "Get started"),
-    ("Stove & board", [("compatibility", "Stove compatibility"), ("hardware", "Hardware")]),
+    ("Stove & board", [("compatibility", "Stove compatibility"), ("hardware", "Hardware"), ("screen", "Stick screen")]),
     ("Integrations", [("home-assistant", "Home Assistant"), ("mqtt", "MQTT"), ("api", "REST API")]),
     ("troubleshooting", "Troubleshooting"),
     ("contribute", "Contribute"),
