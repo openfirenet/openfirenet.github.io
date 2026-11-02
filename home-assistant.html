@@ -69,11 +69,11 @@
   <tr><th>Type</th><th>Entities</th></tr>
   <tr><td>Thermostat</td><td>On/off, target temperature (14 to 28 °C), mode (manual, auto, comfort), heating power (30 to 100 %)</td></tr>
   <tr><td>Fans</td><td>MultiAir 1 and 2: on/off, auto or speeds 1 to 5, convection trim. Created for the <a href="compatibility.html">models sold with MultiAir</a>; for another equipped stove, tick "My stove has MultiAir" in the integration's <b>Configure</b> dialog (since version 2.8)</td></tr>
-  <tr><td>Switches</td><td>Weekly heating schedule, frost protection</td></tr>
-  <tr><td>Heating schedule</td><td>A button that copies a Home Assistant schedule to the stove; a start and an end time for each slot, disabled by default</td></tr>
+  <tr><td>Switches</td><td>Weekly heating schedule, frost protection, eco mode (for the stoves that have one)</td></tr>
+  <tr><td>Heating schedule</td><td>A button that copies a Home Assistant schedule to the stove; a start and an end time for each slot, disabled by default (14 entities instead of 28 on a stove with firmware 2.25, which takes one range a day)</td></tr>
   <tr><td>Numbers</td><td>Setback temperature, frost protection temperature, room sensor calibration, baking oven temperature (DOMO BACK)</td></tr>
   <tr><td>Sensors</td><td>Room, combustion chamber and mainboard temperatures, pellets consumed, running hours, service countdown, actual heating power, fan and auger speeds, stove state, Wi-Fi signal, air flaps</td></tr>
-  <tr><td>Diagnostics</td><td>Link with the stove, combustion active, stove error, hopper lid, error and warning codes</td></tr>
+  <tr><td>Diagnostics</td><td>Link with the stove, combustion active, stove error, hopper lid, eco mode possible, error and warning codes</td></tr>
 </table>
 </div>
 
@@ -81,7 +81,7 @@
 <p><a href="https://github.com/homeassistant-fr-ecosystem/open-firenet-card">Open Firenet Card</a> is a Lovelace card made by Sylvain Guernion (<a href="https://github.com/sguernion">@sguernion</a>), not by the Open Firenet project. It shows the state of the stove, the temperatures and the consumption in one card, and can also send commands to the stove. To install it, add its repository to HACS as a custom repository with the category <b>Dashboard</b>.</p>
 
 <h2 id="schedule">Heating schedule</h2>
-<p>The stove keeps its own weekly schedule: two time ranges per day, during which it heats. Since version 2.6 of the integration you fill it from Home Assistant, by drawing your week on Home Assistant's schedule grid and copying it to the stove. The schedule then runs in the stove itself: it keeps working when Home Assistant or the Wi-Fi is down.</p>
+<p>The stove keeps its own weekly schedule: two time ranges per day (one on firmware 2.25), during which it heats. Since version 2.6 of the integration you fill it from Home Assistant, by drawing your week on Home Assistant's schedule grid and copying it to the stove. The schedule then runs in the stove itself: it keeps working when Home Assistant or the Wi-Fi is down.</p>
 
 <h3>1. Draw your week</h3>
 <ol>
