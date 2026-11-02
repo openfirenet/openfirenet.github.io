@@ -77,7 +77,7 @@
   <tr><td><code>sensors.room_temperature</code></td><td>Room temperature, <code>null</code> when no RIKA room sensor is connected</td></tr>
   <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Pellets burned in total, and what is left before the next service</td></tr>
   <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>The current settings</td></tr>
-  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Whether the stove accepted the bridge, and which protocol variant it answered: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Whether the stove accepted the bridge, and which protocol variant it answered: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27); <code>?</code> for a stove on firmware 2.25, which speaks numeric frames</td></tr>
   <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Whether the stove sees the bridge over USB, and how many bytes it has sent</td></tr>
   <tr><td><code>raw_sensors</code></td><td>Every value the stove reports, under its RIKA name</td></tr>
 </table>

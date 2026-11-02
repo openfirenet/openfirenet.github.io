@@ -38,7 +38,7 @@
 </header>
 <main>
 <h1>API reference</h1>
-<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.5.0.</p>
+<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware 4.8.2.</p>
 <p>Local REST API of the Open Firenet bridge, the ESP32-S3 that replaces the RIKA Firenet stick. It is served on your network at <code>http://open-firenet.local</code> (or the bridge's IP address), without key or account.</p>
 <p>Units are natural ones: temperatures in °C, power in percent, readable mode names.</p>
 <p><b>Field names.</b> Only the recommended names are described here, the ones used by the Home Assistant integration and by MQTT. For historical reasons the bridge also accepts older aliases in commands (for example <code>tempRoomTarget</code> for <code>target_temperature</code>, or the plain-text form <code>onOff=1; heatingPower=70;</code>), and <code>GET /api/controls</code> also returns the settings under the stove's own names and units (<code>onOff</code>, <code>tempRoomTarget</code> in tenths of a degree...). New code should not rely on them.</p>
@@ -65,6 +65,8 @@
   <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Choose the board of the display, and order its screens</td></tr>
   <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Whether Wi-Fi power saving is on</td></tr>
   <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Switch Wi-Fi power saving on or off</td></tr>
+  <tr><td><a href="#get-api-log-size"><span class="method get">GET</span> <code>/api/log_size</code></a></td><td>Size of the history of the exchanges with the stove</td></tr>
+  <tr><td><a href="#post-api-log-size"><span class="method post">POST</span> <code>/api/log_size</code></a></td><td>Choose the size of the history</td></tr>
   <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Restart the bridge</td></tr>
   <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>Firmware update status</td></tr>
   <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Trigger an update check, installation, or change auto-check settings</td></tr>
@@ -250,6 +252,8 @@
   <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
   <tr><td><code>dim_after</code></td><td>integer, 30 to 3600</td><td></td></tr>
   <tr><td><code>dim_level</code></td><td>integer, 0 to 50</td><td></td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Rotate the screen by 180 degrees</td></tr>
+  <tr><td><code>language</code></td><td><code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Language of the texts on the screen</td></tr>
   <tr><td><code>screens</code></td><td>list of object</td><td></td></tr>
 </table>
 </div>
@@ -277,6 +281,28 @@
 </div>
 <h4>Answer 200 <small>The setting as saved</small></h4>
 <p>Fields: see <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="get-api-log-size">
+<h3><span class="method get">GET</span> <code>/api/log_size</code></h3>
+<p><b>Size of the history of the exchanges with the stove</b></p>
+<p>The bridge keeps the latest messages exchanged with the stove (<code>/api/log</code>, diagnostic file). 16 kB by default; 32 kB keeps twice as much history and uses 16 kB more memory.</p>
+<h4>Answer 200 <small>The setting</small></h4>
+<p>Fields: see <a href="#schema-logsize">LogSize</a>.</p>
+</div>
+<div class="endpoint" id="post-api-log-size">
+<h3><span class="method post">POST</span> <code>/api/log_size</code></h3>
+<p><b>Choose the size of the history</b></p>
+<p>Saved; applied at the next restart (<code>restart_needed</code> tells).</p>
+<h4>Request body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>kb</code></td><td><code>16</code> | <code>32</code></td><td></td></tr>
+</table>
+</div>
+<h4>Answer 200 <small>The setting as saved</small></h4>
+<p>Fields: see <a href="#schema-logsize">LogSize</a>.</p>
+<h4>Answer 400 <small><code>kb</code> is neither 16 nor 32</small></h4>
 </div>
 <div class="endpoint" id="post-api-restart">
 <h3><span class="method post">POST</span> <code>/api/restart</code></h3>
@@ -373,6 +399,8 @@
   <tr><td><code>dim</code></td><td>boolean</td><td>Lower the backlight after a while without a press of BOOT or an alert</td></tr>
   <tr><td><code>dim_after</code></td><td>integer, 30 to 3600</td><td>Seconds without activity before dimming</td></tr>
   <tr><td><code>dim_level</code></td><td>integer, 0 to 50</td><td>Backlight while dimmed, percent (0 = off)</td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>The screen is rotated by 180 degrees</td></tr>
+  <tr><td><code>language</code></td><td><code></code> | <code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Language of the texts on the screen; empty until one is chosen (English is shown meanwhile)</td></tr>
   <tr><td><code>screens</code></td><td>list of object</td><td>Every screen once, in the order they are shown</td></tr>
 </table>
 </div>
@@ -382,6 +410,17 @@
   <tr><th>Field</th><th>Type</th><th>Description</th></tr>
   <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
   <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-logsize">LogSize</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>kb</code></td><td>integer</td><td>The stored choice, in kB</td></tr>
+  <tr><td><code>running_kb</code></td><td>integer</td><td>The size in use since the last restart, in kB</td></tr>
+  <tr><td><code>options</code></td><td>list of integer</td><td></td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>The stored choice is not the one in use</td></tr>
 </table>
 </div>
 <h3 id="schema-access">Access</h3>
@@ -399,8 +438,10 @@
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>software</code> | <code>unknown</code></td><td>Cause of the last restart: <code>power_on</code> (the stove powered the bridge), <code>brownout</code> (supply voltage too low), <code>crash</code>, <code>watchdog</code> (the program froze), <code>reset_button</code>, <code>usb</code> (reset over USB), <code>user</code> (restart asked through the page or the API), <code>wifi_change</code>, <code>update</code> (wireless update), <code>stove_silent</code> (nothing received from the stove for 60 seconds), <code>software</code> (another restart asked by the firmware)</td></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>stove_lost</code> | <code>software</code> | <code>unknown</code></td><td>Cause of the last restart: <code>power_on</code> (the stove powered the bridge), <code>brownout</code> (supply voltage too low), <code>crash</code>, <code>watchdog</code> (the program froze), <code>reset_button</code>, <code>usb</code> (reset over USB), <code>user</code> (restart asked through the page or the API), <code>wifi_change</code>, <code>update</code> (wireless update), <code>stove_silent</code> (nothing received from the stove for 60 seconds), <code>stove_lost</code> (the stove had acknowledged the bridge, then refused it for 5 minutes), <code>software</code> (another restart asked by the firmware)</td></tr>
   <tr><td><code>min_free_heap</code></td><td>integer</td><td>Lowest free memory since boot, in bytes</td></tr>
+  <tr><td><code>elf_sha256</code></td><td>string</td><td>First characters of the SHA-256 of the running firmware (not published over MQTT)</td></tr>
+  <tr><td><code>crash</code></td><td>object</td><td>The last crash the chip saved in its flash, present only after one (not published over MQTT). It stays until another crash replaces it, so it can predate the last restart: <code>elf_sha256</code> is the firmware that crashed. The addresses can be turned into function names with the ELF file of that release.</td></tr>
   <tr><td><code>chip_temperature</code></td><td>number or <code>null</code></td><td>Temperature of the chip in °C</td></tr>
   <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Wi-Fi connections lost since boot</td></tr>
   <tr><td><code>stove_last_frame_seconds</code></td><td>integer or <code>null</code></td><td>Seconds since the last byte received from the stove; null when nothing was ever received</td></tr>
@@ -427,6 +468,7 @@
   <tr><td><code>version_ack</code> <span class="req">required</span></td><td>boolean</td><td>Whether the stove accepted the bridge (the link is up)</td></tr>
   <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Protocol variant the stove answered: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
   <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>schedule_slots_per_day</code></td><td>integer</td><td>How many heating time slots a day the stove takes: 2, or 1 for a stove with firmware 2.25</td></tr>
   <tr><td><code>usb</code> <span class="req">required</span></td><td>object</td><td>USB link diagnostics</td></tr>
   <tr><td><code>mqtt</code></td><td>object</td><td></td></tr>
   <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
@@ -488,9 +530,11 @@
   <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
   <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
   <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
-  <tr><td><code>pellets_total_kg</code></td><td>integer</td><td></td></tr>
-  <tr><td><code>pellet_hours</code></td><td>integer</td><td>Running hours</td></tr>
-  <tr><td><code>service_countdown_kg</code></td><td>integer</td><td>Pellets left before the next service</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer or <code>null</code></td><td>null until the stove has sent it (after a restart of the bridge)</td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer or <code>null</code></td><td>Running hours with pellets; null until the stove has sent it</td></tr>
+  <tr><td><code>log_runtime</code></td><td>integer or <code>null</code></td><td>Running time with split logs of a combined stove, in minutes (0 on a stove that burns pellets only; null until the stove has sent it)</td></tr>
+  <tr><td><code>log_runtime_hours</code></td><td>integer or <code>null</code></td><td>log_runtime in whole hours</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer or <code>null</code></td><td>Pellets left before the next service; null until the stove has sent it</td></tr>
   <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
   <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
   <tr><td><code>power_actual_percent</code></td><td>integer</td><td>Power the stove really runs at. In comfort mode the stove sets it itself, whatever <code>power_percent</code> says. 0 when it is not heating.</td></tr>
@@ -589,7 +633,9 @@
   <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Same as <code>active</code>, as 0 / 1</td></tr>
   <tr><td><code>setback_temperature</code></td><td>number</td><td>°C outside the scheduled slots</td></tr>
   <tr><td><code>setBackTemp</code></td><td>integer</td><td>Same, in tenths of a degree</td></tr>
-  <tr><td><code>slots</code></td><td>object, any name → integer</td><td>Two slots per day, <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code> with Day in Mon, Tue, Wed, Thu, Fri, Sat, Sun</td></tr>
+  <tr><td><code>slots</code></td><td>object, any name → integer</td><td>Two slots per day, <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code> with Day in Mon, Tue, Wed, Thu, Fri, Sat, Sun. On a stove with firmware 2.25 only the first slot of a day is used; the second one is always 0.</td></tr>
+  <tr><td><code>slots_per_day</code></td><td>integer</td><td>How many slots a day the stove takes: 2, or 1 for a stove with firmware 2.25</td></tr>
+  <tr><td><code>day_ranges</code></td><td>object, any name → object</td><td>Only on a stove with firmware 2.25: the daily range of each weekday (Sun, Mon, ... Sat), <code>start</code> and <code>end</code> in minutes since midnight, as the stove holds them (the same ranges as the first slot of each day in <code>slots</code>).</td></tr>
 </table>
 </div>
 <h3 id="schema-schedulecommand">ScheduleCommand</h3>
