@@ -1,19 +1,63 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{lang}}" data-page="{{page}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
+{{alternates}}<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
 <link rel="icon" href="assets/img/brand-icon.png">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
-    <nav class="nav" id="site-nav" aria-label="Main">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{{t:menu}}</button>
+    <nav class="nav" id="site-nav" aria-label="{{t:nav_label}}">
 {{nav}}
     </nav>
   </div>
@@ -23,8 +67,8 @@
 </main>
 <footer class="site-footer">
   <div class="inner">
-    <p>Open Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
-    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribute</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
+    <p>{{t:footer_disclaimer}}</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">{{t:footer_contribute}}</a> · {{t:footer_questions}}: <a href="https://github.com/openfirenet/open-firenet/issues">{{t:footer_bridge_issues}}</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">{{t:footer_ha_issues}}</a></p>
   </div>
 </footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
@@ -45,6 +89,10 @@
     groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
   });
 })();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
 // Screenshots open full size on click; click again or press Escape to close.
 (function () {
   var box = document.getElementById('lightbox'), big = box.querySelector('img');

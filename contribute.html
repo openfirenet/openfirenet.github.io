@@ -1,14 +1,61 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-page="contribute">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contribute - Open Firenet</title>
 <meta name="description" content="How to help Open Firenet: report what works on your stove, test, translate, improve the documentation or the code.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/contribute.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/contribute.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/contribute.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
 <link rel="icon" href="assets/img/brand-icon.png">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
@@ -33,6 +80,13 @@
       </details>
       <a href="troubleshooting.html">Troubleshooting</a>
       <a href="contribute.html" class="active" aria-current="page">Contribute</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Language"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</summary>
+        <div class="nav-menu">
+          <a href="contribute.html" hreflang="en" lang="en" data-lang="en" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="fr/contribute.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
     </nav>
   </div>
 </header>
@@ -68,6 +122,7 @@
 <h2>Translate</h2>
 <p>The bridge's web page, the Home Assistant integration and the installer are in English, French, German, Italian and Spanish. Adding a language needs no programming: you copy the English texts, translate them, and a check tells you what is missing.</p>
 <p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Translation guide</a></p>
+<p>This website is in English and French. A proofreading of the French pages, or a new language, is welcome: each page is one HTML file to translate, and the website's <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> explains how.</p>
 
 <h2>Improve the documentation</h2>
 <p>This website lives in its own repository, <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. The pages are plain HTML files in <code>src/</code>; its README explains how to rebuild them. A correction, a clearer explanation or a missing step is welcome as a pull request, or simply as an issue describing what confused you.</p>
@@ -122,6 +177,10 @@
     groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
   });
 })();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
 // Screenshots open full size on click; click again or press Escape to close.
 (function () {
   var box = document.getElementById('lightbox'), big = box.querySelector('img');

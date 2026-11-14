@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr" data-page="get-started">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Démarrer avec Open Firenet</title>
+<meta name="description" content="Le matériel à acheter, le flashage de l'ESP32-S3 avec l'installeur, la configuration du Wi-Fi et le branchement de la clé sur un poêle RIKA.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/get-started.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/get-started.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/get-started.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html" class="active" aria-current="page">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../get-started.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/get-started.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Démarrer</h1>
+<p class="lead">D'une carte vierge à un poêle piloté depuis votre navigateur, en cinq étapes.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Vérifiez la version du firmware de votre poêle</h3>
+    <p>Sur l'écran du poêle, ouvrez le menu Info et notez la version logicielle de la carte mère (par exemple 2.27 ou 2.29). Vérifiez ensuite sa prise en charge sur la <a href="compatibility.html">page de compatibilité</a>.</p>
+  </li>
+  <li>
+    <h3>Procurez-vous le matériel</h3>
+    <p>Il vous faut deux choses :</p>
+    <ul>
+      <li><b>Une carte de développement ESP32-S3 avec USB natif.</b> La puce doit être un ESP32-S3 : un ESP32 classique, un ESP32-C3 ou une carte équipée seulement d'un convertisseur USB-série (CH340, CP2102...) ne fonctionnera pas.</li>
+      <li><b>Un câble USB de données</b> entre la carte et la prise USB-A du poêle. Les câbles de charge seule, sans lignes de données, ne fonctionnent pas.</li>
+    </ul>
+    <p>Quelle carte acheter, et celles dont on sait qu'elles fonctionnent : voir <a href="hardware.html">Matériel</a>.</p>
+    <div class="note">
+      <p><b>Cartes à deux ports USB :</b> le poêle doit être branché sur le port marqué « USB » ou « USB OTG » (l'USB natif de la puce). Le port marqué « UART » ou « COM » ne sert qu'au flashage et aux journaux. C'est l'erreur la plus fréquente.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Flashez la carte avec l'installeur</h3>
+    <p>Téléchargez l'installeur pour votre ordinateur sur la <a href="https://github.com/openfirenet/open-firenet-installer/releases">page des versions</a>, puis branchez la carte sur votre ordinateur. L'installeur vous indique qu'il l'a trouvée, la lit et présélectionne <b>Première installation</b> dans l'onglet Flash USB. Il télécharge le dernier firmware officiel, vérifie sa signature, l'écrit sur la carte, puis vous emmène à la configuration du Wi-Fi.</p>
+    <figure>
+      <img class="shot" src="../assets/img/usb-flasher.png" alt="Onglet Flash USB de l'installeur" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Système</th><th>Fichier</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> ou le paquet <code>.deb</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>Votre ordinateur peut vous avertir au premier lancement.</b> L'installeur n'est pas signé avec un certificat d'éditeur payant, donc Windows et macOS ne le reconnaissent pas. C'est un avertissement normal.</p>
+      <ul>
+        <li><b>Windows :</b> un écran bleu « Windows a protégé votre ordinateur » (Microsoft Defender SmartScreen). Cliquez sur <b>Informations complémentaires</b>, puis sur <b>Exécuter quand même</b>.</li>
+        <li><b>macOS :</b> le fichier est un programme simple. Dans le Terminal, rendez-le exécutable avec <code>chmod +x</code> suivi de son nom, puis lancez-le. Si macOS dit qu'il ne peut pas être ouvert ou que son développeur ne peut pas être vérifié, ouvrez <b>Réglages Système &gt; Confidentialité et sécurité</b> et cliquez sur <b>Ouvrir quand même</b>.</li>
+      </ul>
+      <p>Pour vérifier que le fichier est bien l'original, comparez son empreinte SHA-256 avec le fichier <code>SHA256SUMS</code> publié avec chaque version.</p>
+    </div>
+    <p>Sous Linux, votre utilisateur doit faire partie du groupe <code>dialout</code> (ou <code>uucp</code>) pour accéder aux ports série USB. Si la carte n'est pas trouvée, maintenez son bouton BOOT enfoncé en la branchant.</p>
+  </li>
+  <li>
+    <h3>Connectez la clé à votre Wi-Fi</h3>
+    <p>Saisissez le nom et le mot de passe de votre Wi-Fi dans l'onglet Config Wi-Fi de l'installeur, ou faites-le depuis votre téléphone :</p>
+    <ol>
+      <li>Connectez-vous au réseau Wi-Fi <code>Open-Firenet-Setup</code> que crée la carte (sans mot de passe).</li>
+      <li>La page de configuration s'ouvre toute seule. Sinon, allez à l'adresse <code>http://192.168.4.1</code>.</li>
+      <li>Choisissez le Wi-Fi de votre maison (2,4 GHz uniquement), saisissez son mot de passe et enregistrez. La carte redémarre sur votre réseau.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="../assets/img/wifi-setup.png" alt="Onglet Config Wi-Fi de l'installeur" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Branchez-la sur le poêle</h3>
+    <p>Reliez le port USB natif de la carte à la prise USB du poêle, puis coupez l'alimentation secteur du poêle et rétablissez-la. Après environ une minute, ouvrez <code>http://open-firenet.local</code> (ou l'adresse affichée par l'onglet Détection Réseau de l'installeur).</p>
+    <p>La page affiche le modèle de votre poêle et son état. Elle a trois onglets : <b>Poêle</b> (le tableau de bord et les commandes), <b>Bridge</b> (Wi-Fi, MQTT, redémarrage) et <b>Diagnostic</b> (liaison avec le poêle, journal, toutes les valeurs). Si un bandeau indique que la clé n'est pas connectée au poêle, voir <a href="troubleshooting.html">Dépannage</a>.</p>
+  </li>
+</ol>
+
+<h2>Les mises à jour</h2>
+<p>Une fois la clé sur votre réseau, l'onglet Mise à jour Wi-Fi de l'installeur installe les nouvelles versions sans rien débrancher. Votre ordinateur et la clé doivent être sur le même réseau ; si la mise à jour échoue par dépassement de délai (timeout), voir les <a href="troubleshooting.html#ota">conditions réseau</a>.</p>
+<p>En option, depuis le firmware 4.0 : protégez les mises à jour sans fil par un mot de passe. Branchez la clé sur votre ordinateur, ouvrez l'onglet Wi-Fi de l'installeur et définissez un « mot de passe de mise à jour ». L'installeur vous le demande à chaque mise à jour sans fil.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/ota-update.png" alt="Onglet Mise à jour Wi-Fi de l'installeur" width="640">
+</figure>
+
+<h2>Et ensuite</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Ajoutez le poêle comme thermostat, avec ses capteurs.</p><p class="more"><a href="home-assistant.html">Installer l'intégration</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Pour Jeedom, openHAB, Node-RED, Domoticz et les autres systèmes.</p><p class="more"><a href="../mqtt.html">Configurer MQTT (en anglais)</a></p></div>
+  <div class="card"><h3>API REST</h3><p>Lisez et pilotez le poêle depuis vos propres scripts.</p><p class="more"><a href="../api.html">Présentation de l'API (en anglais)</a></p></div>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

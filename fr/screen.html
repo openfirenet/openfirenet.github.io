@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr" data-page="screen">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Écran de la clé - Open Firenet</title>
+<meta name="description" content="La LilyGO T-Dongle-S3 affiche l'état du poêle, les températures et l'adresse de la clé sur son petit écran. Comment l'activer et le régler.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/screen.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/screen.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/screen.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group active">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html" class="active" aria-current="page">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../screen.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/screen.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>L'écran de la LilyGO T-Dongle-S3</h1>
+<p class="lead">La LilyGO T-Dongle-S3 a un petit écran couleur. Depuis Open Firenet 4.5, il montre ce que fait le poêle d'un coup d'œil, sans ouvrir la page.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="L'écran de la clé : le logo au démarrage, puis l'état du poêle, la température ambiante et la puissance" width="760">
+  <figcaption>L'écran de la clé, dessiné ici par le code d'affichage du firmware (ce n'est pas une photo)</figcaption>
+</figure>
+
+<h2>Ce qu'il affiche</h2>
+<p>Un logo animé au démarrage, puis une valeur par écran, l'une après l'autre : l'état du poêle, la température ambiante et sa consigne, la température de flamme, la puissance de chauffe (ou la consigne confort), l'adresse de la clé, les granulés restants avant l'entretien, les heures de fonctionnement, le signal Wi-Fi, la connexion MQTT et la version du firmware. Un écran sans donnée à afficher (par exemple les heures sur un poêle qui ne les transmet pas) est ignoré.</p>
+<p>Une alerte occupe l'écran tant qu'elle dure : une erreur du poêle, le couvercle du réservoir ouvert, le poêle qui ne répond plus ou la perte du Wi-Fi.</p>
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-all.png" alt="Tous les écrans de la clé : logo, état, ambiance, flamme, puissance, adresse, entretien, heures de fonctionnement, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>Tous les écrans, avec des valeurs d'exemple</figcaption>
+</figure>
+
+<h2>L'activer</h2>
+<p>L'écran est <b>désactivé par défaut</b> : sur d'autres cartes, les broches qu'il utilise peuvent être reliées à autre chose, et les piloter pourrait perturber la carte. Ne l'activez que sur une LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Ouvrez la page de la clé, puis <b>Bridge</b> et l'onglet <b>Écran</b>.</li>
+  <li>Choisissez <b>LilyGO T-Dongle-S3</b> comme carte avec écran, et confirmez (la question est posée deux fois).</li>
+  <li>Redémarrez la clé quand la page le propose. L'écran démarre sur le logo.</li>
+</ol>
+<p>L'interrupteur <b>Écran allumé</b> éteint complètement l'écran et son rétroéclairage, en gardant vos réglages.</p>
+
+<h2>Le régler</h2>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-screen.png" alt="L'onglet Écran de la page de la clé : matériel, réglages d'affichage et écrans affichés" width="760">
+  <figcaption>Bridge &gt; Écran</figcaption>
+</figure>
+<ul>
+  <li><b>Écrans affichés</b> : cochez ceux que vous voulez, et faites-les glisser (ou utilisez les flèches) pour choisir leur ordre.</li>
+  <li><b>Durée par écran</b> : de 2 à 30 secondes.</li>
+  <li><b>Rétroéclairage</b> : de 5 à 100 %.</li>
+  <li><b>Langue de l'écran</b> : anglais, français, italien, allemand ou espagnol. La première fois, l'écran prend la langue de la page.</li>
+  <li><b>Pivoter l'écran de 180°</b> : quand la clé est branchée à l'envers.</li>
+  <li><b>Réduire la luminosité</b> : baisse le rétroéclairage à un niveau choisi (0 à 50 %) après un délai sans appui (30 secondes à 1 heure). À 0 %, l'écran est éteint.</li>
+  <li><b>Bouton BOOT</b> de la clé : rallume l'écran quand sa luminosité est réduite, et passe à l'écran suivant quand il est allumé. Une alerte ou un changement d'état du poêle (allumage, arrêt...) le rallume aussi.</li>
+</ul>
+<p>Les modifications attendent que vous appuyiez sur <b>Valider</b>, puis sont enregistrées dans la clé et survivent à un redémarrage.</p>
+
+<h2>Bon à savoir</h2>
+<ul>
+  <li>Lors de notre essai, l'écran faisait consommer trop de courant à la clé au démarrage, et le poêle redémarrait quand la clé était branchée directement. <a href="hardware.html#power">Une rallonge USB</a> a réglé le problème.</li>
+  <li>Open Firenet ne pilote pas les écrans d'autres cartes.</li>
+</ul>
+<p>Une question ou un problème avec l'écran : <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">ouvrez une issue</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

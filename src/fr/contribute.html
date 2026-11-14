@@ -1,0 +1,64 @@
+<!-- source: 1a672d0430c0 -->
+<!-- title: Contribuer - Open Firenet -->
+<!-- description: Comment aider Open Firenet : dire ce qui fonctionne sur votre poêle, tester, traduire, améliorer la documentation ou le code. -->
+<h1>Contribuer</h1>
+<p class="lead">Open Firenet est un projet communautaire. Pas besoin de savoir programmer pour aider : jusqu'ici, les contributions les plus utiles ont été les retours et les essais de personnes qui ont un poêle que nous n'avons pas.</p>
+
+<h2>Dites-nous ce qui fonctionne sur votre poêle</h2>
+<p>Nous ne pouvons tester que sur nos propres poêles. Si la clé fonctionne sur le vôtre, un rapport de deux minutes ajoute aux listes le modèle de votre poêle, sa version de firmware et votre carte, et aide les autres utilisateurs dans leur choix.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Ouvrir un rapport « It works on my stove »</a></p>
+<p>Les retours les plus attendus :</p>
+<ul>
+  <li>les poêles en firmware <b>2.30</b> (un seul retour pour l'instant), en <b>2.25</b> (un seul poêle pour l'instant ; l'allumage n'a pas été essayé) et en firmware <b>plus ancien</b>, que personne n'a testé ;</li>
+  <li>les modèles absents de la <a href="compatibility.html">liste de compatibilité</a> ;</li>
+  <li>les cartes absentes de la <a href="hardware.html">liste du matériel</a>.</li>
+</ul>
+
+<h2 id="heating-cycle">Enregistrer un cycle de chauffe</h2>
+<p>La clé affiche ce que le poêle transmet : son état, ses températures, sa puissance. Le déroulement d'un cycle varie selon les modèles et les versions de firmware, et nous ne connaissons que les nôtres. Un enregistrement de votre poêle nous montre ce qui se passe vraiment, pour que la page et Home Assistant l'affichent fidèlement.</p>
+<ol>
+  <li>Ouvrez l'<a href="https://github.com/openfirenet/open-firenet-installer/releases">installeur</a> (version 1.10.0 ou plus récente) sur un ordinateur de votre réseau, onglet <b>Enregistrer</b>, et cliquez sur <b>Démarrer</b> avant d'allumer le poêle.</li>
+  <li>Pendant la chauffe, notez ce qu'affiche l'écran du poêle aux moments marquants (« Nettoyage », « Mettre des bûches »...).</li>
+  <li>Cliquez sur <b>Arrêter</b> à la fin du cycle, puis sur <b>Nous envoyer ce fichier</b>.</li>
+</ol>
+<p>Le poêle est seulement lu, rien ne lui est envoyé, et le fichier ne contient ni le nom de votre Wi-Fi ni vos adresses. Gardez l'ordinateur allumé, sans mise en veille, pendant l'enregistrement. Sur une machine qui reste allumée, comme un Raspberry Pi, la commande <code>open-firenet-installer record --ip</code> suivie de l'adresse de la clé fait la même chose.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Partager un cycle de chauffe</a></p>
+<p>Les plus attendus : un cycle complet depuis un démarrage à froid, le fonctionnement au bois sur un poêle mixte, et tout modèle ou version de firmware autre qu'un DOMO en 2.29.</p>
+
+<h2>Signaler un problème</h2>
+<p>Un bon rapport évite plusieurs allers-retours : le modèle du poêle et sa version de firmware, la version de la clé et le fichier de diagnostic de la clé. Le formulaire d'issue demande chacun d'eux, et la page <a href="troubleshooting.html#report">Dépannage</a> indique où les trouver.</p>
+<p>Si vous êtes prêt à essayer une version de test sur votre poêle quand nous cherchons une correction, dites-le dans l'issue : c'est ainsi que les firmwares 2.26, 2.27 et 2.28 ont été pris en charge.</p>
+
+<h2>Traduire</h2>
+<p>La page web de la clé, l'intégration Home Assistant et l'installeur existent en anglais, français, allemand, italien et espagnol. Ajouter une langue ne demande pas de savoir programmer : on copie les textes anglais, on les traduit, et une vérification indique ce qui manque.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Guide de traduction</a></p>
+<p>Ce site existe en anglais et en français. Une relecture des pages françaises, ou une nouvelle langue, est la bienvenue : chaque page est un fichier HTML à traduire, et le <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> du site explique comment.</p>
+
+<h2>Améliorer la documentation</h2>
+<p>Ce site a son propre dépôt, <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. Les pages sont de simples fichiers HTML dans <code>src/</code> ; son README explique comment les reconstruire. Une correction, une explication plus claire ou une étape manquante sont les bienvenues sous forme de pull request, ou simplement d'une issue qui décrit ce qui vous a gêné.</p>
+
+<h2>Contribuer au code</h2>
+<p>Le projet a trois dépôts :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Dépôt</th><th>Rôle</th><th>Langages</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>Le firmware de la clé, avec sa page web et son API</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>L'intégration Home Assistant</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>L'installeur pour ordinateur</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>Notre façon de travailler :</p>
+<ol>
+  <li><b>Ouvrez d'abord une issue</b>, ou commentez-en une existante, pour vous mettre d'accord sur ce qu'il faut faire avant d'y passer du temps.</li>
+  <li><b>Une branche par changement</b>, nommée d'après l'issue : <code>fix/42-short-description</code> ou <code>feat/42-short-description</code>.</li>
+  <li><b>Lancez les tests.</b> Dans le dépôt du firmware, <code>./test/build_and_test.sh</code> les lance tous sur votre ordinateur, sans aucun matériel : le protocole, un poêle simulé, la description de l'API et les traductions.</li>
+  <li><b>Ajoutez une ligne à <code>CHANGELOG.md</code></b> sous « Non publié », en anglais, écrite pour les utilisateurs : ce qui change pour eux, pas comment c'est codé.</li>
+  <li><b>Ouvrez une pull request</b> dont la description commence par <code>Fixes #42</code> (ou <code>Refs #42</code> pour un changement partiel). Les vérifications se lancent toutes seules.</li>
+</ol>
+<p>Les messages de commit commencent par <code>feat:</code>, <code>fix:</code>, <code>docs:</code> ou <code>chore:</code> : le script de publication les lit pour choisir le prochain numéro de version.</p>
+<div class="note">
+  <p><b>À propos du protocole du poêle :</b> il a été rétro-ingénié, et une trame erronée peut amener un poêle à refuser la clé. Un changement dans le dialogue avec le poêle doit être essayé sur un vrai poêle, idéalement sur chaque famille de firmware, avant d'être fusionné. Indiquez dans votre pull request ce que vous avez pu tester et ce que vous n'avez pas pu tester.</p>
+</div>
+
+<h2>Questions</h2>
+<p>Vous ne savez pas par où commencer, ou si une idée a sa place ? <a href="https://github.com/openfirenet/open-firenet/issues">Ouvrez une issue</a> et posez la question : il n'y a pas de mauvaise question.</p>

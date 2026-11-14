@@ -1,0 +1,50 @@
+<!-- source: 64a7f60d421e -->
+<!-- title: Écran de la clé - Open Firenet -->
+<!-- description: La LilyGO T-Dongle-S3 affiche l'état du poêle, les températures et l'adresse de la clé sur son petit écran. Comment l'activer et le régler. -->
+<h1>L'écran de la LilyGO T-Dongle-S3</h1>
+<p class="lead">La LilyGO T-Dongle-S3 a un petit écran couleur. Depuis Open Firenet 4.5, il montre ce que fait le poêle d'un coup d'œil, sans ouvrir la page.</p>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="L'écran de la clé : le logo au démarrage, puis l'état du poêle, la température ambiante et la puissance" width="760">
+  <figcaption>L'écran de la clé, dessiné ici par le code d'affichage du firmware (ce n'est pas une photo)</figcaption>
+</figure>
+
+<h2>Ce qu'il affiche</h2>
+<p>Un logo animé au démarrage, puis une valeur par écran, l'une après l'autre : l'état du poêle, la température ambiante et sa consigne, la température de flamme, la puissance de chauffe (ou la consigne confort), l'adresse de la clé, les granulés restants avant l'entretien, les heures de fonctionnement, le signal Wi-Fi, la connexion MQTT et la version du firmware. Un écran sans donnée à afficher (par exemple les heures sur un poêle qui ne les transmet pas) est ignoré.</p>
+<p>Une alerte occupe l'écran tant qu'elle dure : une erreur du poêle, le couvercle du réservoir ouvert, le poêle qui ne répond plus ou la perte du Wi-Fi.</p>
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-all.png" alt="Tous les écrans de la clé : logo, état, ambiance, flamme, puissance, adresse, entretien, heures de fonctionnement, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>Tous les écrans, avec des valeurs d'exemple</figcaption>
+</figure>
+
+<h2>L'activer</h2>
+<p>L'écran est <b>désactivé par défaut</b> : sur d'autres cartes, les broches qu'il utilise peuvent être reliées à autre chose, et les piloter pourrait perturber la carte. Ne l'activez que sur une LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Ouvrez la page de la clé, puis <b>Bridge</b> et l'onglet <b>Écran</b>.</li>
+  <li>Choisissez <b>LilyGO T-Dongle-S3</b> comme carte avec écran, et confirmez (la question est posée deux fois).</li>
+  <li>Redémarrez la clé quand la page le propose. L'écran démarre sur le logo.</li>
+</ol>
+<p>L'interrupteur <b>Écran allumé</b> éteint complètement l'écran et son rétroéclairage, en gardant vos réglages.</p>
+
+<h2>Le régler</h2>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-screen.png" alt="L'onglet Écran de la page de la clé : matériel, réglages d'affichage et écrans affichés" width="760">
+  <figcaption>Bridge &gt; Écran</figcaption>
+</figure>
+<ul>
+  <li><b>Écrans affichés</b> : cochez ceux que vous voulez, et faites-les glisser (ou utilisez les flèches) pour choisir leur ordre.</li>
+  <li><b>Durée par écran</b> : de 2 à 30 secondes.</li>
+  <li><b>Rétroéclairage</b> : de 5 à 100 %.</li>
+  <li><b>Langue de l'écran</b> : anglais, français, italien, allemand ou espagnol. La première fois, l'écran prend la langue de la page.</li>
+  <li><b>Pivoter l'écran de 180°</b> : quand la clé est branchée à l'envers.</li>
+  <li><b>Réduire la luminosité</b> : baisse le rétroéclairage à un niveau choisi (0 à 50 %) après un délai sans appui (30 secondes à 1 heure). À 0 %, l'écran est éteint.</li>
+  <li><b>Bouton BOOT</b> de la clé : rallume l'écran quand sa luminosité est réduite, et passe à l'écran suivant quand il est allumé. Une alerte ou un changement d'état du poêle (allumage, arrêt...) le rallume aussi.</li>
+</ul>
+<p>Les modifications attendent que vous appuyiez sur <b>Valider</b>, puis sont enregistrées dans la clé et survivent à un redémarrage.</p>
+
+<h2>Bon à savoir</h2>
+<ul>
+  <li>Lors de notre essai, l'écran faisait consommer trop de courant à la clé au démarrage, et le poêle redémarrait quand la clé était branchée directement. <a href="hardware.html#power">Une rallonge USB</a> a réglé le problème.</li>
+  <li>Open Firenet ne pilote pas les écrans d'autres cartes.</li>
+</ul>
+<p>Une question ou un problème avec l'écran : <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">ouvrez une issue</a>.</p>

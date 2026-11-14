@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr" data-page="index">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Firenet : pilotage local des poêles à granulés RIKA</title>
+<meta name="description" content="Passerelle Wi-Fi open source pour poêles à granulés RIKA : interface web locale, API REST, MQTT et intégration Home Assistant, sans cloud.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../index.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/index.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <img class="logo" src="../assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Pilotage local des poêles à granulés RIKA</h1>
+  <p class="lead">Open Firenet remplace la clé RIKA Firenet par une carte ESP32-S3. Votre poêle dispose ainsi d'une page web locale, d'une API REST, de MQTT et d'une intégration Home Assistant. Aucun compte cloud, aucun accès à Internet nécessaire.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Démarrer</a>
+    <a class="btn ghost" href="compatibility.html">Mon poêle est-il compatible ?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-controls.png" alt="Page web locale d'Open Firenet : état du poêle, températures, puissance et commandes" width="760">
+  <figcaption>Page servie par la clé sur votre réseau local, à l'adresse <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Fonctionnalités</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Pilotage local sur votre réseau</h3>
+    <p>Marche/arrêt, mode de fonctionnement, puissance de chauffe, température de consigne, programmation hebdomadaire, protection hors-gel et ventilateurs MultiAir pour les poêles équipés.</p>
+  </div>
+  <div class="card">
+    <h3>Toutes les données du poêle en direct</h3>
+    <p>Températures, consommation de granulés, heures de fonctionnement, compte à rebours d'entretien, codes d'erreur et d'avertissement : jusqu'à 88 valeurs remontées sous leurs désignations RIKA d'origine.</p>
+  </div>
+  <div class="card">
+    <h3>S'intègre à votre domotique</h3>
+    <p>Une intégration Home Assistant, une API REST, et MQTT pour Jeedom, openHAB, Node-RED, Domoticz et tout autre système domotique.</p>
+  </div>
+  <div class="card">
+    <h3>Fonctionnement 100 % local</h3>
+    <p>La clé dialogue avec le poêle en USB et avec vous par votre Wi-Fi. Aucune donnée n'est envoyée à un serveur.</p>
+  </div>
+  <div class="card">
+    <h3>Un écran sur la clé</h3>
+    <p>Avec la clé LilyGO T-Dongle-S3, l'état du poêle et la température de la pièce s'affichent sur l'écran de la clé. <a href="screen.html">Découvrir l'écran</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="Écran couleur de la LilyGO T-Dongle-S3 : logo, état du poêle, température ambiante et puissance" width="560">
+  <figcaption>La LilyGO T-Dongle-S3 affiche l'état du poêle d'un coup d'œil sur son propre écran (<a href="screen.html">détails</a>)</figcaption>
+</figure>
+
+<h2>Les trois composants</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>S'exécute sur l'ESP32-S3 branché au poêle. Fournit la page web et l'API.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet sur GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Installeur</h3>
+    <p>Application pour Windows, macOS et Linux : flashe la carte, configure le Wi-Fi, fait les mises à jour sans fil.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Télécharger l'installeur</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Thermostat, ventilateurs, interrupteur de programmation, capteurs et diagnostics, installés via HACS.</p>
+    <p class="more"><a href="home-assistant.html">Installer dans Home Assistant</a></p>
+  </div>
+</div>
+
+<h2>Poêles compatibles</h2>
+<p>Ce qui compte, c'est la version de firmware de la carte mère du poêle, affichée dans le menu Info de l'écran du poêle. La clé la détecte toute seule.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware du poêle</th><th>État</th><th>Remarques</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Compatible</span></td><td>Toutes les valeurs et tous les réglages, y compris le fonctionnement au bois (un seul retour pour l'instant)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Compatible</span></td><td>Toutes les valeurs et tous les réglages</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Compatible</span></td><td>Toutes les valeurs et tous les réglages</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Compatible</span></td><td>Toutes les valeurs et tous les réglages</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Partiel</span></td><td>Prise en charge initiale : état, températures et réglages principaux, programmation avec une plage horaire par jour. L'allumage n'a pas encore été essayé</td></tr>
+  <tr><td><b>Antérieur à 2.25</b></td><td><span class="badge unknown">Non testé</span></td><td>Vos retours sont les bienvenus</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Tous les détails de compatibilité</a></p>
+
+<h2>Aperçu de l'interface</h2>
+<div class="shots">
+  <img class="shot" src="../assets/img/ui-desktop-schedule.png" alt="Programmation hebdomadaire avec deux plages horaires par jour">
+  <img class="shot" src="../assets/img/ui-desktop-bridge.png" alt="Onglet Bridge, Réseau : Wi-Fi, économie d'énergie, accès à l'interface">
+  <img class="shot" src="../assets/img/ui-desktop-diagnostics.png" alt="Onglet Diagnostic : liaison avec le poêle, journal des échanges et ensemble des valeurs">
+  <img class="shot" src="../assets/img/dashboard-scan.png" alt="L'installeur trouve la clé sur le réseau et affiche l'état du poêle">
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

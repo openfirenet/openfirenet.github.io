@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="fr" data-page="troubleshooting">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dépannage - Open Firenet</title>
+<meta name="description" content="Que vérifier quand la clé Open Firenet ne se relie pas au poêle, n'est pas joignable ou qu'une mise à jour échoue, et comment signaler un problème.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/troubleshooting.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/troubleshooting.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/troubleshooting.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html" class="active" aria-current="page">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../troubleshooting.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/troubleshooting.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Dépannage</h1>
+<p class="lead">Commencez par la page de la clé elle-même, à l'adresse <code>http://open-firenet.local</code> : depuis la version 3.2, elle vous dit pourquoi il n'y a pas de liaison avec le poêle.</p>
+
+<h2>Le poêle n'est pas connecté</h2>
+
+<details open>
+  <summary>Bandeau « La clé n'est pas reliée au poêle en USB »</summary>
+  <p>Le poêle ne voit pas du tout la clé. Vérifiez, dans cet ordre :</p>
+  <ul>
+    <li><b>Le port USB de la carte.</b> Sur les cartes à deux ports USB, le poêle doit être sur celui marqué « USB » ou « USB OTG », pas « UART » ou « COM ».</li>
+    <li><b>Le câble.</b> Il doit transporter les données. Beaucoup de câbles courts ne font que l'alimentation.</li>
+    <li><b>Le poêle.</b> Il doit être sous tension : c'est sa prise USB qui alimente la carte.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Bandeau « Le poêle ne répond pas »</summary>
+  <p>Le poêle voit la clé mais n'a rien envoyé. Coupez le poêle au secteur pendant une minute, rallumez-le et attendez deux minutes. Si rien ne change, téléchargez le journal (onglet Diagnostic) et <a href="#report">signalez-le</a>.</p>
+</details>
+
+<details>
+  <summary>Le poêle redémarre quand on branche la clé</summary>
+  <p>La carte tire probablement trop de courant sur la prise USB du poêle au démarrage. C'est rare ; on l'a vu avec une clé qui a un écran. Mettez une rallonge USB entre le poêle et la carte : voir <a href="hardware.html#power">Matériel</a>.</p>
+</details>
+
+<details>
+  <summary>L'écran du poêle affiche « FIRENET UPDATE » ou un code UW29 (ou un autre code UW)</summary>
+  <p>Les deux viennent de la vérification de la clé par le poêle : « FIRENET UPDATE » signifie qu'il a jugé la version de la clé périmée et propose de la mettre à jour, UW29 qu'il n'a pas reçu d'identification valide à temps. Ne confirmez pas la mise à jour sur le poêle. Mettez plutôt la clé à jour : les versions antérieures à la 3.6.1 pouvaient échouer à cette vérification sur les poêles en firmware 2.28. Si cela persiste avec la dernière version, <a href="#report">signalez-le</a> avec le journal.</p>
+</details>
+
+<details>
+  <summary>La page indique « En attente du poêle » et les valeurs sont grisées</summary>
+  <p>La clé n'a encore reçu aucune donnée du poêle. Juste après la mise sous tension, c'est normal pendant quelques secondes. Si cela dure, lisez le bandeau au-dessus.</p>
+</details>
+
+<h2>La page n'est pas joignable</h2>
+
+<details>
+  <summary><code>http://open-firenet.local</code> ne s'ouvre pas</summary>
+  <ul>
+    <li>Certains réseaux et téléphones Android ne résolvent pas les noms en <code>.local</code>. Utilisez plutôt l'adresse IP : l'onglet Détection Réseau de l'installeur l'affiche, votre box aussi.</li>
+    <li>Votre appareil doit être sur le même réseau que la clé.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>La page indique « La clé ne répond pas sous ce nom »</summary>
+  <p>Depuis le firmware 4.0, la clé ne répond qu'à son adresse IP et à <code>open-firenet.local</code>. Si vous l'ouvrez sous un autre nom, par exemple celui que lui donne votre box (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) ou un domaine à vous, sa page affiche ce message avec un lien vers son adresse IP.</p>
+  <ul>
+    <li>Suivez le lien, ouvrez l'onglet Bridge, Réseau, section « Accès à la page », et ajoutez le nom que vous utilisez (un par ligne, 8 au plus). Elle répond alors aussi sous ce nom, immédiatement.</li>
+    <li>Un nom doit contenir un point. Ajouter <code>example.org</code> accepte aussi <code>stove.example.org</code>.</li>
+  </ul>
+  <p>C'est ce qui empêche une page d'un autre site, ouverte dans un navigateur de votre réseau, de lire ou de commander la clé.</p>
+</details>
+
+<details>
+  <summary>La clé n'est plus sur mon réseau</summary>
+  <p>Quand elle ne peut pas rejoindre votre Wi-Fi, la clé passe en mode configuration et crée le réseau <code>Open-Firenet-Setup</code>. Connectez-vous-y et saisissez de nouveau votre Wi-Fi. Seuls les réseaux 2,4 GHz sont pris en charge.</p>
+  <p>Depuis le firmware 4.0, la clé rejoint votre réseau toute seule : après une coupure elle réessaie sans cesse, et quand elle démarre avant votre box (après une coupure de courant) elle quitte le mode configuration dès que le réseau répond. Avec un firmware plus ancien, elle reste hors du réseau jusqu'à ce qu'on la redémarre : débranchez-la et rebranchez-la, puis mettez-la à jour.</p>
+  <p>Depuis le firmware 4.0, quand un mot de passe Wi-Fi est enregistré, la clé ne rejoint qu'un réseau chiffré (WPA ou plus récent) : elle ne rejoint plus un réseau ouvert, ni un réseau encore protégé par l'ancien WEP, qui porterait le même nom.</p>
+</details>
+
+<details>
+  <summary>La clé perd souvent le Wi-Fi, ou sa page met du temps à répondre</summary>
+  <p>Depuis le firmware 4.0, l'onglet Bridge a un interrupteur « Économie d'énergie Wi-Fi » (sous Réseau). Il est activé par défaut : la clé chauffe moins et consomme moins, et une réponse peut attendre jusqu'à un quart de seconde. Désactivez-le si la clé perd souvent le Wi-Fi ou si vous voulez qu'elle réponde plus vite ; le changement s'applique immédiatement.</p>
+  <p>La carte « État de la clé » de l'onglet Diagnostic compte les déconnexions Wi-Fi depuis le dernier démarrage, ce qui permet de voir si le changement aide.</p>
+</details>
+
+<h2 id="ota">Mises à jour</h2>
+
+<details>
+  <summary>Windows affiche « Windows a protégé votre ordinateur », ou macOS refuse d'ouvrir l'installeur</summary>
+  <p>L'installeur n'est pas signé avec un certificat d'éditeur payant : le système ne le connaît donc pas et vous avertit. C'est normal, et ce n'est pas le signe que le fichier est dangereux.</p>
+  <ul>
+    <li><b>Windows :</b> sur l'écran bleu de Microsoft Defender SmartScreen, cliquez sur <b>Informations complémentaires</b>, puis sur <b>Exécuter quand même</b>.</li>
+    <li><b>macOS :</b> ouvrez <b>Réglages Système &gt; Confidentialité et sécurité</b> et cliquez sur <b>Ouvrir quand même</b> à côté du nom de l'installeur.</li>
+  </ul>
+  <p>Ne le téléchargez que depuis la <a href="https://github.com/openfirenet/open-firenet-installer/releases">page des versions</a>. Pour être sûr du fichier, comparez son SHA-256 avec le fichier <code>SHA256SUMS</code> publié au même endroit.</p>
+</details>
+
+<details>
+  <summary>La mise à jour sans fil échoue par dépassement de délai (timeout)</summary>
+  <p>Une mise à jour sans fil demande que l'ordinateur et la clé puissent se joindre dans les deux sens : l'installeur envoie une invitation à la clé (port UDP 3232), puis la clé se connecte en retour à l'ordinateur pour télécharger le firmware. Sur les réseaux à segments séparés (VLAN, Wi-Fi invité) ou avec un pare-feu sur l'ordinateur, c'est bloqué.</p>
+  <ul>
+    <li>Mettez l'ordinateur sur le même réseau que la clé, ou</li>
+    <li>autorisez les connexions entrantes du réseau local dans le pare-feu de l'ordinateur, ou</li>
+    <li>faites la mise à jour par USB.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Le firmware est trop gros pour une mise à jour sans fil</summary>
+  <p>Une clé flashée la première fois depuis l'IDE Arduino avec le schéma de partitions par défaut a des emplacements de mise à jour de 1 310 720 octets. Le firmware 3.5.0 et les suivants sont plus gros : la clé refuse la mise à jour sans rien dire et l'installeur finit par abandonner après un dépassement de délai. L'installeur 1.6.0 nomme cette cause, et refuse tout de suite quand la clé est en firmware 3.6.0 ou plus récent.</p>
+  <ul>
+    <li>Flashez une fois la clé par USB avec l'installeur, en mode <b>Première installation</b>. C'est le seul mode qui réécrit la table des partitions : le mode par défaut, <b>Mise à jour</b>, laisse l'ancienne en place. Vous devrez saisir de nouveau votre Wi-Fi, et les mises à jour sans fil fonctionnent ensuite.</li>
+    <li>Si vous compilez depuis les sources dans l'IDE Arduino, choisissez Outils &gt; Partition Scheme &gt; « Minimal SPIFFS (1.9MB APP with OTA) ».</li>
+  </ul>
+  <p>Une clé flashée avec l'installeur n'est pas concernée.</p>
+</details>
+
+<details>
+  <summary>Après la mise à jour vers le firmware 4.0, quelque chose ne fonctionne plus</summary>
+  <p>Le firmware 4.0 ferme la clé aux pages des autres sites. Trois choses changent :</p>
+  <ul>
+    <li><b>Home Assistant montre le poêle comme indisponible, ou la page reste vide :</b> la clé a été configurée ou ouverte sous un nom donné par votre box. Utilisez son adresse IP ou <code>open-firenet.local</code>, ou ajoutez le nom sur la page de la clé (voir « La clé ne répond pas sous ce nom » plus haut). Mettez l'intégration Home Assistant à jour en 2.6.0 ou plus récent : elle vous le dit en clair.</li>
+    <li><b>Un tableau de bord personnel, servi depuis une autre adresse, ne lit plus la clé depuis le navigateur :</b> la clé n'accepte plus les requêtes venant d'autres pages. Appelez-la plutôt depuis un programme (un script, Home Assistant, Node-RED), ou utilisez MQTT.</li>
+    <li><b>Un script qui redémarrait la clé avec une requête GET :</b> <code>/api/restart</code> demande maintenant un POST.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Après la mise à jour vers le firmware 4.1, une automatisation sur l'état du poêle ne se déclenche plus</summary>
+  <p>Depuis le firmware 4.1, un poêle éteint est indiqué « Arrêt » (état <code>off</code>). « Veille » (<code>standby</code>) est réservé à un poêle allumé qui attend une demande de chauffe. Les versions précédentes indiquaient les deux comme « Veille » : une automatisation ou un script qui teste <code>standby</code> pour savoir que le poêle est éteint doit maintenant tester <code>off</code>.</p>
+</details>
+
+<details>
+  <summary>L'installeur demande un mot de passe de mise à jour, ou je l'ai oublié</summary>
+  <p>Depuis le firmware 4.0, vous pouvez protéger les mises à jour sans fil par un mot de passe. Il se définit, ou se supprime, avec l'installeur pendant que la clé est branchée sur votre ordinateur (onglet Wi-Fi, « mot de passe de mise à jour »), jamais par le réseau. L'installeur le demande ensuite à chaque mise à jour sans fil et ne le garde pas.</p>
+  <p>Si vous l'avez oublié : flashez une fois la clé par USB en mode « Première installation ». Cela supprime le mot de passe, et vous saisissez de nouveau votre Wi-Fi.</p>
+</details>
+
+<details>
+  <summary>La version n'a pas changé après une mise à jour</summary>
+  <p>Vérifiez la version à côté du titre sur la page de la clé. Avec un signal Wi-Fi faible, une mise à jour peut échouer sans rien dire ; faites-la par USB avec l'installeur.</p>
+</details>
+
+<h2>Valeurs</h2>
+
+<details>
+  <summary>La température ambiante affiche « -- »</summary>
+  <p>Votre poêle n'a pas de sonde d'ambiance RIKA. Dans Home Assistant, vous pouvez afficher un autre capteur sur le thermostat, voir <a href="home-assistant.html">Home Assistant</a>.</p>
+</details>
+
+<details>
+  <summary>La valeur des volets d'air semble dix fois plus petite que sur l'écran du poêle</summary>
+  <p>L'écran du poêle affiche les volets d'air en pour mille (‰), la clé en pourcentage : 50 ‰ à l'écran font 5 % sur la page.</p>
+</details>
+
+<details>
+  <summary>J'ai changé un réglage MultiAir et l'écran du poêle affiche encore l'ancienne valeur</summary>
+  <p>Le réglage est appliqué tout de suite, mais nous avons constaté sur plusieurs versions de firmware que l'écran du poêle ne rafraîchit pas son menu MultiAir tant qu'il est ouvert : quittez le menu et rouvrez-le, la nouvelle valeur est là. Les autres réglages, comme la puissance de chauffe, se rafraîchissent tout de suite à l'écran.</p>
+</details>
+
+<h2 id="diagnostics">L'onglet Diagnostic</h2>
+<p>L'onglet Diagnostic de la page de la clé (<code>http://open-firenet.local/#diagnostics</code>) rassemble ce qu'il faut pour comprendre un problème : l'état de la clé elle-même (cause de son dernier redémarrage, mémoire, Wi-Fi, nombre de fois où la liaison avec le poêle a été établie et perdue), l'état de la liaison, le journal des échanges et toutes les valeurs que remonte le poêle. Le bouton « Fichier de diagnostic » met le tout dans un fichier à joindre à un rapport.</p>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-diagnostics.png" alt="Onglet Diagnostic : état de la clé, liaison avec le poêle, journal des échanges" width="760">
+</figure>
+
+<h2>MQTT</h2>
+
+<details>
+  <summary>Le badge MQTT indique « Refusé : utilisateur ou mot de passe incorrect »</summary>
+  <p>Le broker a rejeté la clé. Saisissez de nouveau le mot de passe dans l'onglet Bridge et enregistrez : le champ est vide exprès, et affiche « Inchangé » une fois un mot de passe enregistré.</p>
+</details>
+
+<details>
+  <summary>Le badge MQTT indique « Broker injoignable »</summary>
+  <p>Vérifiez l'adresse et le port du broker (1883 par défaut), et que le broker accepte les connexions de votre réseau. La clé réessaie toutes les 10 secondes ; la liaison avec le poêle n'est pas touchée.</p>
+</details>
+
+<details>
+  <summary>Le badge MQTT indique « Certificat non reconnu »</summary>
+  <p>Le TLS est activé, et la clé refuse le certificat du broker. Si votre broker a un certificat auto-signé ou émis par votre propre autorité, collez le certificat de l'autorité qui l'a signé dans la carte MQTT : voir <a href="../mqtt.html#tls">MQTT, connexion chiffrée</a> (en anglais). Sans lui, seuls les certificats signés par une autorité publique, pour le nom saisi comme adresse du broker, sont acceptés.</p>
+</details>
+
+<details>
+  <summary>Le badge MQTT indique « Échec de la connexion chiffrée »</summary>
+  <p>La négociation TLS (handshake) avec le broker a échoué avant même la vérification du certificat. La cause habituelle est le TLS coché sur le port non chiffré du broker : le TLS est normalement sur le port 8883, le MQTT en clair sur le 1883.</p>
+</details>
+
+<details>
+  <summary>Le poêle apparaît deux fois dans Home Assistant</summary>
+  <p>L'intégration Open Firenet et la découverte MQTT sont toutes deux actives. Gardez-en une : décochez « Découverte Home Assistant » dans l'onglet MQTT de la page Bridge (ses entités sont alors supprimées), ou supprimez l'intégration.</p>
+</details>
+
+<details>
+  <summary>J'ai coché « Découverte Home Assistant » et rien n'apparaît</summary>
+  <p>Vérifiez que « Activer MQTT » est coché aussi et que le badge indique « Connecté », et que l'intégration MQTT de Home Assistant elle-même est configurée sur le même broker.</p>
+</details>
+
+<details>
+  <summary>Une commande envoyée par MQTT est ignorée</summary>
+  <p>Les commandes sont ignorées tant que le poêle n'est pas relié, pendant les quelques secondes après l'établissement de la liaison où la clé ne connaît pas encore les réglages du poêle, et quand elles sont publiées avec le flag retain. Voir <a href="../mqtt.html">MQTT</a> (en anglais).</p>
+</details>
+
+<h2 id="report">Signaler un problème</h2>
+<p>Ouvrez une <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> avec :</p>
+<ul>
+  <li>le modèle du poêle et sa version de firmware (menu Info du poêle) ;</li>
+  <li>la version du firmware de la clé (à côté du titre sur sa page) ;</li>
+  <li>le fichier de diagnostic : onglet Diagnostic, « Fichier de diagnostic », pris une à deux minutes après l'allumage du poêle, ou juste après l'apparition du problème ;</li>
+  <li>ce qu'affiche l'écran du poêle, avec le code éventuel.</li>
+</ul>
+<p>Le fichier de diagnostic contient l'état de la clé, la liaison, toutes les valeurs et le journal des échanges. Le nom de votre Wi-Fi et l'adresse MAC de la clé y sont masqués, et le mot de passe Wi-Fi n'y figure jamais.</p>
+<p>Avec un firmware de clé 3.6.1 ou plus ancien, ce bouton n'existe pas : envoyez le résultat de <code>http://open-firenet.local/api/state</code> et le journal (onglet Diagnostic, « Télécharger » dans le journal des échanges).</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="fr" data-page="hardware">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matériel - Open Firenet</title>
+<meta name="description" content="Quelles cartes ESP32-S3 fonctionnent comme clé Open Firenet pour les poêles à granulés RIKA : les points à vérifier, et les cartes essayées jusqu'ici.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/hardware.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/hardware.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/hardware.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group active">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html" class="active" aria-current="page">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../hardware.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/hardware.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Matériel</h1>
+<p class="lead">La clé est une carte ESP32-S3 branchée sur la prise USB du poêle. Beaucoup de cartes conviennent ; cette page indique les points à vérifier et liste celles dont on sait qu'elles fonctionnent.</p>
+
+<h2>Ce que la carte doit avoir</h2>
+<ul>
+  <li><b>Une puce ESP32-S3.</b> Pas un ESP32, un ESP32-C3 ni un ESP32-S2 : le firmware est fait pour le S3 uniquement.</li>
+  <li><b>L'USB natif de la puce sur un connecteur.</b> Le poêle parle à la clé par USB : le port USB de la carte doit donc être relié à l'ESP32-S3 lui-même, pas à un convertisseur USB-série (CH340, CP2102...).</li>
+  <li><b>Au moins 4 Mo de mémoire flash.</b> Presque toutes les cartes ESP32-S3 en ont autant ou plus.</li>
+</ul>
+<p>Pas nécessaire : de la mémoire supplémentaire (PSRAM), un écran, une batterie. Une antenne externe aide quand le poêle est loin de votre point d'accès Wi-Fi.</p>
+
+<div class="note">
+  <p><b>Cartes à deux ports USB :</b> le poêle doit être branché sur le port marqué « USB » ou « USB OTG » (l'USB natif de la puce). Le port marqué « UART » ou « COM » ne sert qu'au flashage et aux journaux. C'est l'erreur la plus fréquente ; la page de la clé vous prévient quand elle se produit.</p>
+</div>
+
+<h2>Le câble</h2>
+<p>Le poêle a une prise USB-A, celle où se branche la clé RIKA Firenet. Utilisez un câble ou un adaptateur du connecteur de votre carte vers un USB-A mâle, et vérifiez qu'il transporte les données : beaucoup de câbles courts ne font que l'alimentation.</p>
+
+<h2>Cartes</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Carte</th><th>État</th><th>Connecteur</th><th>Remarques</th></tr>
+  <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, module N16R8</td>
+    <td><span class="badge ok">Testée</span></td>
+    <td>2 × USB-C</td>
+    <td>La carte de développement courante à deux ports USB-C et 44 broches, vendue sous de nombreuses marques. C'est la carte sur laquelle Open Firenet est développé. Branchez le poêle sur le port « USB », pas « UART » / « COM ».</td>
+  </tr>
+  <tr>
+    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 avec boîtier</b> et connecteur d'antenne externe</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 × USB-C</td>
+    <td>La même carte vendue en kit avec un boîtier gris vissé et un connecteur pour antenne externe (par exemple par Heemol). Pas de soudure, et l'antenne aide quand le poêle est loin du point d'accès Wi-Fi. Un utilisateur s'en sert sur son poêle. Même règle : le poêle va sur le port « USB ».</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (modèle FNK0099, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 ports USB</td>
+    <td>Carte de développement vendue par deux. Un utilisateur la signale comme fonctionnelle. Elle a deux ports USB : le poêle va sur le port natif (« USB » ou « USB-OTG »), pas sur le port « UART ».</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td><span class="badge partial">Présumée</span></td>
+    <td>2 × USB-C</td>
+    <td>Carte de développement vendue par deux. Un utilisateur y a installé Open Firenet avec l'installeur et accède à sa page. Pas encore confirmée sur un poêle. Même règle que pour les autres cartes à deux ports : le poêle va sur le port « USB », pas « UART » / « COM ».</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 × USB-C</td>
+    <td>Clone répandu de la DevKitC-1, avec deux ports USB-C et une LED RVB. Le poêle va sur le port « USB ». Compatible avec le boîtier magnétique imprimé en 3D présenté plus bas.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 Mo de flash, 2 Mo de PSRAM)</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>USB-C</td>
+    <td>Carte de développement compacte (format ESP32-S3-Zero) vendue par deux, avec USB natif uniquement. Un utilisateur la signale comme fonctionnelle.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (avec écran)</td>
+    <td><span class="badge ok">Testée</span></td>
+    <td>Prise USB-A</td>
+    <td>Une clé avec sa propre prise USB-A. <b>Elle peut nécessiter une rallonge USB</b> entre le poêle et la clé, voir plus bas. Son écran affiche l'état du poêle et les températures depuis Open Firenet 4.5 : voir <a href="screen.html">l'écran de la clé</a>. Pour la flasher, branchez-la sur votre ordinateur.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (sans écran)</td>
+    <td><span class="badge partial">Présumée</span></td>
+    <td>Prise USB-A</td>
+    <td>Même carte que la version avec écran ; non testée.</td>
+  </tr>
+  <tr>
+    <td><b>M5Stamp S3</b></td>
+    <td><span class="badge partial">Présumée</span></td>
+    <td>USB-C</td>
+    <td>USB natif uniquement. Pas encore de retour sur un poêle.</td>
+  </tr>
+  <tr>
+    <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td><span class="badge partial">Présumée</span></td>
+    <td>USB-C</td>
+    <td>USB natif uniquement. Pas encore de retour sur un poêle.</td>
+  </tr>
+</table>
+</div>
+<p><span class="badge ok">Testée</span> par le projet sur un poêle. <span class="badge ok">Signalée</span> comme fonctionnelle par un utilisateur. <span class="badge partial">Présumée</span> : devrait fonctionner d'après ses caractéristiques, sans retour confirmé.</p>
+
+<div class="note">
+  <p><b>LilyGO T-Dongle-S3 avec écran : gardez une rallonge USB sous la main.</b> Lors de notre essai, branchée directement sur le poêle, la clé tirait trop de courant au démarrage, à cause de son écran, et le poêle redémarrait. Avec une rallonge USB entre le poêle et la clé, cela fonctionnait : le câble limite cet appel de courant. Cela n'arrive pas forcément avec toutes les clés ni tous les poêles.</p>
+</div>
+
+<h3 id="power">Si le poêle redémarre quand vous branchez la clé</h3>
+<p>La prise USB du poêle ne fournit qu'un courant limité. Une carte qui tire beaucoup au démarrage (écran, LED, modules supplémentaires) peut faire redémarrer le poêle. La plupart des cartes ne le font pas. Si cela arrive avec la vôtre, mettez une rallonge USB entre le poêle et la carte.</p>
+
+<h3>Cartes avec USB natif uniquement</h3>
+<p>Les clés et petites cartes comme la T-Dongle-S3, la M5Stamp S3 ou la XIAO n'ont qu'un port USB, le natif. Il sert à la fois à flasher la carte depuis votre ordinateur et à parler au poêle. Si l'installeur ne trouve pas la carte, maintenez son bouton BOOT enfoncé en la branchant.</p>
+
+<h2>Boîtiers et impressions 3D</h2>
+<p>Vous pouvez laisser la carte nue, mais un boîtier la protège de la poussière et garde l'installation propre derrière le poêle.</p>
+<img class="shot" src="../assets/img/magnetic-case.webp" alt="Le boîtier magnétique, imprimé en noir avec le logo Open Firenet, à côté de ses quatre aimants néodyme" width="600">
+<p><small>Le boîtier magnétique ci-dessous. Photo : tatutsa888.</small></p>
+<ul>
+  <li>
+    <b><a href="https://www.printables.com/model/1892285-open-firenet-esp32-s3-magnetic-case-for-pellet-sto" target="_blank" rel="noopener">Boîtier magnétique de tatutsa888</a></b> (Printables, modèle 3D gratuit) :
+    conçu spécialement pour Open Firenet sur une carte YD-ESP32-S3 ou DevKitC-1. Il se ferme par clipsage sans vis, tient sur la tôle du poêle grâce à des aimants néodyme et cache le port et le câble USB. Imprimez-le en PETG ou en ABS pour qu'il résiste à la chaleur près du poêle.
+  </li>
+  <li>
+    <b>Kit Heemol avec boîtier :</b> si vous n'avez pas d'imprimante 3D, certaines cartes ESP32-S3 DevKitC-1 sont vendues en kit avec un boîtier vissé et une antenne Wi-Fi externe (voir le tableau des cartes plus haut).
+  </li>
+</ul>
+
+<h2>Votre carte fonctionne ? Dites-le-nous</h2>
+<p>Cette liste s'enrichit de vos retours. Si votre carte fonctionne, ou pas, ouvrez un <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">rapport « It works on my stove »</a> avec le nom exact de la carte et le modèle de votre poêle : cela aide les autres utilisateurs dans leur choix.</p>
+
+<h2>Ensuite</h2>
+<div class="grid">
+  <div class="card"><h3>Démarrer</h3><p>Flashez la carte et branchez-la sur le poêle.</p><p class="more"><a href="get-started.html">Pas à pas</a></p></div>
+  <div class="card"><h3>Compatibilité</h3><p>Quels poêles et quelles versions de firmware sont pris en charge.</p><p class="more"><a href="compatibility.html">Compatibilité des poêles</a></p></div>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
