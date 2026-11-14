@@ -1,0 +1,80 @@
+<!-- source: d8c9b6634705 -->
+<!-- title: API REST - Open Firenet -->
+<!-- description: Présentation de l'API REST locale de la clé Open Firenet : lire l'état du poêle et envoyer des commandes en HTTP et JSON. -->
+<h1>API REST</h1>
+<p class="lead">La clé sert une API JSON sur votre réseau, avec des unités naturelles : températures en °C, puissance en pourcentage, noms de modes lisibles. Ni clé d'API, ni compte.</p>
+
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Référence complète de l'API</a>
+  <a class="btn ghost" href="openapi.yaml">Fichier OpenAPI</a>
+</div>
+
+<h2>Adresses</h2>
+<p>Cliquez sur une adresse ou une méthode pour voir son détail dans la <a href="api-reference.html">référence de l'API</a>.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Adresse</th><th>Méthode</th><th>Rôle</th></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Tout en une fois : clé, poêle, capteurs, réglages, diagnostic de la liaison</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Lire ou modifier les réglages (modifications partielles acceptées)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Programmation hebdomadaire : 14 plages horaires et la température réduite</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Version du firmware et date de compilation</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>Réglages MQTT et état de la connexion, voir <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Délai entre les messages envoyés au poêle (50 à 600 ms, 150 par défaut)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Redémarrer la clé</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>Effacer les réglages Wi-Fi et revenir en mode configuration</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Journal en texte brut du dialogue avec le poêle</td></tr>
+</table>
+</div>
+
+<h2>Qui peut l'appeler</h2>
+<p>Les programmes de votre réseau : Home Assistant, des scripts, <code>curl</code>, Node-RED. Et la page web de la clé elle-même. Depuis le firmware 4.0, une page d'un autre site ouverte dans un navigateur ne le peut pas : la clé répond 403 à une requête qui indique une autre page comme origine, et n'envoie aucune autorisation cross-origin.</p>
+<p>La clé répond à son adresse IP, à un nom sans point et à <code>open-firenet.local</code>. Un autre nom doit d'abord être ajouté dans l'onglet Bridge, Réseau, section « Accès à la page » (ou avec <code>/api/access</code>) ; d'ici là, la clé répond 403 avec un corps JSON qui donne son adresse IP.</p>
+
+<h2>Lire l'état</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>La réponse est regroupée par thème. Les parties les plus utiles :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Champ</th><th>Signification</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>État de fonctionnement, modèle et version de firmware du poêle</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Erreur et avertissement en cours, 0 s'il n'y en a pas</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Température ambiante, <code>null</code> quand aucune sonde d'ambiance RIKA n'est branchée</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Granulés consommés au total, et ce qu'il reste avant le prochain entretien</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>Les réglages actuels</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Si le poêle a accepté la clé, et dans quelle variante du protocole il a répondu : <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27) ; <code>?</code> pour un poêle en firmware 2.25, qui utilise des trames numériques</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Si le poêle voit la clé en USB, et combien d'octets il a envoyés</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Toutes les valeurs que transmet le poêle, sous leur nom RIKA</td></tr>
+</table>
+</div>
+
+<h2>Envoyer des commandes</h2>
+<p>Envoyez en POST un objet JSON contenant seulement les champs à modifier :</p>
+<pre><code># 21 °C en mode confort
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21, "mode": "comfort"}'
+
+# allumer à 80 % de puissance
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Champ</th><th>Valeurs</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>30 à 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>14 à 28 °C, en degrés entiers (un demi-degré est arrondi)</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, 4 à 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>-4,0 à +4,0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (et <code>Fan2</code>)</td><td>MultiAir : marche/arrêt, 0 = auto ou 1 à 5, ajustement de -30 à +30 %</td></tr>
+</table>
+</div>
+
+<div class="note">
+  <p>Depuis le firmware 4.0, les commandes ne sont acceptées qu'en POST et en PUT, et une commande envoyée avant que le poêle ait transmis ses réglages (la clé n'est pas reliée, ou vient de démarrer) est refusée avec <code>503</code> et <code>"error": "stove_not_ready"</code>. Rien n'a été envoyé au poêle : réessayez quelques secondes plus tard.</p>
+</div>
+
+<h2>Référence complète</h2>
+<p>Toutes les adresses et tous les champs, avec leur type, leur unité et leur plage, sont dans la <a href="api-reference.html">référence de l'API</a>. Elle est générée à partir de la <a href="openapi.yaml">description OpenAPI</a> du firmware, que vous pouvez charger dans vos propres outils (visionneuses de documentation, générateurs de clients).</p>
+<p>Le format de la programmation et les notes sur le protocole se trouvent aussi dans le dépôt du firmware : <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, API REST</a> et <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>
