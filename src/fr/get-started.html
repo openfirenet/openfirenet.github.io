@@ -1,0 +1,81 @@
+<!-- source: 77f08a09ac55 -->
+<!-- title: Démarrer avec Open Firenet -->
+<!-- description: Le matériel à acheter, le flashage de l'ESP32-S3 avec l'installeur, la configuration du Wi-Fi et le branchement de la clé sur un poêle RIKA. -->
+<h1>Démarrer</h1>
+<p class="lead">D'une carte vierge à un poêle piloté depuis votre navigateur, en cinq étapes.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Vérifiez la version du firmware de votre poêle</h3>
+    <p>Sur l'écran du poêle, ouvrez le menu Info et notez la version logicielle de la carte mère (par exemple 2.27 ou 2.29). Vérifiez ensuite sa prise en charge sur la <a href="compatibility.html">page de compatibilité</a>.</p>
+  </li>
+  <li>
+    <h3>Procurez-vous le matériel</h3>
+    <p>Il vous faut deux choses :</p>
+    <ul>
+      <li><b>Une carte de développement ESP32-S3 avec USB natif.</b> La puce doit être un ESP32-S3 : un ESP32 classique, un ESP32-C3 ou une carte équipée seulement d'un convertisseur USB-série (CH340, CP2102...) ne fonctionnera pas.</li>
+      <li><b>Un câble USB de données</b> entre la carte et la prise USB-A du poêle. Les câbles de charge seule, sans lignes de données, ne fonctionnent pas.</li>
+    </ul>
+    <p>Quelle carte acheter, et celles dont on sait qu'elles fonctionnent : voir <a href="hardware.html">Matériel</a>.</p>
+    <div class="note">
+      <p><b>Cartes à deux ports USB :</b> le poêle doit être branché sur le port marqué « USB » ou « USB OTG » (l'USB natif de la puce). Le port marqué « UART » ou « COM » ne sert qu'au flashage et aux journaux. C'est l'erreur la plus fréquente.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Flashez la carte avec l'installeur</h3>
+    <p>Téléchargez l'installeur pour votre ordinateur sur la <a href="https://github.com/openfirenet/open-firenet-installer/releases">page des versions</a>, puis branchez la carte sur votre ordinateur. L'installeur vous indique qu'il l'a trouvée, la lit et présélectionne <b>Première installation</b> dans l'onglet Flash USB. Il télécharge le dernier firmware officiel, vérifie sa signature, l'écrit sur la carte, puis vous emmène à la configuration du Wi-Fi.</p>
+    <figure>
+      <img class="shot" src="assets/img/usb-flasher.png" alt="Onglet Flash USB de l'installeur" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Système</th><th>Fichier</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> ou le paquet <code>.deb</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>Votre ordinateur peut vous avertir au premier lancement.</b> L'installeur n'est pas signé avec un certificat d'éditeur payant, donc Windows et macOS ne le reconnaissent pas. C'est un avertissement normal.</p>
+      <ul>
+        <li><b>Windows :</b> un écran bleu « Windows a protégé votre ordinateur » (Microsoft Defender SmartScreen). Cliquez sur <b>Informations complémentaires</b>, puis sur <b>Exécuter quand même</b>.</li>
+        <li><b>macOS :</b> le fichier est un programme simple. Dans le Terminal, rendez-le exécutable avec <code>chmod +x</code> suivi de son nom, puis lancez-le. Si macOS dit qu'il ne peut pas être ouvert ou que son développeur ne peut pas être vérifié, ouvrez <b>Réglages Système &gt; Confidentialité et sécurité</b> et cliquez sur <b>Ouvrir quand même</b>.</li>
+      </ul>
+      <p>Pour vérifier que le fichier est bien l'original, comparez son empreinte SHA-256 avec le fichier <code>SHA256SUMS</code> publié avec chaque version.</p>
+    </div>
+    <p>Sous Linux, votre utilisateur doit faire partie du groupe <code>dialout</code> (ou <code>uucp</code>) pour accéder aux ports série USB. Si la carte n'est pas trouvée, maintenez son bouton BOOT enfoncé en la branchant.</p>
+  </li>
+  <li>
+    <h3>Connectez la clé à votre Wi-Fi</h3>
+    <p>Saisissez le nom et le mot de passe de votre Wi-Fi dans l'onglet Config Wi-Fi de l'installeur, ou faites-le depuis votre téléphone :</p>
+    <ol>
+      <li>Connectez-vous au réseau Wi-Fi <code>Open-Firenet-Setup</code> que crée la carte (sans mot de passe).</li>
+      <li>La page de configuration s'ouvre toute seule. Sinon, allez à l'adresse <code>http://192.168.4.1</code>.</li>
+      <li>Choisissez le Wi-Fi de votre maison (2,4 GHz uniquement), saisissez son mot de passe et enregistrez. La carte redémarre sur votre réseau.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="assets/img/wifi-setup.png" alt="Onglet Config Wi-Fi de l'installeur" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Branchez-la sur le poêle</h3>
+    <p>Reliez le port USB natif de la carte à la prise USB du poêle, puis coupez l'alimentation secteur du poêle et rétablissez-la. Après environ une minute, ouvrez <code>http://open-firenet.local</code> (ou l'adresse affichée par l'onglet Détection Réseau de l'installeur).</p>
+    <p>La page affiche le modèle de votre poêle et son état. Elle a trois onglets : <b>Poêle</b> (le tableau de bord et les commandes), <b>Bridge</b> (Wi-Fi, MQTT, redémarrage) et <b>Diagnostic</b> (liaison avec le poêle, journal, toutes les valeurs). Si un bandeau indique que la clé n'est pas connectée au poêle, voir <a href="troubleshooting.html">Dépannage</a>.</p>
+  </li>
+</ol>
+
+<h2>Les mises à jour</h2>
+<p>Une fois la clé sur votre réseau, l'onglet Mise à jour Wi-Fi de l'installeur installe les nouvelles versions sans rien débrancher. Votre ordinateur et la clé doivent être sur le même réseau ; si la mise à jour échoue par dépassement de délai (timeout), voir les <a href="troubleshooting.html#ota">conditions réseau</a>.</p>
+<p>En option, depuis le firmware 4.0 : protégez les mises à jour sans fil par un mot de passe. Branchez la clé sur votre ordinateur, ouvrez l'onglet Wi-Fi de l'installeur et définissez un « mot de passe de mise à jour ». L'installeur vous le demande à chaque mise à jour sans fil.</p>
+
+<figure>
+  <img class="shot" src="assets/img/ota-update.png" alt="Onglet Mise à jour Wi-Fi de l'installeur" width="640">
+</figure>
+
+<h2>Et ensuite</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Ajoutez le poêle comme thermostat, avec ses capteurs.</p><p class="more"><a href="home-assistant.html">Installer l'intégration</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Pour Jeedom, openHAB, Node-RED, Domoticz et les autres systèmes.</p><p class="more"><a href="mqtt.html">Configurer MQTT (en anglais)</a></p></div>
+  <div class="card"><h3>API REST</h3><p>Lisez et pilotez le poêle depuis vos propres scripts.</p><p class="more"><a href="api.html">Présentation de l'API (en anglais)</a></p></div>
+</div>

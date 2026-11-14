@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="fr" data-page="home-assistant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intégration Home Assistant - Open Firenet</title>
+<meta name="description" content="Installer l'intégration Open Firenet dans Home Assistant via HACS et piloter un poêle à granulés RIKA comme un thermostat, avec ses capteurs.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/home-assistant.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/home-assistant.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/home-assistant.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html" class="active" aria-current="page">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../home-assistant.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/home-assistant.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Home Assistant</h1>
+<p class="lead">L'intégration ajoute votre poêle à Home Assistant sous forme de thermostat, avec ses ventilateurs, ses interrupteurs, ses capteurs et ses diagnostics. Elle parle à la clé sur votre réseau : pas de cloud.</p>
+<p>Vous utilisez une autre domotique (Jeedom, openHAB, Node-RED, Domoticz...) ? Voir <a href="../mqtt.html">MQTT</a> (en anglais). Si vous préférez ne pas installer d'intégration, la clé peut aussi annoncer le poêle à Home Assistant par la <a href="../mqtt.html#discovery">découverte MQTT</a>, avec moins de fonctions.</p>
+
+<h2>Avant de commencer</h2>
+<ul>
+  <li>Une clé avec le firmware Open Firenet, reliée au poêle et joignable sur votre réseau (voir <a href="get-started.html">Démarrer</a>).</li>
+  <li>Home Assistant 2024.1 ou plus récent.</li>
+  <li>HACS, conseillé pour l'installation et les mises à jour.</li>
+</ul>
+
+<h2>Installer avec HACS</h2>
+<ol class="steps">
+  <li><p>Dans HACS, cherchez <b>Open Firenet</b> et cliquez sur <b>Télécharger</b>.</p></li>
+  <li><p>Redémarrez Home Assistant.</p></li>
+</ol>
+<p>Open Firenet est dans la liste par défaut de HACS. Si la recherche ne le trouve pas (HACS ancien, ou liste pas encore rafraîchie), ajoutez-le à la main : dans HACS, ouvrez le menu en haut à droite, puis <b>Dépôts personnalisés</b>, et ajoutez <code>https://github.com/openfirenet/open-firenet-ha</code> avec la catégorie <b>Intégration</b>. Puis cherchez de nouveau.</p>
+<p>Sans HACS : copiez le dossier <code>custom_components/open_firenet/</code> du <a href="https://github.com/openfirenet/open-firenet-ha">dépôt</a> dans le dossier <code>config/custom_components/</code> de votre Home Assistant et redémarrez.</p>
+
+<h2>Ajouter votre poêle</h2>
+<ol class="steps">
+  <li><p>Allez dans <b>Paramètres</b>, <b>Appareils et services</b>, <b>Ajouter une intégration</b>.</p></li>
+  <li><p>Cherchez <b>Open Firenet</b>.</p></li>
+  <li><p>Saisissez l'adresse de la clé (<code>open-firenet.local</code> ou son adresse IP) et l'intervalle de rafraîchissement (30 secondes par défaut). Un nom donné par votre box ne fonctionne qu'une fois ajouté sur la page de la clé (onglet Bridge, section « Accès à la page »).</p></li>
+</ol>
+
+<h2>Ce que vous obtenez</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Type</th><th>Entités</th></tr>
+  <tr><td>Thermostat</td><td>Marche/arrêt, température de consigne (14 à 28 °C), mode (manuel, auto, confort), puissance de chauffe (30 à 100 %)</td></tr>
+  <tr><td>Ventilateurs</td><td>MultiAir 1 et 2 : marche/arrêt, auto ou vitesses 1 à 5, correction de convection. Créés pour les <a href="compatibility.html">modèles vendus avec le MultiAir</a> ; pour un autre poêle équipé, cochez « Mon poêle a le MultiAir » dans la fenêtre <b>Configurer</b> de l'intégration (depuis la version 2.8)</td></tr>
+  <tr><td>Interrupteurs</td><td>Programmation de chauffe hebdomadaire, hors-gel, mode éco (pour les poêles qui en ont un)</td></tr>
+  <tr><td>Programmation</td><td>Un bouton qui copie un planning Home Assistant vers le poêle ; une heure de début et de fin pour chaque plage, désactivées par défaut (14 entités au lieu de 28 sur un poêle en firmware 2.25, qui prend une plage par jour)</td></tr>
+  <tr><td>Nombres</td><td>Température réduite, température hors-gel, calibrage de la sonde d'ambiance, température du four (DOMO BACK)</td></tr>
+  <tr><td>Capteurs</td><td>Températures de la pièce, de la chambre de combustion et de la carte mère, granulés consommés, heures de fonctionnement, compte à rebours avant entretien, puissance de chauffe réelle, vitesses du ventilateur et de la vis sans fin, état du poêle, signal Wi-Fi, volets d'air</td></tr>
+  <tr><td>Diagnostics</td><td>Liaison avec le poêle, combustion en cours, erreur du poêle, couvercle du réservoir, mode éco possible, codes d'erreur et d'avertissement</td></tr>
+</table>
+</div>
+
+<h2 id="card">Carte de tableau de bord</h2>
+<p><a href="https://github.com/homeassistant-fr-ecosystem/open-firenet-card">Open Firenet Card</a> est une carte Lovelace créée par Sylvain Guernion (<a href="https://github.com/sguernion">@sguernion</a>), pas par le projet Open Firenet. Elle montre l'état du poêle, les températures et la consommation dans une seule carte, et peut aussi envoyer des commandes au poêle. Pour l'installer, ajoutez son dépôt à HACS comme dépôt personnalisé avec la catégorie <b>Tableau de bord</b>.</p>
+
+<h2 id="schedule">Programmation de chauffe</h2>
+<p>Le poêle garde sa propre programmation hebdomadaire : deux plages horaires par jour (une en firmware 2.25), pendant lesquelles il chauffe. Depuis la version 2.6 de l'intégration, vous la remplissez depuis Home Assistant, en traçant vos plages de chauffe sur la grille de planning de Home Assistant et en la copiant vers le poêle. La programmation tourne ensuite dans le poêle lui-même : elle continue de fonctionner quand Home Assistant ou le Wi-Fi est coupé.</p>
+
+<h3>1. Dessinez votre semaine</h3>
+<ol>
+  <li>Dans Home Assistant, ouvrez <b>Paramètres &gt; Appareils et services &gt; Entrées</b> et appuyez sur <b>Créer une entrée</b>.</li>
+  <li>Choisissez <b>Planning</b> et donnez-lui un nom, par exemple « Poêle ».</li>
+  <li>Sur la grille hebdomadaire, faites glisser sur un jour pour dessiner une plage horaire. Cliquez sur une plage pour régler son début et sa fin exacts, ou pour la supprimer.</li>
+  <li>Tracez au plus <b>deux plages par jour</b>, ce que le poêle peut contenir. Un jour laissé vide signifie aucune plage de chauffe ce jour-là.</li>
+</ol>
+
+<h3>2. Indiquez à l'intégration quel planning utiliser</h3>
+<ol>
+  <li>Ouvrez <b>Paramètres &gt; Appareils et services &gt; Open Firenet</b> et appuyez sur <b>Configurer</b>.</li>
+  <li>Sous « Planning à copier vers le poêle », choisissez le planning que vous avez créé, et validez.</li>
+</ol>
+<p>Cela se fait une seule fois.</p>
+
+<h3>3. Copiez-le vers le poêle</h3>
+<ol>
+  <li>Ouvrez la page de l'appareil du poêle (<b>Paramètres &gt; Appareils et services &gt; Open Firenet</b>, puis l'appareil).</li>
+  <li>Dans le bloc « Configuration », appuyez sur <b>Copier le planning vers le poêle</b>.</li>
+</ol>
+<p>Toute la semaine est envoyée en une commande et remplace ce que le poêle contenait, jours vides compris. Vous pouvez vérifier le résultat sur la page de la clé, onglet Poêle, « Programmation ».</p>
+
+<h3>4. Activez la programmation</h3>
+<p>La copie remplit la programmation du poêle ; l'interrupteur <b>Programmation de chauffe</b> décide si le poêle la suit. Activez-le depuis la page de l'appareil, ou depuis une automatisation.</p>
+
+<div class="note">
+  <p><b>Après chaque changement de la grille, appuyez de nouveau sur le bouton.</b> La copie n'est pas automatique : le poêle garde la dernière programmation reçue.</p>
+</div>
+
+<h3>Bon à savoir</h3>
+<ul>
+  <li><b>Plus de deux plages dans une journée :</b> la copie est refusée avec un message qui nomme le jour, et rien n'est envoyé au poêle.</li>
+  <li><b>Une plage qui finit à minuit</b> est envoyée comme finissant à 23:59.</li>
+  <li><b>Pour vider la programmation du poêle :</b> videz la grille et appuyez sur le bouton.</li>
+  <li><b>Le planning Home Assistant lui-même n'allume rien.</b> Il ne sert que de modèle horaire ; son propre état marche/arrêt n'est pas utilisé.</li>
+  <li><b>Pour les automatisations,</b> chaque plage du poêle existe aussi sous forme d'une entité heure de début et d'une entité heure de fin, avec les boutons « Envoyer les plages au poêle » et « Annuler les modifications des plages ». Elles sont désactivées par défaut : activez celles dont vous avez besoin sur la page de l'appareil. Une heure modifiée est gardée dans Home Assistant jusqu'à l'appui sur le bouton d'envoi.</li>
+</ul>
+
+<h2>Poêle sans sonde d'ambiance RIKA</h2>
+<p>Si votre poêle n'a pas de sonde d'ambiance, la température de sa pièce est inconnue. Vous pouvez afficher à la place, sur le thermostat, la température de n'importe quel capteur Home Assistant : ouvrez la fenêtre <b>Configurer</b> de l'intégration et choisissez le capteur.</p>
+<div class="note">
+  <p>Cela ne change que ce qu'affiche le thermostat. Le poêle continue de réguler avec sa propre sonde. Pour allumer et éteindre le poêle selon un autre capteur, utilisez le thermostat générique de Home Assistant ou une automatisation.</p>
+</div>
+
+<h2>Problèmes</h2>
+<p>Si les entités sont indisponibles, vérifiez d'abord que <code>http://open-firenet.local</code> s'ouvre dans votre navigateur et montre le poêle comme connecté. Voir ensuite <a href="troubleshooting.html">Dépannage</a>, ou ouvrez une issue sur le <a href="https://github.com/openfirenet/open-firenet-ha/issues">dépôt de l'intégration</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

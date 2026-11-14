@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="fr" data-page="compatibility">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compatibilité des poêles - Open Firenet</title>
+<meta name="description" content="Quels poêles à granulés RIKA et quelles versions de firmware fonctionnent avec Open Firenet, et ce qu'on peut lire et piloter sur chacun.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/compatibility.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/compatibility.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/compatibility.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group active">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html" class="active" aria-current="page">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../mqtt.html">MQTT (en anglais)</a>
+          <a href="../api.html">API REST (en anglais)</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../compatibility.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/compatibility.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Compatibilité des poêles</h1>
+<p class="lead">La compatibilité dépend de la version de firmware de la carte mère du poêle, pas de son modèle. Chaque génération de firmware utilise sa propre variante du protocole, et la clé trouve toute seule celle de votre poêle.</p>
+
+<h2>Par version de firmware</h2>
+<p>La version est affichée dans le menu Info de l'écran du poêle.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware du poêle</th><th>État</th><th>Lecture</th><th>Pilotage</th></tr>
+  <tr>
+    <td><b>2.30</b><br>ex. INDUO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Toutes les valeurs et tous les réglages</td>
+    <td>Marche/arrêt, mode, puissance, consigne de température, programmation, hors-gel, étalonnage de la sonde d'ambiance. Le fonctionnement au bois est suivi étape par étape avec le firmware de la clé 4.1 ou plus récent. Un seul poêle a fait l'objet d'un retour pour l'instant, un INDUO, en fonctionnement aux granulés et aux bûches.</td>
+  </tr>
+  <tr>
+    <td><b>2.29</b><br>ex. DOMO, DOMO BACK, PRIMO MULTIAIR, SUMO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Toutes les valeurs et tous les réglages</td>
+    <td>Tout : marche/arrêt, mode, puissance, consigne de température, programmation, hors-gel, étalonnage de la sonde d'ambiance, ventilateurs MultiAir, four (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>ex. LIVO, INDUO II, SONO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Toutes les valeurs et tous les réglages</td>
+    <td>Marche/arrêt, mode, puissance, consigne de température, programmation, hors-gel, étalonnage de la sonde d'ambiance, ventilateurs MultiAir</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>ex. INDUO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Toutes les valeurs et tous les réglages</td>
+    <td>Marche/arrêt, mode, puissance, consigne de température, programmation, hors-gel, étalonnage de la sonde d'ambiance</td>
+  </tr>
+  <tr>
+    <td><b>2.25</b><br>ex. SUMO</td>
+    <td><span class="badge partial">Partiel</span></td>
+    <td>État, températures, entrées et réglages. Température ambiante au degré près</td>
+    <td>Mode, puissance manuelle, consigne d'ambiance, arrêt, et la programmation hebdomadaire avec <b>une plage horaire par jour</b> (sans activation jour par jour), essayés sur un poêle. <b>Pas encore essayé sur un poêle :</b> l'allumage, la consigne réduite, le hors-gel, le niveau de puissance confort. Nécessite le firmware de la clé 4.9 ou plus récent. Si vous l'essayez, envoyez-nous le fichier de diagnostic</td>
+  </tr>
+  <tr>
+    <td><b>Antérieur à 2.25</b></td>
+    <td><span class="badge unknown">Non testé</span></td>
+    <td colspan="2">Personne n'a encore fait de retour. Vos retours sont les bienvenus.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>Le firmware 2.28</b> nécessite le firmware de la clé 4.0 ou plus récent pour tout piloter : avant la 3.6.1, le poêle pouvait afficher « FIRENET UPDATE » ou le code UW29 au lieu d'établir la liaison, et avant la 4.0 la clé n'envoyait au poêle que la marche/arrêt, le mode, la puissance et la température.</p>
+</div>
+
+<h2>Premier démarrage</h2>
+<p>À son premier démarrage avec un poêle, la clé essaie tour à tour les trois variantes du protocole et garde celle à laquelle le poêle répond. Cela prend environ six secondes ; ensuite, elle démarre directement avec la bonne. Il n'y a rien à configurer.</p>
+
+<h2>Ventilateurs MultiAir</h2>
+<p>Les réglages MultiAir apparaissent sur la page quand le poêle annonce l'un de ces modèles :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modèle</th><th>MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>DOMO</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>PARO</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>SONO</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>CONNECT</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Ventilateurs 1 et 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Ventilateurs 1 et 2</td></tr>
+</table>
+</div>
+<p>Sur tout autre modèle, l'onglet Poêle affiche un lien « Mon poêle a MultiAir : afficher ses réglages ». Utilisez-le si votre poêle en est équipé sans figurer dans cette liste, et signalez-le-nous pour que nous l'ajoutions.</p>
+
+<h2>La carte</h2>
+<p>Le firmware est testé sur l'ESP32-S3. La carte doit donner accès à l'USB natif de la puce (USB OTG) sur un connecteur : le poêle joue le rôle d'hôte USB et la clé celui de périphérique série USB.</p>
+<ul>
+  <li>ESP32-S3 avec USB natif : fonctionne.</li>
+  <li>ESP32-S2 : a aussi un USB natif et pourrait fonctionner, non testé.</li>
+  <li>ESP32 classique, ESP32-C3 et cartes équipées seulement d'un pont USB-UART : ne fonctionneront pas.</li>
+</ul>
+
+<h2>Parlez-nous de votre poêle</h2>
+<p>Si votre poêle ou votre version de firmware ne figure pas dans la liste, ou se comporte autrement, ouvrez une <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> avec le modèle, la version de firmware, le journal (onglet Diagnostic) et le résultat de <code>http://open-firenet.local/api/state</code>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

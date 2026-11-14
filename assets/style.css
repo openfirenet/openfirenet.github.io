@@ -201,3 +201,42 @@ h4 small { font-weight: 400; color: var(--text-dim); margin-left: 6px; }
 table.fields td:first-child { white-space: nowrap; }
 .req { font-size: 0.7rem; font-weight: 700; color: var(--amber); margin-left: 6px; text-transform: uppercase; }
 :target { scroll-margin-top: 80px; }
+
+/* Language menu, at the right end of the bar */
+.nav-lang .nav-menu { left: auto; right: 0; min-width: 140px; }
+.flag { width: 20px; height: 14px; border-radius: 2px; flex: none; vertical-align: -2px; margin-right: 8px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15); }
+@media (max-width: 760px) {
+  .nav-lang { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px; }
+}
+/* Offer of the page in the visitor's language, at the bottom of the window */
+/* Animated logo shown briefly on a first visit of the home page while the language is chosen (as on the stick's screen). */
+.splash-screen { display: none; }
+html.splash body { overflow: hidden; }
+html.splash .splash-screen {
+  display: flex; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center;
+  background: #0c0f17; opacity: 1; transition: opacity var(--splash-fade, 0.4s) ease;
+}
+html.splash.splash-out .splash-screen { opacity: 0; }
+.splash-logo { display: flex; align-items: center; gap: clamp(16px, 4vw, 32px); padding: 16px; animation: splash-in 0.3s ease-out both; }
+html.splash-handoff .splash-logo { animation: none; }
+.splash-emblem {
+  width: clamp(88px, 22vw, 150px); aspect-ratio: 1; flex: none;
+  -webkit-mask: url("img/emblem-mask.png") center / contain no-repeat; mask: url("img/emblem-mask.png") center / contain no-repeat;
+}
+.splash-emblem, .splash-fire {
+  background-image: linear-gradient(var(--splash-dir, 0deg), #fde047, #f7a81c, #f97316, #c2410c, #f97316, #f7a81c, #fde047);
+  animation: splash-wave var(--splash-wave, 1.3s) linear infinite;
+}
+.splash-emblem { background-size: 100% 200%; }
+.splash-words {
+  display: flex; flex-direction: column; font-weight: 800; line-height: 1.05; font-size: clamp(2rem, 8vw, 3.6rem);
+  letter-spacing: -0.01em;
+}
+.splash-open { color: #f1f5f9; }
+.splash-fire {
+  --splash-dir: 90deg; background-size: 200% 100%; color: transparent;
+  -webkit-background-clip: text; background-clip: text; animation-name: splash-wave-x;
+}
+@keyframes splash-wave { from { background-position: 50% 0%; } to { background-position: 50% 100%; } }
+@keyframes splash-wave-x { from { background-position: 100% 50%; } to { background-position: 0% 50%; } }
+@keyframes splash-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
