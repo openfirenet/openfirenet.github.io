@@ -1,0 +1,85 @@
+<!-- source: d6358ed95530 -->
+<!-- title: MQTT - Open Firenet -->
+<!-- description: Publier l'état d'un poêle à granulés RIKA sur un broker MQTT et le piloter depuis Jeedom, openHAB, Node-RED, Domoticz ou tout client MQTT. -->
+<h1>MQTT</h1>
+<p class="lead">La clé peut publier l'état du poêle sur votre broker MQTT et en recevoir des commandes. C'est la porte d'entrée pour les domotiques autres que Home Assistant : Jeedom, openHAB, Node-RED, Domoticz et tout client MQTT.</p>
+
+<div class="note">
+  <p>MQTT est facultatif et désactivé par défaut. Il nécessite le firmware de la clé 3.3 ou plus récent, et un broker sur votre réseau (Mosquitto, par exemple). Pour Home Assistant, l'<a href="home-assistant.html">intégration</a> reste la solution la plus complète ; la <a href="#discovery">découverte MQTT</a> est l'alternative qui ne demande rien à installer.</p>
+</div>
+
+<h2>Le configurer</h2>
+<ol>
+  <li>Ouvrez la page de la clé et allez dans l'onglet <b>Bridge</b> (<code>http://open-firenet.local/#bridge</code>), puis dans son onglet <b>MQTT</b>.</li>
+  <li>Saisissez l'<b>Adresse du broker</b> et le <b>Port</b> (1883 par défaut), ainsi que l'utilisateur et le mot de passe si votre broker les demande.</li>
+  <li>Cochez <b>Activer MQTT</b> et enregistrez. Le badge passe à « Connecté » en quelques secondes.</li>
+</ol>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-mqtt.png" alt="Onglet Bridge, réglages MQTT" width="760">
+</figure>
+
+<h2>Ce que la clé publie</h2>
+<p>Tous les topics commencent par un topic de base, <code>openfirenet</code> par défaut. Changez-le dans le réglage <b>Sujet de base</b> si vous avez plusieurs clés.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenu</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> ou <code>offline</code>. Le broker le passe tout seul à <code>offline</code> quand la clé disparaît.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Un message JSON avec les objets <code>device</code>, <code>stove</code>, <code>sensors</code> et <code>controls</code>, avec les mêmes noms et unités que l'<a href="api.html">API REST</a>. Envoyé quand quelque chose change, au plus toutes les 5 secondes et au moins toutes les minutes.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Les mêmes valeurs, une par topic, pour les systèmes qui préfèrent des valeurs simples : <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Tout est publié avec le flag retain, de sorte qu'un client reçoit les valeurs actuelles dès qu'il s'abonne. <code>openfirenet/device/connected</code> indique si la clé est reliée au poêle ; tant qu'elle ne l'est pas, seules les valeurs <code>device</code> et <code>health</code> sont publiées.</p>
+<p>Depuis le firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> indique l'état de la clé elle-même : <code>restart_reason</code> (cause de son dernier redémarrage), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> et <code>mqtt_disconnects</code>. Les compteurs repartent de zéro à chaque démarrage. Une alerte sur <code>stove_link_losses</code> ou sur un changement de <code>restart_reason</code> vous prévient quand quelque chose s'est mal passé.</p>
+
+<h2>Envoyer des commandes</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenu du message</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, ou <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> ou <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>30 à 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>14 à 28, en degrés entiers</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Plusieurs réglages à la fois, en JSON : <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>Les autres réglages de l'<a href="api.html">API REST</a> (hors-gel, ventilateurs MultiAir, programmation...) sont acceptés de la même façon, sous les mêmes noms.</p>
+<pre><code># 21 °C, avec le client en ligne de commande de Mosquitto
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# voir tout ce que publie la clé
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Ne publiez pas de commandes avec le flag retain.</b> Le broker les rejouerait à chaque reconnexion et pourrait allumer le poêle tout seul ; c'est pourquoi la clé les ignore. Les commandes sont aussi ignorées tant que le poêle n'est pas relié.</p>
+</div>
+
+<h2 id="discovery">Découverte Home Assistant</h2>
+<p>Depuis le firmware 3.4, la clé peut aussi annoncer le poêle à l'intégration MQTT de Home Assistant : cochez <b>Découverte Home Assistant</b> dans la carte MQTT et enregistrez. Le poêle apparaît alors tout seul dans Home Assistant, comme un appareil avec :</p>
+<ul>
+  <li>un thermostat : marche / arrêt, température de consigne, et les modes manuel / auto / confort comme préréglages ;</li>
+  <li>la puissance de chauffe, les températures réduite et hors-gel, l'étalonnage de la sonde d'ambiance ;</li>
+  <li>des interrupteurs pour la programmation de chauffe, le hors-gel et le mode éco ;</li>
+  <li>les capteurs : températures, granulés consommés, compte à rebours d'entretien, état, codes d'erreur et d'avertissement.</li>
+</ul>
+<p>Home Assistant doit avoir son intégration MQTT connectée au même broker. Décocher l'option supprime les entités.</p>
+<div class="note">
+  <p><b>Utilisez l'un ou l'autre.</b> Si vous utilisez déjà l'<a href="home-assistant.html">intégration Open Firenet</a>, laissez la découverte désactivée : vous auriez le poêle en double. L'intégration reste la solution la plus complète : elle a aussi les ventilateurs MultiAir, la programmation hebdomadaire (copiée depuis un planning Home Assistant) et la sonde de température externe. Par MQTT, les plages horaires peuvent être écrites mais ne sont pas publiées.</p>
+</div>
+
+<h2 id="tls">Connexion chiffrée (TLS)</h2>
+<p>Depuis le firmware 3.5, la clé peut joindre un broker qui écoute en TLS, en général sur le port 8883 : cochez <b>Connexion chiffrée (TLS)</b> dans la carte MQTT. La clé vérifie alors le certificat du broker, de l'une de ces deux façons :</p>
+<ul>
+  <li><b>Rien d'autre à saisir</b> quand le certificat est signé par une autorité publique, pour le nom saisi comme adresse du broker : un broker hébergé, ou un broker chez vous avec un certificat Let's Encrypt.</li>
+  <li><b>Collez le certificat de votre propre autorité</b> dans le champ qui apparaît, pour un broker chez vous avec un certificat auto-signé. C'est le texte qui commence par <code>-----BEGIN CERTIFICATE-----</code>. Le nom inscrit dans le certificat du broker n'est alors pas vérifié, car un tel broker est généralement joint par son adresse IP.</li>
+</ul>
+<div class="note">
+  <p><b>Seulement si vous en avez besoin.</b> Le chiffrement est exigeant pour cette petite puce : il occupe environ 50 ko de sa mémoire tant que la connexion est ouverte. Avec un broker sur votre propre réseau, le MQTT en clair reste le choix le plus simple. Utilisez le TLS quand le broker l'exige, ou s'il est hors de votre réseau.</p>
+</div>
+
+<h2>Bon à savoir</h2>
+<ul>
+  <li>Sans TLS, la connexion n'est pas chiffrée : c'est acceptable pour un broker sur votre réseau local, pas au-delà.</li>
+  <li>Si le broker est injoignable, la clé réessaie toute seule, toutes les 10 secondes (toutes les 30 secondes avec TLS). La liaison avec le poêle n'est pas affectée.</li>
+</ul>
+<p>Quelque chose ne fonctionne pas ? Voir <a href="troubleshooting.html">Dépannage</a>.</p>

@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="fr" data-page="api-reference">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Référence de l'API - Open Firenet</title>
+<meta name="description" content="Toutes les adresses de la clé Open Firenet, avec leurs champs, types, unités et plages.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/api-reference.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/api-reference.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/api-reference.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../fr/mqtt.html">MQTT</a>
+          <a href="../fr/api.html" class="active" aria-current="page">API REST</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <a href="../fr/contribute.html">Contribuer</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../api-reference.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/api-reference.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Référence de l'API</h1>
+<p class="lead">Toutes les adresses de la clé, avec leurs champs, types, unités et plages. Générée à partir de la <a href="../openapi.yaml">description OpenAPI</a> du firmware 4.9.1.</p>
+<p>API REST locale de la clé Open Firenet, l'ESP32-S3 qui remplace la clé RIKA Firenet. Elle est servie sur votre réseau à l'adresse <code>http://open-firenet.local</code> (ou à l'adresse IP de la clé), sans clé d'API ni compte.</p>
+<p>Les unités sont naturelles : températures en °C, puissance en pourcentage, noms de modes lisibles.</p>
+<p><b>Noms des champs.</b> Seuls les noms recommandés sont décrits ici, ceux qu'utilisent l'intégration Home Assistant et MQTT. Pour des raisons historiques, la clé accepte aussi d'anciens alias dans les commandes (par exemple <code>tempRoomTarget</code> pour <code>target_temperature</code>, ou la forme texte <code>onOff=1; heatingPower=70;</code>), et <code>GET /api/controls</code> renvoie aussi les réglages sous les noms et unités du poêle (<code>onOff</code>, <code>tempRoomTarget</code> en dixièmes de degré...). Un nouveau code ne doit pas s'appuyer dessus.</p>
+<p><b>Qui peut l'appeler.</b> Les programmes de votre réseau (Home Assistant, scripts, <code>curl</code>) et la page web de la clé elle-même. Une page d'un autre site ouverte dans un navigateur ne le peut pas : la clé n'envoie aucune autorisation cross-origin et répond 403 à une requête qui indique une autre page comme origine, ou qui est adressée à un autre nom que son adresse IP, un nom sans point, un nom en <code>.local</code> ou un domaine ajouté dans l'onglet Bridge, section Accès à la page (<code>/api/access</code>). Le 403 est en JSON : <code>refused</code> indique quelle vérification a refusé (<code>host</code> ou <code>origin</code>) et <code>ip</code> donne l'adresse qui fonctionne toujours.</p>
+<p><b>Avant que le poêle soit relié.</b> Tant que le poêle n'a pas répondu, <code>version_ack</code> vaut <code>false</code>, le modèle et la version de firmware du poêle valent <code>null</code>, et les autres valeurs sont des valeurs par défaut, pas des mesures.</p>
+<h2>Adresses</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Adresse</th><th>Rôle</th></tr>
+  <tr><td><a href="#get-api-state"><span class="method get">GET</span> <code>/api/state</code></a></td><td>Tout en une fois</td></tr>
+  <tr><td><a href="#get-api-controls"><span class="method get">GET</span> <code>/api/controls</code></a></td><td>Réglages actuels</td></tr>
+  <tr><td><a href="#post-api-controls"><span class="method post">POST</span> <code>/api/controls</code></a></td><td>Modifier des réglages</td></tr>
+  <tr><td><a href="#get-api-schedule"><span class="method get">GET</span> <code>/api/schedule</code></a></td><td>Programmation hebdomadaire</td></tr>
+  <tr><td><a href="#post-api-schedule"><span class="method post">POST</span> <code>/api/schedule</code></a></td><td>Modifier la programmation hebdomadaire</td></tr>
+  <tr><td><a href="#get-api-mqtt"><span class="method get">GET</span> <code>/api/mqtt</code></a></td><td>Réglages MQTT et état de la connexion</td></tr>
+  <tr><td><a href="#post-api-mqtt"><span class="method post">POST</span> <code>/api/mqtt</code></a></td><td>Modifier les réglages MQTT</td></tr>
+  <tr><td><a href="#get-api-version"><span class="method get">GET</span> <code>/api/version</code></a></td><td>Version du firmware de la clé</td></tr>
+  <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Réseaux Wi-Fi vus par la clé</td></tr>
+  <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>Choisir le réseau Wi-Fi, puis redémarrer</td></tr>
+  <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Effacer les réglages enregistrés, puis redémarrer en mode configuration</td></tr>
+  <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Domaines sous lesquels la clé accepte de répondre</td></tr>
+  <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Choisir les domaines ajoutés</td></tr>
+  <tr><td><a href="#get-api-display"><span class="method get">GET</span> <code>/api/display</code></a></td><td>Écrans du petit afficheur de la clé</td></tr>
+  <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Choisir la carte de l'écran et ordonner ses écrans</td></tr>
+  <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Si l'économie d'énergie du Wi-Fi est activée</td></tr>
+  <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Activer ou désactiver l'économie d'énergie du Wi-Fi</td></tr>
+  <tr><td><a href="#get-api-log-size"><span class="method get">GET</span> <code>/api/log_size</code></a></td><td>Taille de l'historique des échanges avec le poêle</td></tr>
+  <tr><td><a href="#post-api-log-size"><span class="method post">POST</span> <code>/api/log_size</code></a></td><td>Choisir la taille de l'historique</td></tr>
+  <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Redémarrer la clé</td></tr>
+  <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>État de la mise à jour du firmware</td></tr>
+  <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Lancer une recherche de mise à jour, une installation, ou modifier les réglages de recherche automatique</td></tr>
+  <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Délai entre les trames envoyées au poêle</td></tr>
+  <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Modifier le délai entre les trames envoyées au poêle</td></tr>
+  <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Journal des échanges avec le poêle</td></tr>
+</table>
+</div>
+<h2 id="stove">Poêle</h2>
+<p>Lire le poêle et modifier ses réglages</p>
+<div class="endpoint" id="get-api-state">
+<h3><span class="method get">GET</span> <code>/api/state</code></h3>
+<p><b>Tout en une fois</b></p>
+<p>Clé, poêle, capteurs, réglages et diagnostic de la liaison. C'est ce qu'interrogent la page web et l'intégration Home Assistant.</p>
+<h4>Réponse 200 <small>État actuel</small></h4>
+<p>Champs : voir <a href="#schema-state">State</a>.</p>
+</div>
+<div class="endpoint" id="get-api-controls">
+<h3><span class="method get">GET</span> <code>/api/controls</code></h3>
+<p><b>Réglages actuels</b></p>
+<h4>Réponse 200 <small>Les réglages, sous les noms recommandés (les noms et unités du poêle sont aussi renvoyés)</small></h4>
+<p>Champs : voir <a href="#schema-controls">Controls</a>.</p>
+</div>
+<div class="endpoint" id="post-api-controls">
+<h3><span class="method post">POST</span> <code>/api/controls</code></h3>
+<p><b>Modifier des réglages</b></p>
+<p>Envoyez seulement les champs à modifier ; les autres gardent leur valeur. Ignoré tant que le poêle n'est pas relié. Sur un poêle en firmware 2.28, seuls <code>on</code>, <code>mode</code>, <code>power_percent</code> et <code>target_temperature</code> sont appliqués.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<p>Champs : voir <a href="#schema-controlscommand">ControlsCommand</a>.</p>
+<p>21 °C en mode confort:</p>
+<pre><code>{"target_temperature": 21, "mode": "comfort"}</code></pre>
+<p>Allumer à 80 % de puissance:</p>
+<pre><code>{"on": true, "power_percent": 80}</code></pre>
+<h4>Réponse 200 <small>Les réglages de base envoyés au poêle</small></h4>
+<p>Champs : voir <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Réponse 503 <small>Le poêle n'est pas relié, ou n'a pas encore transmis ses réglages (quelques secondes après l'établissement de la liaison). Rien n'a été envoyé ; réessayez.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-schedule">
+<h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
+<p><b>Programmation hebdomadaire</b></p>
+<h4>Réponse 200 <small>Les 14 plages horaires et la température réduite</small></h4>
+<p>Champs : voir <a href="#schema-schedule">Schedule</a>.</p>
+</div>
+<div class="endpoint" id="post-api-schedule">
+<h3><span class="method post">POST</span> <code>/api/schedule</code></h3>
+<p><b>Modifier la programmation hebdomadaire</b></p>
+<p>Même fonctionnement que <code>POST /api/controls</code> ; envoyez les plages à modifier sous leur nom.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<p>Champs : voir <a href="#schema-schedulecommand">ScheduleCommand</a>.</p>
+<p>Exemple:</p>
+<pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
+<h4>Réponse 200 <small>Les réglages de base envoyés au poêle</small></h4>
+<p>Champs : voir <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Réponse 503 <small>Le poêle n'est pas relié, ou n'a pas encore transmis ses réglages (quelques secondes après l'établissement de la liaison). Rien n'a été envoyé ; réessayez.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="bridge">Bridge</h2>
+<p>Réglages et maintenance de la clé elle-même</p>
+<div class="endpoint" id="get-api-mqtt">
+<h3><span class="method get">GET</span> <code>/api/mqtt</code></h3>
+<p><b>Réglages MQTT et état de la connexion</b></p>
+<h4>Réponse 200 <small>Les réglages (le mot de passe n'est jamais renvoyé) et l'état</small></h4>
+<p>Champs : voir <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="post-api-mqtt">
+<h3><span class="method post">POST</span> <code>/api/mqtt</code></h3>
+<p><b>Modifier les réglages MQTT</b></p>
+<p>Un champ omis garde sa valeur. Le client redémarre avec les nouveaux réglages ; l'état suit au GET suivant.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<p>Champs : voir <a href="#schema-mqttcommand">MqttCommand</a>.</p>
+<h4>Réponse 200 <small>Les réglages enregistrés</small></h4>
+<p>Champs : voir <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="get-api-version">
+<h3><span class="method get">GET</span> <code>/api/version</code></h3>
+<p><b>Version du firmware de la clé</b></p>
+<h4>Réponse 200 <small>Version et date de compilation</small></h4>
+<p>Champs : voir <a href="#schema-version">Version</a>.</p>
+</div>
+<div class="endpoint" id="get-api-scan">
+<h3><span class="method get">GET</span> <code>/api/scan</code></h3>
+<p><b>Réseaux Wi-Fi vus par la clé</b></p>
+<p>Le premier appel lance une recherche et répond 202 ; rappelez quelques secondes plus tard pour obtenir la liste.</p>
+<h4>Réponse 200 <small>Réseaux trouvés (2,4 GHz), chaque nom une seule fois</small></h4>
+<p>Une liste de :</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obligatoire</span></td><td>string</td><td></td></tr>
+  <tr><td><code>rssi</code> <span class="req">obligatoire</span></td><td>integer</td><td>Force du signal en dBm</td></tr>
+</table>
+</div>
+<h4>Réponse 202 <small>Recherche en cours</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>status</code></td><td><code>scanning</code></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-wifi">
+<h3><span class="method post">POST</span> <code>/api/wifi</code></h3>
+<p><b>Choisir le réseau Wi-Fi, puis redémarrer</b></p>
+<p>Envoyé par le formulaire de configuration. Répond par une page HTML de confirmation (elle doit fonctionner dans les navigateurs de portail captif), puis la clé redémarre sur ce réseau.</p>
+<h4>Corps de la requête <small>application/x-www-form-urlencoded</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obligatoire</span></td><td>string</td><td></td></tr>
+  <tr><td><code>pass</code></td><td>string</td><td>Vide pour un réseau ouvert</td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Enregistré ; la clé redémarre</small></h4>
+<p><code>text/html</code></p>
+<h4>Réponse 400 <small>Nom du réseau manquant</small></h4>
+<p><code>text/html</code></p>
+</div>
+<div class="endpoint" id="post-api-forget">
+<h3><span class="method post">POST</span> <code>/api/forget</code></h3>
+<p><b>Effacer les réglages enregistrés, puis redémarrer en mode configuration</b></p>
+<p>Efface le réseau Wi-Fi, les réglages MQTT et le délai entre trames. La clé crée ensuite le réseau <code>Open-Firenet-Setup</code>.</p>
+<h4>Réponse 200 <small>Effacé ; la clé redémarre</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-access">
+<h3><span class="method get">GET</span> <code>/api/access</code></h3>
+<p><b>Domaines sous lesquels la clé accepte de répondre</b></p>
+<p>En plus de son adresse IP et de <code>open-firenet.local</code>, voir « Qui peut l'appeler » plus haut.</p>
+<h4>Réponse 200 <small>Les domaines ajoutés</small></h4>
+<p>Champs : voir <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="post-api-access">
+<h3><span class="method post">POST</span> <code>/api/access</code></h3>
+<p><b>Choisir les domaines ajoutés</b></p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>extra_hosts</code></td><td>string</td><td>Un domaine par ligne (les virgules et les espaces les séparent aussi) ; un texte vide les retire tous. Une entrée doit contenir au moins un point (<code>example.org</code>, pas <code>org</code>), et couvre aussi les noms qui en dépendent. Au plus 8 entrées de 63 caractères ; les entrées qui ne respectent pas ces règles sont ignorées.</td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Les domaines tels qu'enregistrés</small></h4>
+<p>Champs : voir <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="get-api-display">
+<h3><span class="method get">GET</span> <code>/api/display</code></h3>
+<p><b>Écrans du petit afficheur de la clé</b></p>
+<p>Le petit écran des cartes qui en ont un : la carte que le propriétaire a indiquée (<code>board</code>, <code>none</code> par défaut) et, quand il fonctionne, les écrans affichés, dans quel ordre et pendant combien de temps chacun.</p>
+<h4>Réponse 200 <small>Le réglage</small></h4>
+<p>Champs : voir <a href="#schema-display">Display</a>.</p>
+</div>
+<div class="endpoint" id="post-api-display">
+<h3><span class="method post">POST</span> <code>/api/display</code></h3>
+<p><b>Choisir la carte de l'écran et ordonner ses écrans</b></p>
+<p>Enregistré et conservé après un redémarrage. <code>screens</code> et <code>seconds</code> s'appliquent tout de suite : les écrans listés passent en premier, dans cet ordre ; les autres suivent dans leur ordre précédent. <code>board</code> s'applique au prochain redémarrage. Tout champ peut être omis.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 à 30</td><td>Secondes d'affichage de chaque écran</td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 à 100</td><td></td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 à 3600</td><td></td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 à 50</td><td></td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Pivoter l'écran de 180 degrés</td></tr>
+  <tr><td><code>language</code></td><td><code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Langue des textes de l'écran</td></tr>
+  <tr><td><code>screens</code></td><td>liste de objet</td><td></td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Le réglage tel qu'enregistré</small></h4>
+<p>Champs : voir <a href="#schema-display">Display</a>.</p>
+<h4>Réponse 400 <small>Carte inconnue, identifiant d'écran inconnu ou répété, ou secondes hors plage</small></h4>
+</div>
+<div class="endpoint" id="get-api-wifi-power-saving">
+<h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Si l'économie d'énergie du Wi-Fi est activée</b></p>
+<p>Activée par défaut : la clé chauffe moins et consomme moins, et une réponse peut attendre jusqu'à un quart de seconde. Désactivée : elle répond tout de suite ; pour les réseaux sur lesquels la clé perd sans cesse le Wi-Fi.</p>
+<h4>Réponse 200 <small>Le réglage</small></h4>
+<p>Champs : voir <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="post-api-wifi-power-saving">
+<h3><span class="method post">POST</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Activer ou désactiver l'économie d'énergie du Wi-Fi</b></p>
+<p>Enregistré, et appliqué tout de suite sans redémarrage.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Le réglage tel qu'enregistré</small></h4>
+<p>Champs : voir <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="get-api-log-size">
+<h3><span class="method get">GET</span> <code>/api/log_size</code></h3>
+<p><b>Taille de l'historique des échanges avec le poêle</b></p>
+<p>La clé garde les derniers messages échangés avec le poêle (<code>/api/log</code>, fichier de diagnostic). 16 ko par défaut ; 32 ko gardent deux fois plus d'historique et utilisent 16 ko de mémoire en plus.</p>
+<h4>Réponse 200 <small>Le réglage</small></h4>
+<p>Champs : voir <a href="#schema-logsize">LogSize</a>.</p>
+</div>
+<div class="endpoint" id="post-api-log-size">
+<h3><span class="method post">POST</span> <code>/api/log_size</code></h3>
+<p><b>Choisir la taille de l'historique</b></p>
+<p>Enregistré ; appliqué au prochain redémarrage (indiqué par <code>restart_needed</code>).</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>kb</code></td><td><code>16</code> | <code>32</code></td><td></td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Le réglage tel qu'enregistré</small></h4>
+<p>Champs : voir <a href="#schema-logsize">LogSize</a>.</p>
+<h4>Réponse 400 <small><code>kb</code> ne vaut ni 16 ni 32</small></h4>
+</div>
+<div class="endpoint" id="post-api-restart">
+<h3><span class="method post">POST</span> <code>/api/restart</code></h3>
+<p><b>Redémarrer la clé</b></p>
+<p>Le poêle continue de fonctionner ; la liaison revient en une minute environ.</p>
+<h4>Réponse 200 <small>La clé redémarre</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-update">
+<h3><span class="method get">GET</span> <code>/api/update</code></h3>
+<p><b>État de la mise à jour du firmware</b></p>
+<p>Renvoie l'état de la mise à jour automatique, les versions installée et disponible, la progression et les réglages.</p>
+<h4>Réponse 200 <small>État de la mise à jour</small></h4>
+<p>Champs : voir <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+</div>
+<div class="endpoint" id="post-api-update">
+<h3><span class="method post">POST</span> <code>/api/update</code></h3>
+<p><b>Lancer une recherche de mise à jour, une installation, ou modifier les réglages de recherche automatique</b></p>
+<p>Envoyez <code>{"action": "check"}</code> pour chercher une version sur GitHub, <code>{"action": "install"}</code> pour télécharger et installer la version disponible (seulement quand le poêle est éteint), ou <code>{"auto_check": true, "check_hours": 24}</code> pour régler les recherches périodiques.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<p>Champs : voir <a href="#schema-updatecommand">UpdateCommand</a>.</p>
+<h4>Réponse 200 <small>Réglages mis à jour (quand auto_check a été envoyé)</small></h4>
+<p>Champs : voir <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+<h4>Réponse 202 <small>Action acceptée, en cours en arrière-plan</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Réponse 400 <small>Contenu de la requête invalide</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h4>Réponse 409 <small>Occupé, rien à installer, ou le poêle n'est pas éteint</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="diagnostics">Diagnostic</h2>
+<div class="endpoint" id="get-api-txgap">
+<h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
+<p><b>Délai entre les trames envoyées au poêle</b></p>
+<h4>Réponse 200 <small>Délai actuel et ses bornes</small></h4>
+<p>Champs : voir <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="post-api-txgap">
+<h3><span class="method post">POST</span> <code>/api/txgap</code></h3>
+<p><b>Modifier le délai entre les trames envoyées au poêle</b></p>
+<p>Réglage de diagnostic, conservé après un redémarrage. Trop bas, le poêle risque de ne traiter qu'une trame sur deux.</p>
+<h4>Corps de la requête <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ms</code> <span class="req">obligatoire</span></td><td>integer, 50 à 600</td><td>Délai en millisecondes</td></tr>
+</table>
+</div>
+<h4>Réponse 200 <small>Le délai utilisé maintenant</small></h4>
+<p>Champs : voir <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="get-log">
+<h3><span class="method get">GET</span> <code>/log</code></h3>
+<p><b>Journal des échanges avec le poêle</b></p>
+<p>Texte brut, une ligne par trame : <code>[temps depuis le démarrage en ms][rx|tx] contenu</code>. Les lignes identiques qui se suivent sont regroupées (<code>xN</code>). Le mot de passe Wi-Fi est masqué. Conservé en mémoire seulement (environ les 32 derniers ko).</p>
+<h4>Réponse 200 <small>Le journal</small></h4>
+<p><code>text/plain</code></p>
+</div>
+<h2 id="schemas">Objets</h2>
+<p>Les objets échangés avec la clé, cités plus haut.</p>
+<h3 id="schema-display">Display</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>available</code></td><td>boolean</td><td>Vrai quand l'écran fonctionne (décidé au démarrage par <code>board</code>) ; les écrans ci-dessous peuvent alors être réglés</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>La carte que le propriétaire indique comme ayant un écran : <code>none</code> (par défaut), <code>tdongle</code> (LilyGO T-Dongle-S3, écran en marche) ou <code>tdongle_off</code> (la même carte, écran et rétroéclairage éteints). Enregistré ; s'applique au prochain redémarrage</td></tr>
+  <tr><td><code>boards</code></td><td>liste de string</td><td>Cartes que ce firmware sait piloter</td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>Vrai quand <code>board</code> diffère de ce qui fonctionne actuellement</td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 à 30</td><td></td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 à 100</td><td>Rétroéclairage, en pourcentage</td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td>Réduire le rétroéclairage après un délai sans appui sur BOOT ni alerte</td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 à 3600</td><td>Secondes sans activité avant de réduire la luminosité</td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 à 50</td><td>Rétroéclairage une fois réduit, en pourcentage (0 = éteint)</td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>L'écran est pivoté de 180 degrés</td></tr>
+  <tr><td><code>language</code></td><td><code></code> | <code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Langue des textes de l'écran ; vide tant qu'aucune n'est choisie (l'anglais est affiché en attendant)</td></tr>
+  <tr><td><code>screens</code></td><td>liste de objet</td><td>Chaque écran une fois, dans l'ordre d'affichage</td></tr>
+</table>
+</div>
+<h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-logsize">LogSize</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>kb</code></td><td>integer</td><td>Le choix enregistré, en ko</td></tr>
+  <tr><td><code>running_kb</code></td><td>integer</td><td>La taille utilisée depuis le dernier redémarrage, en ko</td></tr>
+  <tr><td><code>options</code></td><td>liste de integer</td><td></td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>Le choix enregistré n'est pas celui utilisé</td></tr>
+</table>
+</div>
+<h3 id="schema-access">Access</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>liste de string</td><td>Domaines ajoutés par le propriétaire</td></tr>
+  <tr><td><code>max_extra_hosts</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Nom auquel cette requête était adressée</td></tr>
+</table>
+</div>
+<h3 id="schema-health">Health</h3>
+<p>L'état de la clé elle-même. Les compteurs sont en mémoire et repartent de zéro à chaque démarrage. Aussi publiés en MQTT sous <code>&lt;base&gt;/health/&lt;name&gt;</code>, sauf <code>stove_last_frame_seconds</code>.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>stove_lost</code> | <code>software</code> | <code>unknown</code></td><td>Cause du dernier redémarrage : <code>power_on</code> (le poêle a alimenté la clé), <code>brownout</code> (tension d'alimentation trop basse), <code>crash</code>, <code>watchdog</code> (le programme s'est figé), <code>reset_button</code>, <code>usb</code> (réinitialisation par USB), <code>user</code> (redémarrage demandé depuis la page ou l'API), <code>wifi_change</code>, <code>update</code> (mise à jour sans fil), <code>stove_silent</code> (rien reçu du poêle pendant 60 secondes), <code>stove_lost</code> (le poêle avait accepté la clé, puis l'a refusée pendant 5 minutes), <code>software</code> (autre redémarrage demandé par le firmware)</td></tr>
+  <tr><td><code>min_free_heap</code></td><td>integer</td><td>Mémoire libre la plus basse depuis le démarrage, en octets</td></tr>
+  <tr><td><code>elf_sha256</code></td><td>string</td><td>Premiers caractères du SHA-256 du firmware en cours (non publié en MQTT)</td></tr>
+  <tr><td><code>crash</code></td><td>objet</td><td>Le dernier plantage que la puce a enregistré dans sa flash, présent seulement après un plantage (non publié en MQTT). Il reste jusqu'à ce qu'un autre plantage le remplace, il peut donc être antérieur au dernier redémarrage : <code>elf_sha256</code> est le firmware qui a planté. Les adresses peuvent être converties en noms de fonctions avec le fichier ELF de cette version.</td></tr>
+  <tr><td><code>chip_temperature</code></td><td>number ou <code>null</code></td><td>Température de la puce en °C</td></tr>
+  <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Connexions Wi-Fi perdues depuis le démarrage</td></tr>
+  <tr><td><code>stove_last_frame_seconds</code></td><td>integer ou <code>null</code></td><td>Secondes depuis le dernier octet reçu du poêle ; null si rien n'a jamais été reçu</td></tr>
+  <tr><td><code>stove_detections</code></td><td>integer</td><td>Nombre de fois où le poêle a accepté la clé depuis le démarrage (1 sur une liaison stable)</td></tr>
+  <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Nombre de fois où le poêle a coupé une liaison établie depuis le démarrage</td></tr>
+  <tr><td><code>stove_rx_dropped_bytes</code></td><td>integer</td><td>Octets envoyés par le poêle que la clé n'avait pas la place de recevoir depuis le démarrage (0 sur une clé en bon état)</td></tr>
+  <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Connexions au broker perdues depuis le démarrage</td></tr>
+</table>
+</div>
+<h3 id="schema-state">State</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>device</code> <span class="req">obligatoire</span></td><td><a href="#schema-device">Device</a></td><td></td></tr>
+  <tr><td><code>stove</code> <span class="req">obligatoire</span></td><td><a href="#schema-stove">Stove</a></td><td></td></tr>
+  <tr><td><code>sensors</code> <span class="req">obligatoire</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
+  <tr><td><code>controls</code> <span class="req">obligatoire</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
+  <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code> quand la clé est en mode configuration</td></tr>
+  <tr><td><code>wifi_power_saving</code></td><td>boolean</td><td>Si l'économie d'énergie du Wi-Fi est activée, voir <code>/api/wifi_power_saving</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>write_enabled</code></td><td>boolean</td><td>Toujours vrai</td></tr>
+  <tr><td><code>version_ack</code> <span class="req">obligatoire</span></td><td>boolean</td><td>Si le poêle a accepté la clé (la liaison est établie)</td></tr>
+  <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Variante du protocole dans laquelle le poêle a répondu : <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>schedule_slots_per_day</code></td><td>integer</td><td>Nombre de plages de chauffe par jour que le poêle accepte : 2, ou 1 pour un poêle en firmware 2.25</td></tr>
+  <tr><td><code>usb</code> <span class="req">obligatoire</span></td><td>objet</td><td>Diagnostic de la liaison USB</td></tr>
+  <tr><td><code>mqtt</code></td><td>objet</td><td></td></tr>
+  <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
+  <tr><td><code>frames_in</code></td><td>integer</td><td>Trames reçues du poêle depuis le démarrage</td></tr>
+  <tr><td><code>frames_out</code></td><td>integer</td><td>Trames envoyées au poêle depuis le démarrage</td></tr>
+  <tr><td><code>revision</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>raw_sensors</code> <span class="req">obligatoire</span></td><td>objet, tout nom → integer</td><td>Toutes les valeurs que transmet le poêle, sous leur nom RIKA, dans les unités du poêle (températures souvent en dixièmes de degré). Vide tant que le poêle n'est pas relié.</td></tr>
+  <tr><td><code>status</code></td><td>objet, tout nom → string</td><td>Enregistrement d'état échangé avec le poêle (le mot de passe Wi-Fi est masqué)</td></tr>
+  <tr><td><code>sensors_pos</code></td><td>liste de integer</td><td>Les enregistrements de capteurs par position (diagnostic)</td></tr>
+  <tr><td><code>controls_pos</code></td><td>liste de integer</td><td>Les enregistrements de commandes par position (diagnostic)</td></tr>
+</table>
+</div>
+<h3 id="schema-device">Device</h3>
+<p>La clé</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td>Version du firmware de la clé</td></tr>
+  <tr><td><code>app_version</code></td><td>string</td><td>Identique à <code>version</code></td></tr>
+  <tr><td><code>firmware_version</code></td><td>string</td><td>Identique à <code>version</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>mac</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_ssid</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Signal Wi-Fi en dBm</td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>free_heap</code></td><td>integer</td><td>Mémoire libre en octets</td></tr>
+  <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Taille en octets de l'emplacement où s'écrit une mise à jour sans fil. Un firmware plus gros doit être installé par USB</td></tr>
+  <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Un mot de passe est demandé pour les mises à jour sans fil. Il se définit ou se retire par USB avec l'installeur, jamais par le réseau</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td>Identique à <code>version_ack</code></td></tr>
+</table>
+</div>
+<h3 id="schema-stove">Stove</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>splitlog_check</code> | <code>splitlog_refuel</code> | <code>splitlog_no_refuel</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>is_burning</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>has_error</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error_code</code></td><td>integer</td><td>0 quand il n'y a pas d'erreur</td></tr>
+  <tr><td><code>error_sub</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>warning_code</code></td><td>integer</td><td>0 quand il n'y a pas d'avertissement</td></tr>
+  <tr><td><code>model</code></td><td>integer ou <code>null</code></td><td>Numéro de modèle RIKA, null tant que le poêle ne l'a pas transmis</td></tr>
+  <tr><td><code>model_name</code></td><td>string ou <code>null</code></td><td>Par exemple <code>DOMO</code> ; null tant que le poêle ne l'a pas transmis</td></tr>
+  <tr><td><code>brand</code></td><td><code>RIKA</code> | <code>ANIMO</code> ou <code>null</code></td><td>Marque réglée sur le poêle (capteur <code>fabNumber</code> : 1 = RIKA, 2 = ANIMO) ; null tant que le poêle n'a pas transmis son modèle</td></tr>
+  <tr><td><code>mainboard_version</code></td><td>string ou <code>null</code></td><td>Firmware du poêle, par exemple <code>2.29</code> ; null tant que le poêle ne l'a pas transmis</td></tr>
+  <tr><td><code>firmware_build</code></td><td>string ou <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-sensors">Sensors</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>room_temperature</code></td><td>number ou <code>null</code></td><td>°C ; null quand aucune sonde d'ambiance RIKA n'est branchée</td></tr>
+  <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer ou <code>null</code></td><td>null tant que le poêle ne l'a pas transmis (après un redémarrage de la clé)</td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer ou <code>null</code></td><td>Heures de fonctionnement aux granulés ; null tant que le poêle ne les a pas transmises</td></tr>
+  <tr><td><code>log_runtime</code></td><td>integer ou <code>null</code></td><td>Durée de fonctionnement aux bûches d'un poêle mixte, en minutes (0 sur un poêle qui ne brûle que des granulés ; null tant que le poêle ne l'a pas transmise)</td></tr>
+  <tr><td><code>log_runtime_hours</code></td><td>integer ou <code>null</code></td><td>log_runtime en heures entières</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer ou <code>null</code></td><td>Granulés restants avant le prochain entretien ; null tant que le poêle ne l'a pas transmis</td></tr>
+  <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>power_actual_percent</code></td><td>integer</td><td>Puissance à laquelle le poêle fonctionne réellement. En mode confort, le poêle la fixe lui-même, quelle que soit la valeur de <code>power_percent</code>. 0 quand il ne chauffe pas.</td></tr>
+  <tr><td><code>air_flaps_percent</code></td><td>number ou <code>null</code></td><td></td></tr>
+  <tr><td><code>air_flaps_target_percent</code></td><td>number ou <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsstate">ControlsState</h3>
+<p>Les réglages actuels</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code> : puissance fixe. <code>auto</code> : suit la programmation hebdomadaire. <code>comfort</code> : suit la température ambiante.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td>0 = manuel, 1 = auto, 2 = confort</td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td>Programmation hebdomadaire activée / désactivée</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C en dehors des plages programmées</td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer</td><td>0 = automatique, 1 à 5</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer</td><td>Ajustement en pourcentage, de -30 à +30</td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td>°C (DOMO BACK uniquement)</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td>Étalonnage de la sonde d'ambiance en °C</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>eco_mode_possible</code></td><td>boolean</td><td>Si le poêle autorise le mode éco en ce moment</td></tr>
+</table>
+</div>
+<h3 id="schema-controls">Controls</h3>
+<p>Les réglages actuels. Les noms du poêle (<code>onOff</code>, <code>tempRoomTarget</code>...) sont aussi renvoyés et ne sont pas décrits ici.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code> : puissance fixe. <code>auto</code> : suit la programmation hebdomadaire. <code>comfort</code> : suit la température ambiante.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td></td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><i>autres champs</i></td><td></td><td>Non décrits ici.</td></tr>
+</table>
+</div>
+<h3 id="schema-controlscommand">ControlsCommand</h3>
+<p>N'importe quel sous-ensemble de ces champs</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code> : puissance fixe. <code>auto</code> : suit la programmation hebdomadaire. <code>comfort</code> : suit la température ambiante.</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer, 30 à 100</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number, 14 à 28</td><td>°C, en degrés entiers : un demi-degré est arrondi</td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number, 4 à 10</td><td>°C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number, -4 à 4</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer, 130 à 340</td><td>°C (DOMO BACK uniquement)</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer, 0 à 5</td><td>0 = automatique</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer, -30 à 30</td><td></td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer, 0 à 5</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer, -30 à 30</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsresult">ControlsResult</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code> : puissance fixe. <code>auto</code> : suit la programmation hebdomadaire. <code>comfort</code> : suit la température ambiante.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-schedule">Schedule</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>active</code></td><td>boolean</td><td>Programmation hebdomadaire activée / désactivée</td></tr>
+  <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Identique à <code>active</code>, en 0 / 1</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C en dehors des plages programmées</td></tr>
+  <tr><td><code>setBackTemp</code></td><td>integer</td><td>Identique, en dixièmes de degré</td></tr>
+  <tr><td><code>slots</code></td><td>objet, tout nom → integer</td><td>Deux plages par jour, <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code> avec Day parmi Mon, Tue, Wed, Thu, Fri, Sat, Sun. Sur un poêle en firmware 2.25, seule la première plage de chaque jour est utilisée ; la seconde vaut toujours 0.</td></tr>
+  <tr><td><code>slots_per_day</code></td><td>integer</td><td>Nombre de plages par jour que le poêle accepte : 2, ou 1 pour un poêle en firmware 2.25</td></tr>
+  <tr><td><code>day_ranges</code></td><td>objet, tout nom → objet</td><td>Seulement sur un poêle en firmware 2.25 : la plage quotidienne de chaque jour de la semaine (Sun, Mon, ... Sat), <code>start</code> et <code>end</code> en minutes depuis minuit, telles que le poêle les garde (les mêmes plages que la première plage de chaque jour dans <code>slots</code>).</td></tr>
+</table>
+</div>
+<h3 id="schema-schedulecommand">ScheduleCommand</h3>
+<p><code>heating_times_active</code>, <code>setback_temperature</code>, et n'importe laquelle des 14 plages <code>heatTime&lt;Day&gt;&lt;1|2&gt;</code></p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><i>tout autre nom</i></td><td>integer</td><td>Une plage de chauffe en un seul nombre : début <code>HHMM</code> multiplié par 10000, plus fin <code>HHMM</code>. <code>6000800</code> correspond à 06:00 - 08:00, <code>17002200</code> à 17:00 - 22:00, <code>0</code> à une plage inutilisée.</td></tr>
+</table>
+</div>
+<h3 id="schema-mqtt">Mqtt</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td></td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password_set</code></td><td>boolean</td><td>Si un mot de passe est enregistré (il n'est jamais renvoyé)</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Si les messages de découverte Home Assistant sont publiés</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Si la connexion au broker est chiffrée (MQTT sur TLS)</td></tr>
+  <tr><td><code>ca_set</code></td><td>boolean</td><td>Si un certificat d'autorité est enregistré (il n'est pas renvoyé)</td></tr>
+  <tr><td><code>tls_error</code></td><td>integer</td><td>Dernier code d'erreur de la couche TLS, 0 s'il n'y en a pas (diagnostic)</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>certificate not trusted</code> | <code>secure connection failed</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-mqttcommand">MqttCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Adresse du broker</td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td>Par défaut : <code>1883</code>.</td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password</code></td><td>string</td><td>Vide pour effacer celui enregistré</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td>Par défaut : <code>openfirenet</code>.</td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Découverte MQTT de Home Assistant : le poêle apparaît tout seul dans Home Assistant. À laisser désactivée si l'intégration Open Firenet est utilisée Par défaut : <code>False</code>.</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Connexion chiffrée (MQTT sur TLS, en général sur le port 8883). Le certificat du broker doit être signé par une autorité publique, ou par celle donnée dans ca_certificate Par défaut : <code>False</code>.</td></tr>
+  <tr><td><code>ca_certificate</code></td><td>string</td><td>Certificat (PEM) de votre propre autorité, pour un broker dont le certificat n'est pas signé par une autorité publique ; le nom inscrit dans le certificat du broker n'est alors pas vérifié. Vide pour effacer celui enregistré. Refusé avec une réponse 400 si ce n'est pas un certificat PEM</td></tr>
+</table>
+</div>
+<h3 id="schema-txgap">TxGap</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>ms</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>default</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>min</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>max</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-version">Version</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>app</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
+  <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-updatestatus">UpdateStatus</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>state</code> <span class="req">obligatoire</span></td><td><code>idle</code> | <code>checking</code> | <code>available</code> | <code>downloading</code> | <code>verifying</code> | <code>installing</code> | <code>error</code> | <code>restarting</code></td><td>État actuel de la tâche de mise à jour</td></tr>
+  <tr><td><code>current</code> <span class="req">obligatoire</span></td><td>string</td><td>Version actuellement installée sur la clé (par ex. 4.3.1)</td></tr>
+  <tr><td><code>latest</code> <span class="req">obligatoire</span></td><td>string</td><td>Dernière version trouvée dans les versions GitHub, s'il y en a une</td></tr>
+  <tr><td><code>percent</code> <span class="req">obligatoire</span></td><td>integer</td><td>Pourcentage de progression (0 à 100) pendant le téléchargement ou l'écriture</td></tr>
+  <tr><td><code>error</code> <span class="req">obligatoire</span></td><td>string</td><td>Description de la dernière erreur, si l'état est error</td></tr>
+  <tr><td><code>stove_blocks</code> <span class="req">obligatoire</span></td><td>boolean</td><td>Vrai si l'état du poêle empêche l'installation (il doit être complètement éteint)</td></tr>
+  <tr><td><code>auto_check</code> <span class="req">obligatoire</span></td><td>boolean</td><td>Si les recherches périodiques en arrière-plan sont activées</td></tr>
+  <tr><td><code>check_hours</code> <span class="req">obligatoire</span></td><td>integer</td><td>Intervalle entre les recherches, en heures (12, 24 ou 168)</td></tr>
+  <tr><td><code>last_check</code> <span class="req">obligatoire</span></td><td>integer</td><td>Secondes écoulées depuis la dernière recherche qui a atteint GitHub (-1 s'il n'y en a pas eu)</td></tr>
+</table>
+</div>
+<h3 id="schema-updatecommand">UpdateCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>action</code></td><td><code>check</code> | <code>install</code></td><td>Action à lancer en arrière-plan</td></tr>
+  <tr><td><code>auto_check</code></td><td>boolean</td><td>Activer ou désactiver les recherches périodiques</td></tr>
+  <tr><td><code>check_hours</code></td><td><code>12</code> | <code>24</code> | <code>168</code></td><td>Intervalle de recherche en heures</td></tr>
+</table>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

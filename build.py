@@ -20,12 +20,11 @@ SITE = "https://openfirenet.github.io/"
 PAGES = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
          "contribute", "screen"]
 # Languages of the site. English is the reference, at the root; each other language lives in <code>/, built from
-# src/<code>/<name>.html. A page with no translation (the developer pages: REST API, MQTT, API reference) is only
-# in English, and the translated pages link to it.
+# src/<code>/<name>.html. A page left out of TRANSLATED is only in English, and the translated pages link to it.
 LANGS = ["en", "fr"]
 LANG_NAMES = {"en": "English", "fr": "Français", "de": "Deutsch", "it": "Italiano", "es": "Español"}
-TRANSLATED = ["index", "get-started", "hardware", "compatibility", "home-assistant", "troubleshooting", "contribute",
-              "screen"]
+TRANSLATED = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
+              "contribute", "screen", "api-reference"]
 # The navigation bar: a page (file name, label key), or a group (label key, [pages]) shown as a drop-down menu. The
 # home page is reached through the logo.
 NAV = [
@@ -53,7 +52,7 @@ TEXTS = {
     "fr": {
         "nav_get_started": "Démarrer", "nav_stove_board": "Poêle et matériel", "nav_compatibility": "Compatibilité des poêles",
         "nav_hardware": "Matériel", "nav_screen": "Écran de la clé", "nav_integrations": "Intégrations",
-        "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT (en anglais)", "nav_api": "API REST (en anglais)",
+        "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
         "nav_troubleshooting": "Dépannage", "nav_contribute": "Contribuer",
         "menu": "☰ Menu", "nav_label": "Navigation principale", "lang_label": "Langue",
         "footer_disclaimer": "Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative "
@@ -96,7 +95,7 @@ def flag(code):
     return f'<svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true">{FLAGS.get(code, "")}</svg>'
 
 
-def nav_html(lang, active_name, page_lang):
+def nav_html(lang, active_name, page_lang, page_name):
     t = TEXTS[lang]
     active = ' class="active" aria-current="page"'
     out = []
@@ -120,7 +119,7 @@ def nav_html(lang, active_name, page_lang):
     out.append(f'        <summary aria-label="{t["lang_label"]}">{flag(lang)}{LANG_NAMES[lang]}</summary>')
     out.append('        <div class="nav-menu">')
     for code in LANGS:
-        target = active_name if (code == "en" or active_name in TRANSLATED) else "index"
+        target = page_name if (code == "en" or page_name in TRANSLATED) else "index"
         cur = active if code == lang else ""
         out.append(f'          <a href="{rel(page_lang, code, target)}" hreflang="{code}" lang="{code}" '
                    f'data-lang="{code}"{cur}>{flag(code)}{LANG_NAMES[code]}</a>')
@@ -134,7 +133,9 @@ def localize_paths(html, page_lang):
     if page_lang == "en":
         return html
     html = re.sub(r'((?:href|src)=")(assets/|openapi\.yaml)', r"\1../\2", html)
-    english_only = [n for n in PAGES if n not in TRANSLATED] + [g[0] for g in GENERATED]
+    english_only = [n for n in PAGES + [g[0] for g in GENERATED] if n not in TRANSLATED]
+    if not english_only:
+        return html
     return re.sub(r'(href=")((?:' + "|".join(map(re.escape, english_only)) + r')\.html)', r"\1../\2", html)
 
 
@@ -143,15 +144,32 @@ def source_hash(name):
     return hashlib.sha256((SRC / f"{name}.html").read_bytes()).hexdigest()[:12]
 
 
-# Pages generated from data instead of src/<name>.html: (file name, navigation entry shown as active, title,
-# description, function returning the content)
-def api_reference():
-    return apiref.render(json.loads((SRC / "openapi.json").read_text()))
+# Pages generated from data instead of src/<name>.html: (file name, navigation entry shown as active,
+# {language: (title, description)}, function of the language returning the content and the texts left to translate)
+def strings_file(lang):
+    return SRC / lang / "openapi-strings.json"
+
+
+def api_reference(lang):
+    """The API reference. Its texts come from src/openapi.json; a translation is the table src/<lang>/openapi-strings.json,
+    English text -> translated text. The build keeps that table in step with the description: a new or changed English
+    text is added with an empty translation (and reported), a text the description no longer has is dropped."""
+    spec = json.loads((SRC / "openapi.json").read_text())
+    if lang == "en":
+        return apiref.render(spec), []
+    path = strings_file(lang)
+    old = json.loads(path.read_text()) if path.exists() else {}
+    table = {text: old.get(text, "") for text in apiref.texts(spec)}
+    if table != old:
+        path.write_text(json.dumps(table, indent=1, ensure_ascii=False) + "\n")
+    return apiref.render(spec, lang, table), [t for t, v in table.items() if not v]
 
 
 GENERATED = [
-    ("api-reference", "api", "API reference - Open Firenet",
-     "Every endpoint of the Open Firenet bridge, with its fields, types, units and ranges.", api_reference),
+    ("api-reference", "api", {
+        "en": ("API reference - Open Firenet", "Every endpoint of the Open Firenet bridge, with its fields, types, units and ranges."),
+        "fr": ("Référence de l'API - Open Firenet", "Toutes les adresses de la clé Open Firenet, avec leurs champs, types, unités et plages."),
+    }, api_reference),
 ]
 
 
@@ -188,7 +206,7 @@ def render(layout, lang, name, active_name, page):
         html = html.replace("{{t:" + key + "}}", value)
     html = (html.replace("{{lang}}", lang).replace("{{title}}", m.group(2)).replace("{{description}}", m.group(3))
             .replace("{{alternates}}", alternates(name)).replace("{{page}}", name.removesuffix(".html"))
-            .replace("{{nav}}", nav_html(lang, active_name, lang))
+            .replace("{{nav}}", nav_html(lang, active_name, lang, name))
             .replace("{{content}}", page[m.end():].rstrip("\n")))
     return localize_paths(html, lang), m.group(1)
 
@@ -197,12 +215,20 @@ def build(check=False):
     layout = (SRC / "layout.html").read_text()
     stale, outdated, missing = [], [], []
     outputs = []
+    untranslated = []
     for name in PAGES:
         outputs.append(("en", name, name, (SRC / f"{name}.html").read_text()))
-    for name, active_name, title, description, make in GENERATED:
-        outputs.append(("en", name, active_name, f"<!-- title: {title} -->\n<!-- description: {description} -->\n{make()}\n"))
+    for name, active_name, heads, make in GENERATED:
+        for lang in LANGS:
+            if lang != "en" and name not in TRANSLATED:
+                continue
+            content, left = make(lang)
+            if left:
+                untranslated.append(f"{len(left)} in {strings_file(lang).relative_to(ROOT)}")
+            title, description = heads[lang]
+            outputs.append((lang, name, active_name, f"<!-- title: {title} -->\n<!-- description: {description} -->\n{content}\n"))
     for lang in LANGS[1:]:
-        for name in TRANSLATED:
+        for name in (n for n in TRANSLATED if n in PAGES):
             src = SRC / lang / f"{name}.html"
             if not src.exists():
                 missing.append(f"{lang}/{name}")
@@ -210,7 +236,7 @@ def build(check=False):
             outputs.append((lang, name, name, src.read_text()))
     for lang, name, active_name, page in outputs:
         html, source = render(layout, lang, name, active_name, page)
-        if lang != "en" and source != source_hash(name):
+        if lang != "en" and name in PAGES and source != source_hash(name):
             outdated.append(f"src/{lang}/{name}.html")
         out = ROOT / page_path(lang, name)
         if check:
@@ -225,6 +251,8 @@ def build(check=False):
     if outdated:
         problems.append("the English page changed since this translation, update it and run build.py --stamp "
                         "<file>: " + ", ".join(outdated))
+    if untranslated:
+        problems.append("texts of the API description without translation (empty values): " + ", ".join(untranslated))
     if check and stale:
         problems.append("out of date, run build.py: " + ", ".join(stale))
     for p in problems:
@@ -239,7 +267,7 @@ def stamp(files):
     for f in files:
         path = pathlib.Path(f).resolve()
         name, lang = path.stem, path.parent.name
-        if lang not in LANGS[1:] or name not in TRANSLATED:
+        if lang not in LANGS[1:] or name not in TRANSLATED or name not in PAGES:
             sys.exit(f"{f} is not a translated page (src/<language>/<page>.html)")
         text = HEADER.sub(lambda m: f"<!-- source: {source_hash(name)} -->\n<!-- title: {m.group(2)} -->\n"
                                      f"<!-- description: {m.group(3)} -->\n", path.read_text(), count=1)

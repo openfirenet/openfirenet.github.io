@@ -31,10 +31,59 @@ def slug(text):
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+# Fixed words of the page, per language. The texts of the description itself are translated by a table given to render().
+LABELS = {
+    "en": {"title": "API reference", "lead": "Every endpoint of the bridge, with its fields, types, units and ranges. "
+           "Generated from the {link}OpenAPI description</a> of firmware {version}.", "endpoints": "Endpoints",
+           "endpoint": "Endpoint", "purpose": "Purpose", "objects": "Objects",
+           "objects_lead": "The objects exchanged with the bridge, referred to above.", "field": "Field", "type": "Type",
+           "description": "Description", "required": "required", "any_name": "any other name", "other_fields": "other fields",
+           "not_described": "Not described here.", "list_of": "list of", "object": "object", "any_name_to": "any name",
+           "range": "{lo} to {hi}", "or_null": "or", "default": "Default: {value}.", "fields_see": "Fields: see", "a_list_of": "A list of:",
+           "request_body": "Request body", "example": "Example", "answer": "Answer"},
+    "fr": {"title": "Référence de l'API", "lead": "Toutes les adresses de la clé, avec leurs champs, types, unités et plages. "
+           "Générée à partir de la {link}description OpenAPI</a> du firmware {version}.", "endpoints": "Adresses",
+           "endpoint": "Adresse", "purpose": "Rôle", "objects": "Objets",
+           "objects_lead": "Les objets échangés avec la clé, cités plus haut.", "field": "Champ", "type": "Type",
+           "description": "Description", "required": "obligatoire", "any_name": "tout autre nom", "other_fields": "autres champs",
+           "not_described": "Non décrits ici.", "list_of": "liste de", "object": "objet", "any_name_to": "tout nom",
+           "range": "{lo} à {hi}", "or_null": "ou", "default": "Par défaut : {value}.", "fields_see": "Champs : voir", "a_list_of": "Une liste de :",
+           "request_body": "Corps de la requête", "example": "Exemple", "answer": "Réponse"},
+}
+
+
+def texts(spec):
+    """The texts of the description that are shown on the page, in the order they appear: what a translation covers."""
+    out = []
+    def add(text):
+        if isinstance(text, str) and text.strip() and text not in out:
+            out.append(text)
+    def walk(node, key=None):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k in ("description", "summary") and isinstance(v, str):
+                    add(v)
+                else:
+                    walk(v, k)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, key)
+    for tag in spec.get("tags", []):
+        add(tag["name"])
+    walk(spec)
+    return out
+
+
 class Renderer:
-    def __init__(self, spec):
+    def __init__(self, spec, lang="en", table=None):
         self.spec = spec
         self.schemas = spec["components"]["schemas"]
+        self.l = LABELS[lang]
+        self.table = table or {}
+
+    def tr(self, text):
+        """A text of the description in the page's language (English when it has no translation)."""
+        return self.table.get(text) or text
 
     def deref(self, node):
         while "$ref" in node:
@@ -58,17 +107,17 @@ class Renderer:
         if "enum" in schema:
             text = " | ".join(f"<code>{esc(v)}</code>" for v in schema["enum"])
         elif t == "array":
-            text = "list of " + self.type_of(schema.get("items", {}))
+            text = self.l["list_of"] + " " + self.type_of(schema.get("items", {}))
         elif t == "object":
             extra = schema.get("additionalProperties")
-            text = "object" + (f", any name → {self.type_of(extra)}" if isinstance(extra, dict) else "")
+            text = self.l["object"] + (f", {self.l['any_name_to']} → {self.type_of(extra)}" if isinstance(extra, dict) else "")
         else:
             text = esc(t)
         lo, hi = schema.get("minimum"), schema.get("maximum")
         if lo is not None and hi is not None:
-            text += f", {lo} to {hi}"
+            text += ", " + self.l["range"].format(lo=lo, hi=hi)
         if schema.get("nullable"):
-            text += " or <code>null</code>"
+            text += f" {self.l['or_null']} <code>null</code>"
         return text
 
     def describe(self, schema):
@@ -76,9 +125,9 @@ class Renderer:
         if not text and "$ref" in schema:
             target = self.deref(schema)
             text = target.get("description") if target.get("type") != "object" or "enum" in target else None
-        parts = [inline(text)] if text else []
+        parts = [inline(self.tr(text))] if text else []
         if "default" in schema:
-            parts.append(f"Default: <code>{esc(schema['default'])}</code>.")
+            parts.append(self.l["default"].format(value=f"<code>{esc(schema['default'])}</code>"))
         return " ".join(parts)
 
     def fields(self, schema):
@@ -88,47 +137,48 @@ class Renderer:
         required = set(schema.get("required", []))
         rows = []
         for name, sub in props.items():
-            req = ' <span class="req">required</span>' if name in required else ""
+            req = f' <span class="req">{self.l["required"]}</span>' if name in required else ""
             rows.append(f"  <tr><td><code>{esc(name)}</code>{req}</td><td>{self.type_of(sub)}</td><td>{self.describe(sub)}</td></tr>")
         extra = schema.get("additionalProperties")
         if isinstance(extra, dict):
-            rows.append(f"  <tr><td><i>any other name</i></td><td>{self.type_of(extra)}</td><td>{self.describe(extra)}</td></tr>")
+            rows.append(f"  <tr><td><i>{self.l['any_name']}</i></td><td>{self.type_of(extra)}</td><td>{self.describe(extra)}</td></tr>")
         elif extra is True:
-            rows.append("  <tr><td><i>other fields</i></td><td></td><td>Not described here.</td></tr>")
+            rows.append(f"  <tr><td><i>{self.l['other_fields']}</i></td><td></td><td>{self.l['not_described']}</td></tr>")
         if not rows:
             return ""
-        return ('<div class="table-wrap">\n<table class="fields">\n  <tr><th>Field</th><th>Type</th><th>Description</th></tr>\n'
+        return ('<div class="table-wrap">\n<table class="fields">\n'
+                f'  <tr><th>{self.l["field"]}</th><th>{self.l["type"]}</th><th>{self.l["description"]}</th></tr>\n'
                 + "\n".join(rows) + "\n</table>\n</div>")
 
     def body(self, schema):
         """A schema where it is used: a link for a named object, a table or a type otherwise."""
         if "$ref" in schema:
             name = schema["$ref"].rsplit("/", 1)[1]
-            return f'<p>Fields: see <a href="#schema-{slug(name)}">{esc(name)}</a>.</p>'
+            return f'<p>{self.l["fields_see"]} <a href="#schema-{slug(name)}">{esc(name)}</a>.</p>'
         resolved = self.deref(schema)
         if resolved.get("type") == "object" and resolved.get("properties"):
             return self.fields(resolved)
         if resolved.get("type") == "array" and self.deref(resolved.get("items", {})).get("properties"):
-            return "<p>A list of:</p>\n" + self.fields(resolved["items"])
+            return f"<p>{self.l['a_list_of']}</p>\n" + self.fields(resolved["items"])
         return f"<p>{self.type_of(resolved)}</p>"
 
     def operation(self, path, method, op):
         anchor = slug(f"{method}-{path}")
         out = [f'<div class="endpoint" id="{anchor}">',
                f'<h3><span class="method {method}">{method.upper()}</span> <code>{esc(path)}</code></h3>',
-               f"<p><b>{esc(op.get('summary', ''))}</b></p>"]
-        out += [f"<p>{p}</p>" for p in md(op.get("description", ""))] if op.get("description") else []
+               f"<p><b>{esc(self.tr(op.get('summary', '')))}</b></p>"]
+        out += [f"<p>{p}</p>" for p in md(self.tr(op.get("description", "")))] if op.get("description") else []
         for ctype, content in op.get("requestBody", {}).get("content", {}).items():
-            out.append(f"<h4>Request body <small>{esc(ctype)}</small></h4>")
+            out.append(f"<h4>{self.l['request_body']} <small>{esc(ctype)}</small></h4>")
             out.append(self.body(content["schema"]))
-            examples = [(e.get("summary", "Example"), e["value"]) for e in content.get("examples", {}).values()]
+            examples = [(self.tr(e.get("summary", "")) or self.l["example"], e["value"]) for e in content.get("examples", {}).values()]
             if "example" in content:
-                examples.append(("Example", content["example"]))
+                examples.append((self.l["example"], content["example"]))
             for label, value in examples:
                 out.append(f"<p>{esc(label)}:</p>\n<pre><code>{esc(json.dumps(value))}</code></pre>")
         for code, resp in op.get("responses", {}).items():
             resp = self.deref(resp)
-            out.append(f"<h4>Answer {esc(code)} <small>{inline(resp.get('description', ''))}</small></h4>")
+            out.append(f"<h4>{self.l['answer']} {esc(code)} <small>{inline(self.tr(resp.get('description', '')))}</small></h4>")
             for ctype, content in resp.get("content", {}).items():
                 if ctype == "application/json":
                     out.append(self.body(content["schema"]))
@@ -139,36 +189,36 @@ class Renderer:
 
     def render(self):
         info = self.spec["info"]
-        out = [f"<h1>API reference</h1>",
-               f'<p class="lead">Every endpoint of the bridge, with its fields, types, units and ranges. '
-               f'Generated from the <a href="openapi.yaml">OpenAPI description</a> of firmware {esc(info["version"])}.</p>']
-        out += [f"<p>{p}</p>" for p in md(info.get("description", ""))]
+        out = [f"<h1>{self.l['title']}</h1>",
+               '<p class="lead">' + self.l["lead"].format(link='<a href="openapi.yaml">', version=esc(info["version"])) + "</p>"]
+        out += [f"<p>{p}</p>" for p in md(self.tr(info.get("description", "")))]
         # Summary table
         ops = [(p, m, op) for p, item in self.spec["paths"].items() for m, op in item.items()]
         tags = [t["name"] for t in self.spec.get("tags", [])]
-        out.append('<h2>Endpoints</h2>\n<div class="table-wrap">\n<table>\n  <tr><th>Endpoint</th><th>Purpose</th></tr>')
+        out.append(f'<h2>{self.l["endpoints"]}</h2>\n<div class="table-wrap">\n<table>\n'
+                   f'  <tr><th>{self.l["endpoint"]}</th><th>{self.l["purpose"]}</th></tr>')
         for tag in tags:
             for p, m, op in ops:
                 if tag in op.get("tags", []):
                     out.append(f'  <tr><td><a href="#{slug(m + "-" + p)}"><span class="method {m}">{m.upper()}</span> '
-                               f'<code>{esc(p)}</code></a></td><td>{esc(op.get("summary", ""))}</td></tr>')
+                               f'<code>{esc(p)}</code></a></td><td>{esc(self.tr(op.get("summary", "")))}</td></tr>')
         out.append("</table>\n</div>")
         for tag in tags:
             desc = next((t.get("description") for t in self.spec["tags"] if t["name"] == tag), None)
-            out.append(f'<h2 id="{slug(tag)}">{esc(tag)}</h2>')
+            out.append(f'<h2 id="{slug(tag)}">{esc(self.tr(tag))}</h2>')
             if desc:
-                out.append(f"<p>{inline(desc)}</p>")
+                out.append(f"<p>{inline(self.tr(desc))}</p>")
             out += [self.operation(p, m, op) for p, m, op in ops if tag in op.get("tags", [])]
-        out.append('<h2 id="schemas">Objects</h2>\n<p>The objects exchanged with the bridge, referred to above.</p>')
+        out.append(f'<h2 id="schemas">{self.l["objects"]}</h2>\n<p>{self.l["objects_lead"]}</p>')
         for name, schema in self.schemas.items():
             if schema.get("type") != "object":
                 continue
             out.append(f'<h3 id="schema-{slug(name)}">{esc(name)}</h3>')
             if schema.get("description"):
-                out += [f"<p>{p}</p>" for p in md(schema["description"])]
+                out += [f"<p>{p}</p>" for p in md(self.tr(schema["description"]))]
             out.append(self.fields(schema))
         return "\n".join(out)
 
 
-def render(spec):
-    return Renderer(spec).render()
+def render(spec, lang="en", table=None):
+    return Renderer(spec, lang, table).render()
