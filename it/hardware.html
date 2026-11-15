@@ -106,7 +106,7 @@
   <li><b>Porta USB nativa del chip accessibile via connettore.</b> La stufa dialoga con il bridge tramite protocollo USB nativo: la porta USB della scheda deve essere collegata direttamente all'ESP32-S3 e non a un chip convertitore seriale (CH340, CP2102...).</li>
   <li><b>Almeno 4 MB di memoria flash.</b> Praticamente tutte le schede ESP32-S3 in commercio dispongono di almeno 4 MB di memoria.</li>
 </ul>
-<p>Non necessari: memoria aggiuntiva (PSRAM), display o batteria. Un'antenna esterna è molto utile se la stufa si trova distante dal punto di accesso Wi-Fi.</p>
+<p>Uno schermo o una batteria non sono necessari. Memoria aggiuntiva (PSRAM) non è obbligatoria, ma una PSRAM ottale da 8 o 16 MB viene utilizzata dalla variante PSRAM del firmware e lascia più memoria libera; la PSRAM quad (2 MB) non viene utilizzata. Un'antenna esterna aiuta quando la stufa è lontana dal punto di accesso Wi-Fi.</p>
 
 <div class="note">
   <p><b>Schede con due porte USB:</b> la stufa deve essere obbligatoriamente collegata alla porta con etichetta „USB“ o „USB OTG“ (l'USB nativo del chip). La porta etichettata „UART“ o „COM“ serve unicamente al flash e alla lettura dei log seriali. Questo è l'errore più comune; l'interfaccia web vi avvisa qualora si verifichi.</p>
@@ -150,10 +150,16 @@
     <td>Diffuso clone della DevKitC-1 con due porte USB-C e LED RGB integrato. La stufa va alla porta „USB“. Pienamente compatibile con la custodia magnetica 3D presentata sotto.</td>
   </tr>
   <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM)</td>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM quad)</td>
     <td><span class="badge ok">Segnalata</span></td>
     <td>USB-C</td>
-    <td>Scheda ultra-compatta (formato ESP32-S3-Zero) con solo USB nativo. Funzionamento confermato da un utente.</td>
+    <td>Scheda ultra-compatta (formato ESP32-S3-Zero) con solo USB nativo. La sua PSRAM da 2 MB è quad, quindi utilizza la variante standard del firmware. Funzionamento confermato da un utente.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3 Pocket Dongle</b> (16 MB flash, 8 MB PSRAM ottale, schermo 0,96")</td>
+    <td><span class="badge ok">Testata</span></td>
+    <td>Spina USB-A maschio</td>
+    <td>Una chiavetta con connettore USB-A integrato, 16 MB di flash, 8 MB di PSRAM ottale e schermo a colori ST7735 da 0,96". Testata dal progetto. Utilizza la variante PSRAM del firmware. Il suo schermo mostra le stesse schermate del LilyGO T-Dongle-S3: vedere <a href="screen.html">lo schermo della chiave</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (con schermo)</td>

@@ -9,7 +9,7 @@
   <li><b>The chip's native USB on a connector.</b> The stove talks to the bridge over USB, so the board's USB port must be wired to the ESP32-S3 itself, not to a serial adapter chip (CH340, CP2102...).</li>
   <li><b>At least 4 MB of flash memory.</b> Nearly every ESP32-S3 board has that or more.</li>
 </ul>
-<p>Not needed: extra memory (PSRAM), a screen, a battery. An external antenna helps when the stove is far from your Wi-Fi access point.</p>
+<p>A screen or a battery is not needed. Extra memory (PSRAM) is not mandatory, but 8 or 16 MB octal PSRAM is used by the PSRAM firmware variant and leaves more free memory; quad PSRAM (2 MB) is not used. An external antenna helps when the stove is far from your Wi-Fi access point.</p>
 
 <div class="note">
   <p><b>Boards with two USB ports:</b> the stove must be plugged into the port labelled "USB" or "USB OTG" (the chip's native USB). The port labelled "UART" or "COM" is only for flashing and logs. This is the most common mistake; the bridge's page tells you when it happens.</p>
@@ -53,10 +53,16 @@
     <td>Popular DevKitC-1 clone with two USB-C ports and an RGB LED. The stove goes on the "USB" port. Compatible with the 3D-printed magnetic case below.</td>
   </tr>
   <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM)</td>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB quad PSRAM)</td>
     <td><span class="badge ok">Reported</span></td>
     <td>USB-C</td>
-    <td>Compact development board (ESP32-S3-Zero form factor) sold in packs of two, with native USB only. Reported working by a user.</td>
+    <td>Compact development board (ESP32-S3-Zero form factor) sold in packs of two, with native USB only. Its 2 MB PSRAM is quad, so it uses the standard firmware variant. Reported working by a user.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3 Pocket Dongle</b> (16 MB flash, 8 MB octal PSRAM, 0.96" screen)</td>
+    <td><span class="badge ok">Tested</span></td>
+    <td>USB-A plug</td>
+    <td>A stick with its own USB-A plug, 16 MB flash, 8 MB octal PSRAM and a 0.96" ST7735 colour screen. Tested by the project. Uses the PSRAM firmware variant. Its screen shows the same screens as the LilyGO T-Dongle-S3: see <a href="screen.html">the stick's screen</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (with screen)</td>

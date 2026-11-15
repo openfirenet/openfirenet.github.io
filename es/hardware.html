@@ -106,7 +106,7 @@
   <li><b>USB nativo del chip accesible en conector.</b> La estufa se comunica mediante USB nativo: el conector USB debe estar conectado directamente al ESP32-S3 y no a un chip conversor UART serie (CH340, CP2102...).</li>
   <li><b>Al menos 4 MB de memoria flash.</b> Prácticamente todas las placas ESP32-S3 disponen de 4 MB o más.</li>
 </ul>
-<p>No se requiere: memoria PSRAM adicional, pantalla ni batería. Una antena externa resulta muy conveniente si la estufa está alejada del punto de acceso Wi-Fi.</p>
+<p>No se requiere pantalla ni batería. La memoria adicional (PSRAM) no es obligatoria, pero la variante de firmware PSRAM utiliza 8 o 16 MB de PSRAM octal y deja más memoria libre; la PSRAM quad (2 MB) no se utiliza. Una antena externa resulta muy conveniente si la estufa está alejada del punto de acceso Wi-Fi.</p>
 
 <div class="note">
   <p><b>Placas con dos puertos USB:</b> la estufa debe conectarse obligatoriamente al puerto etiquetado como „USB“ o „USB OTG“ (el USB nativo del chip). El puerto rotulado como „UART“ o „COM“ se reserva para la grabación inicial y la lectura de registros. Es el error más frecuente; la página web del pincho avisa si esto sucede.</p>
@@ -150,10 +150,16 @@
     <td>Clon muy extendido de la DevKitC-1 con dos puertos USB-C y LED RGB. Conectar al puerto „USB“. Compatible con la caja magnética para impresión 3D mostrada abajo.</td>
   </tr>
   <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM)</td>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB de PSRAM quad)</td>
     <td><span class="badge ok">Confirmada</span></td>
     <td>USB-C</td>
-    <td>Placa de desarrollo ultra-compacta (formato ESP32-S3-Zero) en pack doble, únicamente con USB nativo. Funcionamiento confirmado por un usuario.</td>
+    <td>Placa de desarrollo ultra-compacta (formato ESP32-S3-Zero) en pack doble, únicamente con USB nativo. Su PSRAM de 2 MB es quad, por lo que utiliza la variante estándar del firmware. Funcionamiento confirmado por un usuario.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3 Pocket Dongle</b> (16 MB flash, 8 MB de PSRAM octal, pantalla de 0,96")</td>
+    <td><span class="badge ok">Probada</span></td>
+    <td>Conector USB-A macho</td>
+    <td>Un pincho con conector USB-A integrado, 16 MB de flash, 8 MB de PSRAM octal y pantalla a color ST7735 de 0,96". Probada por el proyecto. Utiliza la variante de firmware PSRAM. Su pantalla muestra las mismas pantallas que la LilyGO T-Dongle-S3: consulte <a href="screen.html">la pantalla del pincho</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (con pantalla)</td>

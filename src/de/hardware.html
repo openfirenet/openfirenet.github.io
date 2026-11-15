@@ -1,4 +1,4 @@
-<!-- source: 483595f22865 -->
+<!-- source: 9df7208b4450 -->
 <!-- title: Hardware - Open Firenet -->
 <!-- description: Welche ESP32-S3-Boards als Open-Firenet-Stick für RIKA-Pelletöfen funktionieren: worauf zu achten ist und bisher getestete Boards. -->
 <h1>Hardware</h1>
@@ -10,7 +10,7 @@
   <li><b>Nativer USB-Port des Chips als Buchse herausgeführt.</b> Der Ofen kommuniziert über USB: Der USB-Anschluss des Boards muss direkt mit dem ESP32-S3 verbunden sein, nicht über einen seriellen Wandlerbaustein (CH340, CP2102 usw.).</li>
   <li><b>Mindestens 4 MB Flash-Speicher.</b> Fast alle ESP32-S3-Boards verfügen über mindestens 4 MB.</li>
 </ul>
-<p>Nicht erforderlich: Zusätzlicher PSRAM-Speicher, Display, Akku. Eine externe Antenne ist hilfreich, wenn der Ofen weit vom WLAN-Zugangspunkt entfernt steht.</p>
+<p>Ein Display oder ein Akku sind nicht erforderlich. Zusätzlicher PSRAM-Speicher ist nicht zwingend nötig, aber 8 oder 16 MB oktaler PSRAM wird von der PSRAM-Firmwarevariante genutzt und lässt mehr freien Arbeitsspeicher; Quad-PSRAM (2 MB) wird nicht genutzt. Eine externe Antenne ist hilfreich, wenn der Ofen weit vom WLAN-Zugangspunkt entfernt steht.</p>
 
 <div class="note">
   <p><b>Boards mit zwei USB-Ports:</b> Der Ofen muss an den mit „USB“ oder „USB OTG“ beschrifteten Port angeschlossen werden (nativer USB des Chips). Der mit „UART“ oder „COM“ beschriftete Port dient nur zum Flashen und für Logs. Dies ist der häufigste Fehler; die Seite des Sticks warnt davor.</p>
@@ -54,10 +54,16 @@
     <td>Verbreiteter Klon des DevKitC-1 mit zwei USB-C-Ports und RGB-LED. Der Ofen kommt an den Port „USB“. Kompatibel mit dem unten vorgestellten 3D-Druck-Magnetgehäuse.</td>
   </tr>
   <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB Flash, 2 MB PSRAM)</td>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB Flash, 2 MB Quad-PSRAM)</td>
     <td><span class="badge ok">Gemeldet</span></td>
     <td>USB-C</td>
-    <td>Kompaktes Entwicklerboard (Format ESP32-S3-Zero) im Zweierpack, nur mit nativem USB. Von einem Nutzer als funktionierend gemeldet.</td>
+    <td>Kompaktes Entwicklerboard (Format ESP32-S3-Zero) im Doppelpack, ausschließlich mit nativem USB. Sein 2-MB-PSRAM ist Quad, daher nutzt es die Standard-Firmwarevariante. Von einem Nutzer als funktionierend bestätigt.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3 Pocket Dongle</b> (16 MB Flash, 8 MB oktaler PSRAM, 0,96"-Display)</td>
+    <td><span class="badge ok">Getestet</span></td>
+    <td>USB-A-Stecker</td>
+    <td>Ein Stick mit integriertem USB-A-Stecker, 16 MB Flash, 8 MB oktalem PSRAM und 0,96"-ST7735-Farbdisplay. Vom Projekt getestet. Nutzt die PSRAM-Firmwarevariante. Sein Display zeigt dieselben Anzeigen wie beim LilyGO T-Dongle-S3: siehe <a href="screen.html">das Display des Sticks</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (mit Display)</td>

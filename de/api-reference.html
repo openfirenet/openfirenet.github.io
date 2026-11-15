@@ -98,7 +98,7 @@
 </header>
 <main>
 <h1>API-Referenz</h1>
-<p class="lead">Alle Endpunkte des Sticks, mit Feldern, Typen, Einheiten und Wertebereichen. Erstellt aus der <a href="../openapi.yaml">OpenAPI-Beschreibung</a> der Firmware 4.9.1.</p>
+<p class="lead">Alle Endpunkte des Sticks, mit Feldern, Typen, Einheiten und Wertebereichen. Erstellt aus der <a href="../openapi.yaml">OpenAPI-Beschreibung</a> der Firmware 5.0.0.</p>
 <p>Lokale REST-API der Open-Firenet-Bridge, dem ESP32-S3, der den RIKA Firenet Stick ersetzt. Sie wird in Ihrem Netzwerk unter <code>http://open-firenet.local</code> (oder der IP-Adresse des Sticks) bereitgestellt, ohne API-Schlüssel oder Benutzerkonto.</p>
 <p>Die Einheiten sind natürlich: Temperaturen in °C, Leistung in Prozent, lesbare Betriebsart-Namen.</p>
 <p><b>Feldnamen.</b> Hier werden nur die empfohlenen Namen beschrieben, wie sie von der Home-Assistant-Integration und von MQTT verwendet werden. Aus historischen Gründen akzeptiert der Stick in Steuerbefehlen auch ältere Aliase (z. B. <code>tempRoomTarget</code> für <code>target_temperature</code> oder die Textform <code>onOff=1; heatingPower=70;</code>), und <code>GET /api/controls</code> gibt die Werte auch unter den originalen Ofenbezeichnungen und -einheiten zurück (<code>onOff</code>, <code>tempRoomTarget</code> in Zehntelgrad...). Neuer Code sollte sich nicht darauf stützen.</p>
@@ -306,7 +306,7 @@
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td></td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 bis 30</td><td>Anzeigedauer jeder Seite in Sekunden</td></tr>
   <tr><td><code>brightness</code></td><td>integer, 5 bis 100</td><td></td></tr>
   <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
@@ -451,7 +451,7 @@
 <table class="fields">
   <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
   <tr><td><code>available</code></td><td>boolean</td><td>True, während das Display aktiv ist (entschieden beim Booten anhand von <code>board</code>); die untenstehenden Seiten können dann konfiguriert werden</td></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>Das vom Besitzer angegebene Board mit Display: <code>none</code> (Standard), <code>tdongle</code> (LilyGO T-Dongle-S3 mit aktivem Display) oder <code>tdongle_off</code> (gleiches Board, Display und Hintergrundbeleuchtung aus). Gespeichert; wird beim nächsten Neustart aktiv</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td>Das vom Besitzer angegebene Board mit Display: <code>none</code> (Standard), <code>tdongle</code> (LilyGO T-Dongle-S3 mit aktivem Display), <code>pocket_dongle</code> (ESP32-S3 Pocket Dongle mit aktivem Display) oder deren <code>_off</code>-Variante (Display ausgeschaltet). Gespeichert; wird beim nächsten Neustart aktiv</td></tr>
   <tr><td><code>boards</code></td><td>Liste von string</td><td>Boards, deren Display von dieser Firmware angesteuert werden kann</td></tr>
   <tr><td><code>restart_needed</code></td><td>boolean</td><td>True, wenn sich <code>board</code> von der aktuell laufenden Konfiguration unterscheidet</td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 bis 30</td><td></td></tr>
@@ -557,6 +557,12 @@
   <tr><td><code>wifi_rssi</code></td><td>integer</td><td>WLAN-Signalstärke in dBm</td></tr>
   <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
   <tr><td><code>free_heap</code></td><td>integer</td><td>Freier Arbeitsspeicher in Bytes</td></tr>
+  <tr><td><code>firmware_variant</code></td><td>string</td><td>Firmware-Variante: standard oder psram</td></tr>
+  <tr><td><code>hardware_psram</code></td><td>boolean</td><td>True, wenn das Board über physische PSRAM verfügt, die über die eFuses des Chips erkannt wurde</td></tr>
+  <tr><td><code>hardware_psram_size</code></td><td>integer</td><td>Größe der physischen PSRAM in Bytes, erkannt über die eFuses des Chips (0 wenn keine vorhanden)</td></tr>
+  <tr><td><code>psram_build_supported</code></td><td>boolean</td><td>True, wenn die PSRAM von der PSRAM-Variante der Firmware genutzt werden kann: oktale PSRAM, 8 oder 16 MB. Quad-PSRAM (2 MB) wird nicht unterstützt und das Board behält die Standard-Variante</td></tr>
+  <tr><td><code>psram_size</code></td><td>integer</td><td>Gesamte PSRAM-Größe in Bytes (0 wenn nicht vorhanden oder deaktiviert)</td></tr>
+  <tr><td><code>free_psram</code></td><td>integer</td><td>Freier PSRAM-Speicher in Bytes (0 wenn nicht vorhanden oder deaktiviert)</td></tr>
   <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Größe der Partition in Bytes, in die ein OTA-Update geschrieben wird. Größere Firmware muss per USB installiert werden</td></tr>
   <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Ein Passwort wird für OTA-Updates verlangt. Wird per USB über den Installer eingerichtet oder gelöscht, niemals über das Netzwerk</td></tr>
   <tr><td><code>connected</code></td><td>boolean</td><td>Identisch mit <code>version_ack</code></td></tr>
