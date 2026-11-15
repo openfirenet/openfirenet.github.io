@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="es" data-page="api-reference">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia de la API - Open Firenet</title>
+<meta name="description" content="Todos los endpoints del pincho Open Firenet, con sus campos, tipos, unidades y rangos.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/api-reference.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/api-reference.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/api-reference.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/api-reference.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/api-reference.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/api-reference.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menú</button>
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <a href="../es/get-started.html">Primeros pasos</a>
+      <details class="nav-group">
+        <summary>Estufa y hardware</summary>
+        <div class="nav-menu">
+          <a href="../es/compatibility.html">Compatibilidad de estufas</a>
+          <a href="../es/hardware.html">Hardware</a>
+          <a href="../es/screen.html">Pantalla del pincho</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integraciones</summary>
+        <div class="nav-menu">
+          <a href="../es/home-assistant.html">Home Assistant</a>
+          <a href="../es/mqtt.html">MQTT</a>
+          <a href="../es/api.html" class="active" aria-current="page">API REST</a>
+        </div>
+      </details>
+      <a href="../es/troubleshooting.html">Solución de problemas</a>
+      <a href="../es/contribute.html">Contribuir</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Idioma"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</summary>
+        <div class="nav-menu">
+          <a href="../api-reference.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/api-reference.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/api-reference.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/api-reference.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/api-reference.html" hreflang="es" lang="es" data-lang="es" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Referencia de la API</h1>
+<p class="lead">Todos los endpoints del pincho, con sus campos, tipos, unidades y rangos. Generada a partir de la <a href="../openapi.yaml">descripción OpenAPI</a> del firmware 4.9.1.</p>
+<p>API REST local del pincho Open Firenet, el ESP32-S3 que sustituye al pincho RIKA Firenet. Se sirve en su red en la dirección <code>http://open-firenet.local</code> (o en la dirección IP del pincho), sin clave API ni cuenta.</p>
+<p>Las unidades son naturales: temperaturas en °C, potencia en porcentaje, nombres legibles de modos.</p>
+<p><b>Nombres de campos.</b> Solo se describen aquí los nombres recomendados, los que utilizan la integración de Home Assistant y MQTT. Por razones históricas, el pincho también acepta alias antiguos en los comandos (por ejemplo <code>tempRoomTarget</code> para <code>target_temperature</code>, o la forma de texto <code>onOff=1; heatingPower=70;</code>), y <code>GET /api/controls</code> devuelve también los ajustes bajo los nombres y unidades propios de la estufa (<code>onOff</code>, <code>tempRoomTarget</code> en décimas de grado...). El código nuevo no debe basarse en ellos.</p>
+<p><b>Quién puede llamarla.</b> Los programas de su red (Home Assistant, scripts, <code>curl</code>) y la propia página web del pincho. Una página de otro sitio web abierta en un navegador no puede hacerlo: el pincho no envía autorización de origen cruzado (cross-origin) y responde 403 a una solicitud que indique otra página como origen, o que se dirija a un nombre distinto de su dirección IP, un nombre sin punto, un nombre <code>.local</code> o un dominio añadido en la pestaña Pincho, sección Acceso a la página (<code>/api/access</code>). La respuesta 403 es JSON: <code>refused</code> indica qué comprobación denegó (<code>host</code> u <code>origin</code>) e <code>ip</code> proporciona la dirección que siempre funciona.</p>
+<p><b>Antes de conectar la estufa.</b> Hasta que la estufa responde, <code>version_ack</code> vale <code>false</code>, el modelo y la versión de firmware de la estufa son <code>null</code>, y los demás valores son valores por defecto, no mediciones.</p>
+<h2>Endpoints</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Propósito</th></tr>
+  <tr><td><a href="#get-api-state"><span class="method get">GET</span> <code>/api/state</code></a></td><td>Todo en una sola consulta</td></tr>
+  <tr><td><a href="#get-api-controls"><span class="method get">GET</span> <code>/api/controls</code></a></td><td>Ajustes actuales</td></tr>
+  <tr><td><a href="#post-api-controls"><span class="method post">POST</span> <code>/api/controls</code></a></td><td>Modificar ajustes</td></tr>
+  <tr><td><a href="#get-api-schedule"><span class="method get">GET</span> <code>/api/schedule</code></a></td><td>Horario semanal de calefacción</td></tr>
+  <tr><td><a href="#post-api-schedule"><span class="method post">POST</span> <code>/api/schedule</code></a></td><td>Modificar el horario semanal de calefacción</td></tr>
+  <tr><td><a href="#get-api-mqtt"><span class="method get">GET</span> <code>/api/mqtt</code></a></td><td>Ajustes de MQTT y estado de la conexión</td></tr>
+  <tr><td><a href="#post-api-mqtt"><span class="method post">POST</span> <code>/api/mqtt</code></a></td><td>Modificar los ajustes de MQTT</td></tr>
+  <tr><td><a href="#get-api-version"><span class="method get">GET</span> <code>/api/version</code></a></td><td>Versión de firmware del pincho</td></tr>
+  <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Redes Wi-Fi detectadas por el pincho</td></tr>
+  <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>Configurar la red Wi-Fi y luego reiniciar</td></tr>
+  <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Borrar los ajustes guardados y reiniciar en modo de configuración</td></tr>
+  <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Dominios bajo los cuales el pincho acepta responder</td></tr>
+  <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Configurar los dominios añadidos</td></tr>
+  <tr><td><a href="#get-api-display"><span class="method get">GET</span> <code>/api/display</code></a></td><td>Pantallas de la pantalla integrada del pincho</td></tr>
+  <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Elegir la placa de la pantalla y ordenar sus pantallas</td></tr>
+  <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Indica si el ahorro de energía Wi-Fi está activado</td></tr>
+  <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Activar o desactivar el ahorro de energía Wi-Fi</td></tr>
+  <tr><td><a href="#get-api-log-size"><span class="method get">GET</span> <code>/api/log_size</code></a></td><td>Tamaño del historial de intercambios con la estufa</td></tr>
+  <tr><td><a href="#post-api-log-size"><span class="method post">POST</span> <code>/api/log_size</code></a></td><td>Elegir el tamaño del historial</td></tr>
+  <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Reiniciar el pincho</td></tr>
+  <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>Estado de la actualización de firmware</td></tr>
+  <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Iniciar una comprobación de actualizaciones, la instalación o cambiar los ajustes de comprobación automática</td></tr>
+  <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Intervalo entre tramas enviadas a la estufa</td></tr>
+  <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Modificar el intervalo entre tramas enviadas a la estufa</td></tr>
+  <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Registro de intercambios con la estufa</td></tr>
+</table>
+</div>
+<h2 id="stove">Estufa</h2>
+<p>Leer la estufa y modificar sus ajustes</p>
+<div class="endpoint" id="get-api-state">
+<h3><span class="method get">GET</span> <code>/api/state</code></h3>
+<p><b>Todo en una sola consulta</b></p>
+<p>Pincho, estufa, sensores, ajustes y diagnósticos del enlace. Es lo que consultan periódicamente la página web y Home Assistant.</p>
+<h4>Respuesta 200 <small>Estado actual</small></h4>
+<p>Campos: ver <a href="#schema-state">State</a>.</p>
+</div>
+<div class="endpoint" id="get-api-controls">
+<h3><span class="method get">GET</span> <code>/api/controls</code></h3>
+<p><b>Ajustes actuales</b></p>
+<h4>Respuesta 200 <small>Los ajustes, bajo los nombres recomendados (también se devuelven los nombres y unidades propios de la estufa)</small></h4>
+<p>Campos: ver <a href="#schema-controls">Controls</a>.</p>
+</div>
+<div class="endpoint" id="post-api-controls">
+<h3><span class="method post">POST</span> <code>/api/controls</code></h3>
+<p><b>Modificar ajustes</b></p>
+<p>Envíe únicamente los campos a modificar; los demás conservan su valor. Se ignora mientras la estufa no esté conectada. En estufas con firmware 2.28 solo se aplican <code>on</code>, <code>mode</code>, <code>power_percent</code> y <code>target_temperature</code>.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<p>Campos: ver <a href="#schema-controlscommand">ControlsCommand</a>.</p>
+<p>21 °C en modo confort:</p>
+<pre><code>{"target_temperature": 21, "mode": "comfort"}</code></pre>
+<p>Encender al 80 % de potencia:</p>
+<pre><code>{"on": true, "power_percent": 80}</code></pre>
+<h4>Respuesta 200 <small>Los ajustes básicos enviados a la estufa</small></h4>
+<p>Campos: ver <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Respuesta 503 <small>La estufa no está conectada, o aún no ha enviado sus ajustes (unos segundos tras iniciarse el enlace). No se envió nada; inténtelo de nuevo.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-schedule">
+<h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
+<p><b>Horario semanal de calefacción</b></p>
+<h4>Respuesta 200 <small>Los 14 tramos horarios y la temperatura reducida</small></h4>
+<p>Campos: ver <a href="#schema-schedule">Schedule</a>.</p>
+</div>
+<div class="endpoint" id="post-api-schedule">
+<h3><span class="method post">POST</span> <code>/api/schedule</code></h3>
+<p><b>Modificar el horario semanal de calefacción</b></p>
+<p>Mismo funcionamiento que <code>POST /api/controls</code>; envíe los tramos a modificar bajo sus nombres.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<p>Campos: ver <a href="#schema-schedulecommand">ScheduleCommand</a>.</p>
+<p>Ejemplo:</p>
+<pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
+<h4>Respuesta 200 <small>Los ajustes básicos enviados a la estufa</small></h4>
+<p>Campos: ver <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Respuesta 503 <small>La estufa no está conectada, o aún no ha enviado sus ajustes (unos segundos tras iniciarse el enlace). No se envió nada; inténtelo de nuevo.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="bridge">Pincho</h2>
+<p>Ajustes y mantenimiento del propio pincho</p>
+<div class="endpoint" id="get-api-mqtt">
+<h3><span class="method get">GET</span> <code>/api/mqtt</code></h3>
+<p><b>Ajustes de MQTT y estado de la conexión</b></p>
+<h4>Respuesta 200 <small>Los ajustes (la contraseña nunca se devuelve) y el estado</small></h4>
+<p>Campos: ver <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="post-api-mqtt">
+<h3><span class="method post">POST</span> <code>/api/mqtt</code></h3>
+<p><b>Modificar los ajustes de MQTT</b></p>
+<p>Un campo omitido conserva su valor. El cliente se reinicia con los nuevos ajustes; el estado se actualiza en la siguiente petición GET.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<p>Campos: ver <a href="#schema-mqttcommand">MqttCommand</a>.</p>
+<h4>Respuesta 200 <small>Los ajustes guardados</small></h4>
+<p>Campos: ver <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="get-api-version">
+<h3><span class="method get">GET</span> <code>/api/version</code></h3>
+<p><b>Versión de firmware del pincho</b></p>
+<h4>Respuesta 200 <small>Versión y fecha de compilación</small></h4>
+<p>Campos: ver <a href="#schema-version">Version</a>.</p>
+</div>
+<div class="endpoint" id="get-api-scan">
+<h3><span class="method get">GET</span> <code>/api/scan</code></h3>
+<p><b>Redes Wi-Fi detectadas por el pincho</b></p>
+<p>La primera llamada inicia un escaneo y responde 202; llame de nuevo unos segundos después para obtener la lista.</p>
+<h4>Respuesta 200 <small>Redes encontradas (2,4 GHz), cada nombre una sola vez</small></h4>
+<p>Una lista de :</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obligatorio</span></td><td>string</td><td></td></tr>
+  <tr><td><code>rssi</code> <span class="req">obligatorio</span></td><td>integer</td><td>Intensidad de la señal en dBm</td></tr>
+</table>
+</div>
+<h4>Respuesta 202 <small>Escaneo en curso</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>status</code></td><td><code>scanning</code></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-wifi">
+<h3><span class="method post">POST</span> <code>/api/wifi</code></h3>
+<p><b>Configurar la red Wi-Fi y luego reiniciar</b></p>
+<p>Enviado por el formulario de configuración. Responde con una página HTML de confirmación (compatible con portales cautivos), y luego el pincho se reinicia en esa red.</p>
+<h4>Cuerpo de la petición <small>application/x-www-form-urlencoded</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obligatorio</span></td><td>string</td><td></td></tr>
+  <tr><td><code>pass</code></td><td>string</td><td>Vacío para una red abierta sin contraseña</td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>Guardado; el pincho se reinicia</small></h4>
+<p><code>text/html</code></p>
+<h4>Respuesta 400 <small>Falta el nombre de la red</small></h4>
+<p><code>text/html</code></p>
+</div>
+<div class="endpoint" id="post-api-forget">
+<h3><span class="method post">POST</span> <code>/api/forget</code></h3>
+<p><b>Borrar los ajustes guardados y reiniciar en modo de configuración</b></p>
+<p>Borra la red Wi-Fi, los ajustes de MQTT y el intervalo de tramas. A continuación, el pincho crea la red <code>Open-Firenet-Setup</code>.</p>
+<h4>Respuesta 200 <small>Borrado; el pincho se reinicia</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-access">
+<h3><span class="method get">GET</span> <code>/api/access</code></h3>
+<p><b>Dominios bajo los cuales el pincho acepta responder</b></p>
+<p>Además de su dirección IP y <code>open-firenet.local</code>, consulte „Quién puede llamarla“ más arriba.</p>
+<h4>Respuesta 200 <small>Los dominios añadidos</small></h4>
+<p>Campos: ver <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="post-api-access">
+<h3><span class="method post">POST</span> <code>/api/access</code></h3>
+<p><b>Configurar los dominios añadidos</b></p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>extra_hosts</code></td><td>string</td><td>Un dominio por línea (las comas y espacios también sirven de separación); un texto vacío los elimina todos. Cada entrada debe contener al menos un punto intermedio (<code>example.org</code>, no <code>org</code>), y cubre también sus subdominios. Máximo 8 entradas de 63 caracteres; se descartan las que no cumplan estas reglas.</td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>Los dominios guardados</small></h4>
+<p>Campos: ver <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="get-api-display">
+<h3><span class="method get">GET</span> <code>/api/display</code></h3>
+<p><b>Pantallas de la pantalla integrada del pincho</b></p>
+<p>La pantalla de las placas que disponen de una: qué placa indica el usuario (<code>board</code>, por defecto <code>none</code>) y, mientras funciona, qué pantallas muestra, en qué orden y durante cuántos segundos cada una.</p>
+<h4>Respuesta 200 <small>El ajuste</small></h4>
+<p>Campos: ver <a href="#schema-display">Display</a>.</p>
+</div>
+<div class="endpoint" id="post-api-display">
+<h3><span class="method post">POST</span> <code>/api/display</code></h3>
+<p><b>Elegir la placa de la pantalla y ordenar sus pantallas</b></p>
+<p>Guardado y conservado tras un reinicio. <code>screens</code> y <code>seconds</code> se aplican de inmediato: las pantallas indicadas aparecen primero, en ese orden; las omitidas van a continuación en su orden anterior. <code>board</code> se aplica en el siguiente reinicio. Se puede omitir cualquier campo.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 a 30</td><td>Segundos de duración de cada pantalla</td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 a 100</td><td></td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 a 3600</td><td></td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 a 50</td><td></td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Girar la pantalla 180 grados</td></tr>
+  <tr><td><code>language</code></td><td><code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Idioma de los textos en pantalla</td></tr>
+  <tr><td><code>screens</code></td><td>lista de objeto</td><td></td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>El ajuste tal como se guardó</small></h4>
+<p>Campos: ver <a href="#schema-display">Display</a>.</p>
+<h4>Respuesta 400 <small>Placa desconocida, ID de pantalla desconocido o repetido, o segundos fuera de rango</small></h4>
+</div>
+<div class="endpoint" id="get-api-wifi-power-saving">
+<h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Indica si el ahorro de energía Wi-Fi está activado</b></p>
+<p>Activado por defecto: el pincho se calienta menos y consume menos energía, y una respuesta puede demorarse hasta un cuarto de segundo. Desactivado: responde de inmediato; adecuado para redes donde el pincho pierde la conexión Wi-Fi continuamente.</p>
+<h4>Respuesta 200 <small>El ajuste</small></h4>
+<p>Campos: ver <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="post-api-wifi-power-saving">
+<h3><span class="method post">POST</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Activar o desactivar el ahorro de energía Wi-Fi</b></p>
+<p>Guardado y aplicado de inmediato sin reiniciar.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>El ajuste tal como se guardó</small></h4>
+<p>Campos: ver <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="get-api-log-size">
+<h3><span class="method get">GET</span> <code>/api/log_size</code></h3>
+<p><b>Tamaño del historial de intercambios con la estufa</b></p>
+<p>El pincho conserva los últimos mensajes intercambiados con la estufa (<code>/api/log</code>, archivo de diagnóstico). 16 kB por defecto; 32 kB conserva el doble de historial y consume 16 kB más de memoria.</p>
+<h4>Respuesta 200 <small>El ajuste</small></h4>
+<p>Campos: ver <a href="#schema-logsize">LogSize</a>.</p>
+</div>
+<div class="endpoint" id="post-api-log-size">
+<h3><span class="method post">POST</span> <code>/api/log_size</code></h3>
+<p><b>Elegir el tamaño del historial</b></p>
+<p>Guardado; se aplica en el siguiente reinicio (indicado por <code>restart_needed</code>).</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>kb</code></td><td><code>16</code> | <code>32</code></td><td></td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>El ajuste tal como se guardó</small></h4>
+<p>Campos: ver <a href="#schema-logsize">LogSize</a>.</p>
+<h4>Respuesta 400 <small><code>kb</code> no es ni 16 ni 32</small></h4>
+</div>
+<div class="endpoint" id="post-api-restart">
+<h3><span class="method post">POST</span> <code>/api/restart</code></h3>
+<p><b>Reiniciar el pincho</b></p>
+<p>La estufa sigue funcionando; el enlace vuelve a estar disponible en aproximadamente un minuto.</p>
+<h4>Respuesta 200 <small>El pincho se reinicia</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-update">
+<h3><span class="method get">GET</span> <code>/api/update</code></h3>
+<p><b>Estado de la actualización de firmware</b></p>
+<p>Devuelve el estado de la actualización automática, las versiones instalada y disponible, el progreso y los ajustes.</p>
+<h4>Respuesta 200 <small>Estado de la actualización</small></h4>
+<p>Campos: ver <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+</div>
+<div class="endpoint" id="post-api-update">
+<h3><span class="method post">POST</span> <code>/api/update</code></h3>
+<p><b>Iniciar una comprobación de actualizaciones, la instalación o cambiar los ajustes de comprobación automática</b></p>
+<p>Envíe <code>{"action": "check"}</code> para consultar las versiones en GitHub, <code>{"action": "install"}</code> para descargar y flashear la versión disponible (solo permitido con la estufa estrictamente apagada), o <code>{"auto_check": true, "check_hours": 24}</code> para configurar comprobaciones periódicas.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<p>Campos: ver <a href="#schema-updatecommand">UpdateCommand</a>.</p>
+<h4>Respuesta 200 <small>Ajustes actualizados (cuando se envió auto_check)</small></h4>
+<p>Campos: ver <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+<h4>Respuesta 202 <small>Acción aceptada y ejecutándose en segundo plano</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Respuesta 400 <small>Cuerpo de la solicitud no válido</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h4>Respuesta 409 <small>Ocupado, nada que instalar o la estufa no está apagada</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="diagnostics">Diagnósticos</h2>
+<div class="endpoint" id="get-api-txgap">
+<h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
+<p><b>Intervalo entre tramas enviadas a la estufa</b></p>
+<h4>Respuesta 200 <small>Intervalo actual y sus límites</small></h4>
+<p>Campos: ver <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="post-api-txgap">
+<h3><span class="method post">POST</span> <code>/api/txgap</code></h3>
+<p><b>Modificar el intervalo entre tramas enviadas a la estufa</b></p>
+<p>Ajuste de diagnóstico, conservado tras un reinicio. Si es demasiado bajo, la estufa puede procesar solo una de cada dos tramas.</p>
+<h4>Cuerpo de la petición <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ms</code> <span class="req">obligatorio</span></td><td>integer, 50 a 600</td><td>Intervalo en milisegundos</td></tr>
+</table>
+</div>
+<h4>Respuesta 200 <small>El intervalo actualmente en uso</small></h4>
+<p>Campos: ver <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="get-log">
+<h3><span class="method get">GET</span> <code>/log</code></h3>
+<p><b>Registro de intercambios con la estufa</b></p>
+<p>Texto sin formato, una línea por trama: <code>[tiempo en ms][rx|tx] contenido</code>. Las líneas consecutivas idénticas se agrupan (<code>xN</code>). La contraseña Wi-Fi se oculta. Solo se conserva en memoria RAM (aproximadamente los últimos 32 kB).</p>
+<h4>Respuesta 200 <small>El registro</small></h4>
+<p><code>text/plain</code></p>
+</div>
+<h2 id="schemas">Objetos</h2>
+<p>Los objetos intercambiados con el pincho, referenciados arriba.</p>
+<h3 id="schema-display">Display</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>available</code></td><td>boolean</td><td>True mientras la pantalla está activa (determinado al arrancar por <code>board</code>); a continuación se pueden configurar las siguientes pantallas</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>La placa con pantalla indicada por el usuario: <code>none</code> (por defecto), <code>tdongle</code> (LilyGO T-Dongle-S3, pantalla activa) o <code>tdongle_off</code> (la misma placa, pantalla y retroiluminación apagadas). Guardado; se aplica en el siguiente reinicio</td></tr>
+  <tr><td><code>boards</code></td><td>lista de string</td><td>Placas cuyas pantallas puede controlar este firmware</td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>True cuando <code>board</code> difiere de lo que se está ejecutando actualmente</td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 a 30</td><td></td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 a 100</td><td>Retroiluminación, en porcentaje</td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td>Atenuar la retroiluminación tras un tiempo sin pulsar BOOT o sin alertas</td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 a 3600</td><td>Segundos de inactividad antes de atenuar</td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 a 50</td><td>Retroiluminación durante la atenuación, en porcentaje (0 = apagada)</td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>La pantalla está girada 180 grados</td></tr>
+  <tr><td><code>language</code></td><td><code></code> | <code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Idioma de los textos en pantalla; vacío hasta elegir uno (mientras tanto se muestra en inglés)</td></tr>
+  <tr><td><code>screens</code></td><td>lista de objeto</td><td>Cada pantalla una sola vez, en el orden en que se muestran</td></tr>
+</table>
+</div>
+<h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-logsize">LogSize</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>kb</code></td><td>integer</td><td>La opción guardada, en kB</td></tr>
+  <tr><td><code>running_kb</code></td><td>integer</td><td>El tamaño en uso desde el último reinicio, en kB</td></tr>
+  <tr><td><code>options</code></td><td>lista de integer</td><td></td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>La opción guardada no es la que está en uso</td></tr>
+</table>
+</div>
+<h3 id="schema-access">Access</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>lista de string</td><td>Dominios añadidos por el usuario</td></tr>
+  <tr><td><code>max_extra_hosts</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Nombre al que se dirigió esta solicitud</td></tr>
+</table>
+</div>
+<h3 id="schema-health">Health</h3>
+<p>Estado de salud del propio pincho. Los contadores residen en memoria y se reinician a cero en cada arranque. También se publican vía MQTT bajo <code>&lt;base&gt;/health/&lt;name&gt;</code>, excepto <code>stove_last_frame_seconds</code>.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>stove_lost</code> | <code>software</code> | <code>unknown</code></td><td>Causa del último reinicio: <code>power_on</code> (la estufa alimentó el pincho), <code>brownout</code> (tensión de alimentación baja), <code>crash</code>, <code>watchdog</code> (bloqueo del programa), <code>reset_button</code>, <code>usb</code> (reinicio por USB), <code>user</code> (reinicio solicitado por la web o API), <code>wifi_change</code>, <code>update</code> (actualización inalámbrica), <code>stove_silent</code> (sin datos de la estufa durante 60 segundos), <code>stove_lost</code> (la estufa aceptó el enlace y luego lo rechazó durante 5 minutos), <code>software</code> (otro reinicio solicitado por el firmware)</td></tr>
+  <tr><td><code>min_free_heap</code></td><td>integer</td><td>Memoria libre mínima desde el arranque, en bytes</td></tr>
+  <tr><td><code>elf_sha256</code></td><td>string</td><td>Primeros caracteres del SHA-256 del firmware en ejecución (no publicado por MQTT)</td></tr>
+  <tr><td><code>crash</code></td><td>objeto</td><td>El último informe de cuelgue que el chip guardó en su flash, presente solo tras producirse uno (no publicado por MQTT). Permanece hasta que otro cuelgue lo sustituye, por lo que puede ser anterior al último reinicio: <code>elf_sha256</code> identifica el firmware que falló. Las direcciones pueden convertirse en nombres de función con el archivo ELF de dicha versión.</td></tr>
+  <tr><td><code>chip_temperature</code></td><td>number o <code>null</code></td><td>Temperatura del chip en °C</td></tr>
+  <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Conexiones Wi-Fi perdidas desde el arranque</td></tr>
+  <tr><td><code>stove_last_frame_seconds</code></td><td>integer o <code>null</code></td><td>Segundos transcurridos desde el último byte recibido de la estufa; null si nunca se ha recibido nada</td></tr>
+  <tr><td><code>stove_detections</code></td><td>integer</td><td>Veces que la estufa aceptó el pincho desde el arranque (1 en un enlace estable)</td></tr>
+  <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Veces que la estufa interrumpió un enlace establecido desde el arranque</td></tr>
+  <tr><td><code>stove_rx_dropped_bytes</code></td><td>integer</td><td>Bytes enviados por la estufa que el pincho no tuvo espacio para recibir desde el arranque (0 en un funcionamiento normal)</td></tr>
+  <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Conexiones al bróker perdidas desde el arranque</td></tr>
+</table>
+</div>
+<h3 id="schema-state">State</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>device</code> <span class="req">obligatorio</span></td><td><a href="#schema-device">Device</a></td><td></td></tr>
+  <tr><td><code>stove</code> <span class="req">obligatorio</span></td><td><a href="#schema-stove">Stove</a></td><td></td></tr>
+  <tr><td><code>sensors</code> <span class="req">obligatorio</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
+  <tr><td><code>controls</code> <span class="req">obligatorio</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
+  <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code> mientras el pincho está en modo de configuración</td></tr>
+  <tr><td><code>wifi_power_saving</code></td><td>boolean</td><td>Indica si el ahorro de energía Wi-Fi está activado, consulte <code>/api/wifi_power_saving</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>write_enabled</code></td><td>boolean</td><td>Siempre true</td></tr>
+  <tr><td><code>version_ack</code> <span class="req">obligatorio</span></td><td>boolean</td><td>Indica si la estufa aceptó el pincho (enlace activo)</td></tr>
+  <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Variante de protocolo respondida por la estufa: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>schedule_slots_per_day</code></td><td>integer</td><td>Cuántos tramos horarios de calefacción al día admite la estufa: 2, o 1 en estufas con firmware 2.25</td></tr>
+  <tr><td><code>usb</code> <span class="req">obligatorio</span></td><td>objeto</td><td>Diagnósticos del enlace USB</td></tr>
+  <tr><td><code>mqtt</code></td><td>objeto</td><td></td></tr>
+  <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
+  <tr><td><code>frames_in</code></td><td>integer</td><td>Tramas recibidas de la estufa desde el arranque</td></tr>
+  <tr><td><code>frames_out</code></td><td>integer</td><td>Tramas enviadas a la estufa desde el arranque</td></tr>
+  <tr><td><code>revision</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>raw_sensors</code> <span class="req">obligatorio</span></td><td>objeto, cualquier nombre → integer</td><td>Cada valor comunicado por la estufa, bajo su nombre RIKA, en las unidades de la estufa (temperaturas a menudo en décimas de grado). Vacío hasta conectar la estufa.</td></tr>
+  <tr><td><code>status</code></td><td>objeto, cualquier nombre → string</td><td>Registro de estado intercambiado con la estufa (la contraseña Wi-Fi está oculta)</td></tr>
+  <tr><td><code>sensors_pos</code></td><td>lista de integer</td><td>Los registros de sensores por posición (diagnósticos)</td></tr>
+  <tr><td><code>controls_pos</code></td><td>lista de integer</td><td>Los registros de control por posición (diagnósticos)</td></tr>
+</table>
+</div>
+<h3 id="schema-device">Device</h3>
+<p>El pincho</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td>Versión de firmware del pincho</td></tr>
+  <tr><td><code>app_version</code></td><td>string</td><td>Igual que <code>version</code></td></tr>
+  <tr><td><code>firmware_version</code></td><td>string</td><td>Igual que <code>version</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>mac</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_ssid</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Señal Wi-Fi en dBm</td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>free_heap</code></td><td>integer</td><td>Memoria libre en bytes</td></tr>
+  <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Tamaño en bytes de la partición donde se escribe una actualización inalámbrica. Un firmware mayor debe instalarse por USB</td></tr>
+  <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Se solicita una contraseña para las actualizaciones inalámbricas. Se configura o elimina por USB con el instalador, nunca por la red</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td>Igual que <code>version_ack</code></td></tr>
+</table>
+</div>
+<h3 id="schema-stove">Stove</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>splitlog_check</code> | <code>splitlog_refuel</code> | <code>splitlog_no_refuel</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>is_burning</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>has_error</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error_code</code></td><td>integer</td><td>0 cuando no hay ningún error</td></tr>
+  <tr><td><code>error_sub</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>warning_code</code></td><td>integer</td><td>0 cuando no hay ninguna advertencia</td></tr>
+  <tr><td><code>model</code></td><td>integer o <code>null</code></td><td>Número de modelo RIKA, null hasta que la estufa lo envíe</td></tr>
+  <tr><td><code>model_name</code></td><td>string o <code>null</code></td><td>Por ejemplo <code>DOMO</code>; null hasta que la estufa lo envíe</td></tr>
+  <tr><td><code>brand</code></td><td><code>RIKA</code> | <code>ANIMO</code> o <code>null</code></td><td>Marca configurada en la estufa (sensor <code>fabNumber</code>: 1 = RIKA, 2 = ANIMO); null hasta que la estufa envíe su modelo</td></tr>
+  <tr><td><code>mainboard_version</code></td><td>string o <code>null</code></td><td>Firmware de la estufa, por ejemplo <code>2.29</code>; null hasta que la estufa lo envíe</td></tr>
+  <tr><td><code>firmware_build</code></td><td>string o <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-sensors">Sensors</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>room_temperature</code></td><td>number o <code>null</code></td><td>°C; null cuando no hay conectada ninguna sonda de ambiente RIKA</td></tr>
+  <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer o <code>null</code></td><td>null hasta que la estufa lo envíe (tras un reinicio del pincho)</td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer o <code>null</code></td><td>Horas de funcionamiento con pellets; null hasta que la estufa lo envíe</td></tr>
+  <tr><td><code>log_runtime</code></td><td>integer o <code>null</code></td><td>Tiempo de funcionamiento con leña en una estufa combinada, en minutos (0 en una estufa exclusiva de pellets; null hasta que la estufa lo envíe)</td></tr>
+  <tr><td><code>log_runtime_hours</code></td><td>integer o <code>null</code></td><td>log_runtime en horas completas</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer o <code>null</code></td><td>Pellets restantes antes del próximo mantenimiento; null hasta que la estufa lo envíe</td></tr>
+  <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>power_actual_percent</code></td><td>integer</td><td>Potencia real a la que funciona la estufa. En modo confort la estufa la ajusta por sí misma, independientemente de lo que indique <code>power_percent</code>. 0 cuando no está calentando.</td></tr>
+  <tr><td><code>air_flaps_percent</code></td><td>number o <code>null</code></td><td></td></tr>
+  <tr><td><code>air_flaps_target_percent</code></td><td>number o <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsstate">ControlsState</h3>
+<p>Los ajustes actuales</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potencia fija. <code>auto</code>: sigue el horario semanal. <code>comfort</code>: sigue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td>0 = manual, 1 = auto, 2 = confort</td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td>Horario semanal activado / desactivado</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C fuera de los tramos programados</td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer</td><td>0 = automático, de 1 a 5</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer</td><td>Ajuste de llama en porcentaje, de -30 a +30</td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td>°C (solo DOMO BACK)</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td>Calibración de la sonda de ambiente en °C</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>eco_mode_possible</code></td><td>boolean</td><td>Indica si la estufa permite el modo eco en este momento</td></tr>
+</table>
+</div>
+<h3 id="schema-controls">Controls</h3>
+<p>Los ajustes actuales. También se devuelven los nombres propios de la estufa (<code>onOff</code>, <code>tempRoomTarget</code>...), que no se describen aquí.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potencia fija. <code>auto</code>: sigue el horario semanal. <code>comfort</code>: sigue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td></td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><i>otros campos</i></td><td></td><td>No descritos aquí.</td></tr>
+</table>
+</div>
+<h3 id="schema-controlscommand">ControlsCommand</h3>
+<p>Cualquier subconjunto de estos campos</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potencia fija. <code>auto</code>: sigue el horario semanal. <code>comfort</code>: sigue la temperatura ambiente.</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer, 30 a 100</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number, 14 a 28</td><td>°C, en grados enteros: los medios grados se redondean</td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number, 4 a 10</td><td>°C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number, -4 a 4</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer, 130 a 340</td><td>°C (solo DOMO BACK)</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer, 0 a 5</td><td>0 = automático</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer, -30 a 30</td><td></td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer, 0 a 5</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer, -30 a 30</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsresult">ControlsResult</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potencia fija. <code>auto</code>: sigue el horario semanal. <code>comfort</code>: sigue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-schedule">Schedule</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>active</code></td><td>boolean</td><td>Horario semanal activado / desactivado</td></tr>
+  <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Igual que <code>active</code>, como 0 / 1</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C fuera de los tramos programados</td></tr>
+  <tr><td><code>setBackTemp</code></td><td>integer</td><td>Igual, en décimas de grado</td></tr>
+  <tr><td><code>slots</code></td><td>objeto, cualquier nombre → integer</td><td>Dos tramos al día, <code>heatTime&lt;Día&gt;&lt;1|2&gt;</code> con Día en Mon, Tue, Wed, Thu, Fri, Sat, Sun. En estufas con firmware 2.25 solo se utiliza el primer tramo del día; el segundo es siempre 0.</td></tr>
+  <tr><td><code>slots_per_day</code></td><td>integer</td><td>Cuántos tramos al día admite la estufa: 2, o 1 en estufas con firmware 2.25</td></tr>
+  <tr><td><code>day_ranges</code></td><td>objeto, cualquier nombre → objeto</td><td>Solo en estufas con firmware 2.25: el rango diario de cada día de la semana (Sun, Mon, ... Sat), con <code>start</code> y <code>end</code> en minutos desde la medianoche, tal como los almacena la estufa (los mismos rangos que el primer tramo de cada día en <code>slots</code>).</td></tr>
+</table>
+</div>
+<h3 id="schema-schedulecommand">ScheduleCommand</h3>
+<p><code>heating_times_active</code>, <code>setback_temperature</code> y cualquiera de los 14 tramos <code>heatTime&lt;Día&gt;&lt;1|2&gt;</code></p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><i>cualquier otro nombre</i></td><td>integer</td><td>Un tramo de calefacción como número único: inicio <code>HHMM</code> multiplicado por 10000, más fin <code>HHMM</code>. <code>6000800</code> es de 06:00 a 08:00, <code>17002200</code> es de 17:00 a 22:00, <code>0</code> es un tramo no utilizado.</td></tr>
+</table>
+</div>
+<h3 id="schema-mqtt">Mqtt</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td></td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password_set</code></td><td>boolean</td><td>Indica si hay una contraseña guardada (nunca se devuelve)</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Indica si se publican los mensajes de autodescubrimiento de Home Assistant</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Indica si la conexión con el bróker está cifrada (MQTT sobre TLS)</td></tr>
+  <tr><td><code>ca_set</code></td><td>boolean</td><td>Indica si hay un certificado de autoridad guardado (no se devuelve)</td></tr>
+  <tr><td><code>tls_error</code></td><td>integer</td><td>Último código de error de la capa TLS, 0 si no hay ninguno (diagnósticos)</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>certificate not trusted</code> | <code>secure connection failed</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-mqttcommand">MqttCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Dirección del bróker</td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td>Por defecto: <code>1883</code>.</td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password</code></td><td>string</td><td>Vacío para borrar la guardada</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td>Por defecto: <code>openfirenet</code>.</td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Autodescubrimiento MQTT para Home Assistant: la estufa aparece automáticamente en Home Assistant. Déjelo desactivado si utiliza la integración Open Firenet Por defecto: <code>False</code>.</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Conexión cifrada (MQTT sobre TLS, normalmente puerto 8883). El certificado del bróker debe estar firmado por una autoridad pública o por la indicada en ca_certificate Por defecto: <code>False</code>.</td></tr>
+  <tr><td><code>ca_certificate</code></td><td>string</td><td>Certificado (PEM) de su propia autoridad, para un bróker cuyo certificado no esté firmado por una autoridad pública; en tal caso no se comprueba el nombre en el certificado del bróker. Vacío para borrar el guardado. Rechazado con respuesta 400 si no es un certificado PEM</td></tr>
+</table>
+</div>
+<h3 id="schema-txgap">TxGap</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>ms</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>default</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>min</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>max</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-version">Version</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>app</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
+  <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-updatestatus">UpdateStatus</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>state</code> <span class="req">obligatorio</span></td><td><code>idle</code> | <code>checking</code> | <code>available</code> | <code>downloading</code> | <code>verifying</code> | <code>installing</code> | <code>error</code> | <code>restarting</code></td><td>Estado actual del ciclo de vida de la tarea de actualización</td></tr>
+  <tr><td><code>current</code> <span class="req">obligatorio</span></td><td>string</td><td>Versión actualmente instalada en el pincho (ej. 4.3.1)</td></tr>
+  <tr><td><code>latest</code> <span class="req">obligatorio</span></td><td>string</td><td>Última versión encontrada en las publicaciones de GitHub, si existe</td></tr>
+  <tr><td><code>percent</code> <span class="req">obligatorio</span></td><td>integer</td><td>Porcentaje de progreso (0 a 100) durante la descarga o flasheo</td></tr>
+  <tr><td><code>error</code> <span class="req">obligatorio</span></td><td>string</td><td>Descripción del último error, si el estado es de error</td></tr>
+  <tr><td><code>stove_blocks</code> <span class="req">obligatorio</span></td><td>boolean</td><td>True si el estado de la estufa impide la instalación (debe estar estrictamente apagada)</td></tr>
+  <tr><td><code>auto_check</code> <span class="req">obligatorio</span></td><td>boolean</td><td>Indica si las comprobaciones periódicas en segundo plano están activadas</td></tr>
+  <tr><td><code>check_hours</code> <span class="req">obligatorio</span></td><td>integer</td><td>Intervalo entre comprobaciones en horas (12, 24 o 168)</td></tr>
+  <tr><td><code>last_check</code> <span class="req">obligatorio</span></td><td>integer</td><td>Segundos transcurridos desde la última comprobación que conectó con GitHub (-1 si ninguna)</td></tr>
+</table>
+</div>
+<h3 id="schema-updatecommand">UpdateCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+  <tr><td><code>action</code></td><td><code>check</code> | <code>install</code></td><td>Acción a ejecutar en segundo plano</td></tr>
+  <tr><td><code>auto_check</code></td><td>boolean</td><td>Activar o desactivar comprobaciones periódicas</td></tr>
+  <tr><td><code>check_hours</code></td><td><code>12</code> | <code>24</code> | <code>168</code></td><td>Intervalo de comprobación en horas</td></tr>
+</table>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuir</a> · Preguntas y soporte: <a href="https://github.com/openfirenet/open-firenet/issues">issues del pincho y del firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de la integración de Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!-- source: 1d30c65e3242 -->
+<!-- title: Fehlerbehebung - Open Firenet -->
+<!-- description: Was zu prüfen ist, wenn der Open-Firenet-Stick keine Verbindung zum Ofen aufbaut, nicht erreichbar ist oder ein Update fehlschlägt, und wie ein Problem gemeldet wird. -->
+<h1>Fehlerbehebung</h1>
+<p class="lead">Beginnen Sie auf der Webseite des Sticks unter <code>http://open-firenet.local</code>: Seit Version 3.2 nennt sie den Grund, warum keine Verbindung zum Ofen besteht.</p>
+
+<h2>Der Ofen ist nicht verbunden</h2>
+
+<details open>
+  <summary>Banner: „Der Stick ist nicht über USB mit dem Ofen verbunden“</summary>
+  <p>Der Ofen erkennt den Stick überhaupt nicht. Prüfen Sie in dieser Reihenfolge:</p>
+  <ul>
+    <li><b>Der USB-Port der Platine.</b> Bei Platinen mit zwei USB-Ports muss der Ofen mit dem mit „USB“ oder „USB OTG“ beschrifteten Port verbunden sein, nicht mit „UART“ oder „COM“.</li>
+    <li><b>Das Kabel.</b> Es muss Daten übertragen können. Viele kurze Kabel sind reine Ladekabel.</li>
+    <li><b>Der Ofen.</b> Er muss eingeschaltet sein: Seine USB-Buchse versorgt die Platine mit Strom.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Banner: „Der Ofen antwortet nicht“</summary>
+  <p>Der Ofen erkennt den Stick, hat jedoch keine Daten gesendet. Schalten Sie den Ofen für eine Minute am Hauptschalter aus, schalten Sie ihn wieder ein und warten Sie zwei Minuten. Ändert sich nichts, laden Sie das Protokoll herunter (Reiter Diagnose) und <a href="#report">melden Sie das Problem</a>.</p>
+</details>
+
+<details>
+  <summary>Der Ofen startet beim Einstecken des Sticks neu</summary>
+  <p>Die Platine zieht beim Starten vermutlich zu viel Strom aus der USB-Buchse des Ofens. Dies kommt selten vor; beobachtet wurde es bei einem Stick mit Display. Schalten Sie ein USB-Verlängerungskabel zwischen Ofen und Platine: siehe <a href="hardware.html#power">Hardware</a>.</p>
+</details>
+
+<details>
+  <summary>Das Ofen-Display zeigt „FIRENET UPDATE“ oder den Code UW29 (oder einen anderen UW-Code)</summary>
+  <p>Beides rührt von der Überprüfung des Sticks durch den Ofen her: „FIRENET UPDATE“ bedeutet, dass der Ofen die Firmware des Sticks für veraltet hält und ein Update anbietet; UW29 bedeutet, dass er nicht rechtzeitig eine gültige Identifikation erhalten hat. Bestätigen Sie das Update nicht am Ofen. Aktualisieren Sie stattdessen den Stick: Versionen vor 3.6.1 konnten diese Prüfung bei Öfen mit Firmware 2.28 nicht bestehen. Besteht das Problem mit der neuesten Version weiterhin, <a href="#report">melden Sie es</a> zusammen mit der Protokolldatei.</p>
+</details>
+
+<details>
+  <summary>Die Seite meldet „Warte auf den Ofen“ und die Werte sind ausgegraut</summary>
+  <p>Der Stick hat noch keine Daten vom Ofen empfangen. Direkt nach dem Einschalten ist dies für einige Sekunden normal. Bleibt dieser Zustand bestehen, beachten Sie das Banner darüber.</p>
+</details>
+
+<h2>Die Seite ist nicht erreichbar</h2>
+
+<details>
+  <summary><code>http://open-firenet.local</code> öffnet sich nicht</summary>
+  <ul>
+    <li>Manche Netzwerke und Android-Smartphones lösen <code>.local</code>-Namen nicht auf. Verwenden Sie stattdessen die IP-Adresse: Der Reiter Netzwerkerkennung im Installer zeigt sie an, ebenso Ihr Router.</li>
+    <li>Ihr Gerät muss sich im selben Netzwerk wie der Stick befinden.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Die Seite meldet „Der Stick antwortet nicht unter diesem Namen“</summary>
+  <p>Seit Firmware 4.0 antwortet der Stick ausschließlich unter seiner IP-Adresse und unter <code>open-firenet.local</code>. Öffnen Sie ihn unter einem anderen Namen, beispielsweise dem von Ihrem Router vergebenen Namen (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) oder einer eigenen Domain, zeigt die Seite diese Meldung mit einem Link zu seiner IP-Adresse.</p>
+  <ul>
+    <li>Folgen Sie dem Link, öffnen Sie den Reiter Stick, Netzwerk, Bereich „Zugriff auf die Webseite“, und tragen Sie den verwendeten Namen ein (einer pro Zeile, maximal 8). Der Stick antwortet ab sofort auch unter diesem Namen.</li>
+    <li>Ein Name muss mindestens einen Punkt enthalten. Der Eintrag von <code>example.org</code> deckt auch <code>ofen.example.org</code> ab.</li>
+  </ul>
+  <p>Dies verhindert, dass eine im Browser geöffnete Webseite eines anderen Servers auf Ihrem Netzwerk den Stick auslesen oder steuern kann.</p>
+</details>
+
+<details>
+  <summary>Der Stick ist nicht mehr im Netzwerk erreichbar</summary>
+  <p>Kann der Stick keine Verbindung zu Ihrem WLAN herstellen, wechselt er in den Einrichtungsmodus und erstellt das Netzwerk <code>Open-Firenet-Setup</code>. Verbinden Sie sich damit und geben Sie Ihre WLAN-Zugangsdaten erneut ein. Es werden ausschließlich 2,4-GHz-Netzwerke unterstützt.</p>
+  <p>Seit Firmware 4.0 verbindet sich der Stick selbstständig wieder mit Ihrem Netzwerk: Nach einem Verbindungsabbruch versucht er es fortlaufend erneut, und startet er vor Ihrem Router (etwa nach einem Stromausfall), verlässt er den Einrichtungsmodus, sobald das Netzwerk antwortet. Bei älterer Firmware bleibt er offline, bis er neu gestartet wird: Trennen Sie ihn kurz vom Strom und führen Sie anschließend ein Update durch.</p>
+  <p>Seit Firmware 4.0 verbindet sich der Stick bei gesetztem WLAN-Passwort ausschließlich mit verschlüsselten Netzwerken (WPA oder neuer): Er verbindet sich nicht mehr mit offenen oder durch das veraltete WEP geschützten Netzwerken mit gleichem Namen.</p>
+</details>
+
+<details>
+  <summary>Häufige WLAN-Verbindungsabbrüche oder langsame Antwortzeiten</summary>
+  <p>Seit Firmware 4.0 bietet der Reiter Stick einen Schalter „WLAN-Energiesparmodus“ (unter Netzwerk). Dieser ist standardmäßig aktiviert: Der Stick erwärmt sich weniger und verbraucht weniger Strom, wobei eine Antwort bis zu einer Viertelsekunde verzögert sein kann. Deaktivieren Sie ihn, falls der Stick häufig die WLAN-Verbindung verliert oder schneller antworten soll; die Änderung wird sofort wirksam.</p>
+  <p>Die Karte „Zustand des Sticks“ im Reiter Diagnose zählt die WLAN-Trennungen seit dem letzten Start, woran sich der Effekt der Einstellung ablesen lässt.</p>
+</details>
+
+<h2 id="ota">Updates</h2>
+
+<details>
+  <summary>Windows meldet „Der Computer wurde durch Windows geschützt“ oder macOS verweigert das Öffnen</summary>
+  <p>Der Installer ist nicht mit einem kostenpflichtigen Entwicklerzertifikat signiert, weshalb das Betriebssystem ihn nicht kennt und eine Warnung anzeigt. Dies ist normal und kein Hinweis auf eine schädliche Datei.</p>
+  <ul>
+    <li><b>Windows:</b> Klicken Sie auf dem blauen Bildschirm des Microsoft Defender SmartScreen auf <b>Weitere Informationen</b> und anschließend auf <b>Trotzdem ausführen</b>.</li>
+    <li><b>macOS:</b> Öffnen Sie nach dem Abweisen die <b>Systemeinstellungen</b>, wechseln Sie zu <b>Datenschutz &amp; Sicherheit</b>, scrollen Sie zu „Sicherheit“ und klicken Sie auf <b>Dennoch öffnen</b>.</li>
+  </ul>
+  <p>Laden Sie ihn nur von der <a href="https://github.com/openfirenet/open-firenet-installer/releases">Releases-Seite</a> herunter. Um die Datei zu prüfen, vergleichen Sie ihren SHA-256-Hash mit der dort veröffentlichten Datei <code>SHA256SUMS</code>.</p>
+</details>
+
+<details>
+  <summary>Das drahtlose Update schlägt durch Timeout fehl</summary>
+  <p>Ein drahtloses Update erfordert, dass Computer und Stick sich gegenseitig in beiden Richtungen erreichen können: Der Installer sendet eine Einladung an den Stick (UDP-Port 3232), anschließend verbindet sich der Stick zurück zum Computer, um die Firmware herunterzuladen. In Netzwerken mit getrennten Segmenten (VLANs, Gäste-WLAN) oder bei einer Firewall auf dem Computer wird dies blockiert.</p>
+  <ul>
+    <li>Bringen Sie den Computer in dasselbe Netzwerk wie den Stick, oder</li>
+    <li>erlauben Sie eingehende Verbindungen aus dem lokalen Netzwerk in der Firewall des Computers, oder</li>
+    <li>führen Sie das Update stattdessen über USB durch.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Die Firmware ist zu groß für ein drahtloses Update</summary>
+  <p>Ein Stick, der erstmals aus der Arduino IDE mit dem Standard-Partitionsschema geflasht wurde, verfügt über Update-Partitionen von 1.310.720 Bytes. Firmware 3.5.0 und neuer ist größer: Der Stick verweigert das Update ohne Meldung und beim Installer kommt es zum Timeout. Installer 1.6.0 erkennt diese Ursache und bricht sofort ab, wenn auf dem Stick Firmware 3.6.0 oder neuer läuft.</p>
+  <ul>
+    <li>Flashen Sie den Stick einmalig über USB mit dem Installer im Modus <b>Erstinstallation</b>. Nur dieser Modus schreibt die Partitionstabelle neu; der Standardmodus <b>Update</b> belässt die alte Partitionierung. Sie müssen Ihre WLAN-Daten anschließend erneut eingeben, danach funktionieren drahtlose Updates dauerhaft.</li>
+    <li>Falls Sie aus dem Quellcode in der Arduino IDE kompilieren, wählen Sie Werkzeuge &gt; Partition Scheme &gt; „Minimal SPIFFS (1.9MB APP with OTA)“.</li>
+  </ul>
+  <p>Ein mit dem Installer geflashter Stick ist davon nicht betroffen.</p>
+</details>
+
+<details>
+  <summary>Nach dem Update auf Firmware 4.0 funktioniert etwas nicht mehr</summary>
+  <p>Firmware 4.0 sperrt den Stick für Webseiten anderer Server. Drei Punkte ändern sich dadurch:</p>
+  <ul>
+    <li><b>Home Assistant zeigt den Ofen als nicht verfügbar an oder die Seite bleibt leer:</b> Der Stick wurde unter einem vom Router vergebenen Hostnamen eingerichtet oder aufgerufen. Verwenden Sie seine IP-Adresse oder <code>open-firenet.local</code>, oder fügen Sie den Namen auf der Webseite des Sticks hinzu (siehe oben „Der Stick antwortet nicht unter diesem Namen“). Aktualisieren Sie die Home-Assistant-Integration auf Version 2.6.0 oder neuer: Sie weist im Klartext darauf hin.</li>
+    <li><b>Ein eigenes Dashboard unter einer anderen Adresse liest den Stick nicht mehr im Browser aus:</b> Der Stick blockiert Anfragen von Drittseiten. Rufen Sie ihn stattdessen über ein Programm ab (Skript, Home Assistant, Node-RED) oder nutzen Sie MQTT.</li>
+    <li><b>Ein Skript startete den Stick bisher mit einem GET-Aufruf neu:</b> <code>/api/restart</code> erfordert nun zwingend einen POST-Aufruf.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nach dem Update auf Firmware 4.1 reagiert eine Automation auf den Ofenstatus nicht mehr</summary>
+  <p>Seit Firmware 4.1 wird ein ausgeschalteter Ofen als „Aus“ gemeldet (Status <code>off</code>). „Standby“ (<code>standby</code>) bleibt Öfen vorbehalten, die eingeschaltet sind und auf Wärmeanforderung warten. Frühere Versionen meldeten beide Zustände als „Standby“: Eine Automation oder ein Skript, das auf <code>standby</code> prüft, um festzustellen, ob der Ofen aus ist, muss nun auf <code>off</code> prüfen.</p>
+</details>
+
+<details>
+  <summary>Der Installer fragt nach einem Update-Passwort, oder Sie haben es vergessen</summary>
+  <p>Seit Firmware 4.0 können drahtlose Updates mit einem Passwort geschützt werden. Es wird über den Installer festgelegt oder gelöscht, während der Stick per USB mit Ihrem Computer verbunden ist (Reiter WLAN, „Update-Passwort“), niemals über das Netzwerk. Der Installer fragt bei jedem drahtlosen Update danach und speichert es nicht ab.</p>
+  <p>Falls Sie es vergessen haben: Flashen Sie den Stick einmalig über USB im Modus „Erstinstallation“. Dadurch wird das Passwort gelöscht und Sie geben Ihre WLAN-Zugangsdaten erneut ein.</p>
+</details>
+
+<details>
+  <summary>Die Version hat sich nach einem Update nicht geändert</summary>
+  <p>Überprüfen Sie die Version neben dem Titel auf der Webseite des Sticks. Bei schwachem WLAN-Signal kann ein Update unbemerkt fehlschlagen; aktualisieren Sie in diesem Fall über USB mit dem Installer.</p>
+</details>
+
+<h2>Werte</h2>
+
+<details>
+  <summary>Die Raumtemperatur zeigt „--“</summary>
+  <p>Ihr Ofen verfügt über keinen RIKA-Raumfühler. In Home Assistant können Sie einen anderen Fühler auf dem Thermostat anzeigen lassen: siehe <a href="home-assistant.html">Home Assistant</a>.</p>
+</details>
+
+<details>
+  <summary>Der Luftklappenwert wirkt zehnmal kleiner als auf dem Ofen-Display</summary>
+  <p>Das Display des Ofens zeigt die Luftklappen in Promille (‰) an, der Stick in Prozent: 50 ‰ auf dem Display entsprechen 5 % auf der Webseite.</p>
+</details>
+
+<details>
+  <summary>MultiAir-Einstellung geändert, aber das Ofen-Display zeigt noch den alten Wert</summary>
+  <p>Die Einstellung wird sofort übernommen. Wir haben jedoch bei mehreren Firmware-Versionen festgestellt, dass das Display des Ofens sein MultiAir-Menü nicht aktualisiert, solange es geöffnet bleibt: Verlassen Sie das Menü und öffnen Sie es erneut, um den neuen Wert zu sehen. Andere Einstellungen, etwa die Heizleistung, aktualisieren sich auf dem Display sofort.</p>
+</details>
+
+<h2 id="diagnostics">Der Reiter Diagnose</h2>
+<p>Der Reiter Diagnose auf der Webseite des Sticks (<code>http://open-firenet.local/#diagnostics</code>) bündelt alle Angaben zur Ursachenforschung: den Zustand des Sticks selbst (Grund des letzten Neustarts, Speicher, WLAN, Anzahl der hergestellten und verlorenen Verbindungen zum Ofen), den Verbindungsstatus, das Kommunikationsprotokoll und sämtliche vom Ofen gemeldeten Werte. Über die Schaltfläche „Diagnosedatei herunterladen“ wird alles in einer Datei zusammengefasst, die Sie einem Fehlerbericht anhängen können.</p>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Reiter Diagnose: Zustand des Sticks, Verbindung zum Ofen, Austauschprotokoll" width="760">
+</figure>
+
+<h2>MQTT</h2>
+
+<details>
+  <summary>Der Status meldet „Abgelehnt: Falscher Benutzer oder Passwort“</summary>
+  <p>Der Broker hat den Stick zurückgewiesen. Geben Sie das Passwort im Reiter Stick erneut ein und speichern Sie: Das Feld bleibt aus Sicherheitsgründen leer und zeigt „Unverändert“ an, sobald ein Passwort gespeichert ist.</p>
+</details>
+
+<details>
+  <summary>Der Status meldet „Broker nicht erreichbar“</summary>
+  <p>Prüfen Sie Broker-Adresse und Port (standardmäßig 1883) sowie die Erreichbarkeit des Brokers im lokalen Netzwerk. Der Stick wiederholt den Verbindungsversuch alle 10 Sekunden; die Kommunikation mit dem Ofen bleibt unberührt.</p>
+</details>
+
+<details>
+  <summary>Der Status meldet „Zertifikat nicht vertrauenswürdig“</summary>
+  <p>TLS ist aktiviert und der Stick akzeptiert das Zertifikat des Brokers nicht. Verwendet Ihr Broker ein selbstsigniertes Zertifikat, tragen Sie das Zertifikat der ausstellenden Zertifizierungsstelle in der MQTT-Karte ein: siehe <a href="mqtt.html#tls">MQTT, verschlüsselte Verbindung</a>. Andernfalls werden nur von öffentlichen Zertifizierungsstellen ausgestellte Zertifikate für den eingetragenen Hostnamen akzeptiert.</p>
+</details>
+
+<details>
+  <summary>Der Status meldet „Sichere Verbindung fehlgeschlagen“</summary>
+  <p>Der TLS-Handshake mit dem Broker schlug fehl, noch bevor das Zertifikat geprüft werden konnte. Die häufigste Ursache ist aktiviertes TLS auf dem unverschlüsselten Port des Brokers: TLS liegt typischerweise auf Port 8883, unverschlüsseltes MQTT auf Port 1883.</p>
+</details>
+
+<details>
+  <summary>Der Ofen erscheint doppelt in Home Assistant</summary>
+  <p>Sowohl die Open-Firenet-Integration als auch MQTT Discovery sind aktiv. Behalten Sie nur eine Variante bei: Deaktivieren Sie „Home-Assistant-Erkennung“ im Reiter MQTT des Sticks (wodurch die Entitäten entfernt werden) oder entfernen Sie die Integration.</p>
+</details>
+
+<details>
+  <summary>Ich habe „Home-Assistant-Erkennung“ aktiviert, aber es erscheint nichts</summary>
+  <p>Stellen Sie sicher, dass auch „MQTT aktivieren“ aktiv ist und der Status auf „Verbunden“ steht, und dass die MQTT-Integration in Home Assistant mit demselben Broker verbunden ist.</p>
+</details>
+
+<details>
+  <summary>Ein über MQTT gesendeter Befehl wird ignoriert</summary>
+  <p>Befehle werden ignoriert, solange der Ofen nicht verbunden ist, während der ersten Sekunden nach dem Verbindungsaufbau, in denen der Stick die Einstellungen des Ofens noch nicht kennt, und wenn sie mit gesetztem Retain-Flag gesendet wurden. Siehe <a href="mqtt.html">MQTT</a>.</p>
+</details>
+
+<h2 id="report">Ein Problem melden</h2>
+<p>Eröffnen Sie ein <a href="https://github.com/openfirenet/open-firenet/issues">Issue</a> mit folgenden Angaben:</p>
+<ul>
+  <li>Modell und Firmware-Version des Ofens (im Menü „Info“ des Ofens);</li>
+  <li>Firmware-Version des Sticks (neben dem Titel auf seiner Webseite);</li>
+  <li>die Diagnosedatei: Reiter Diagnose, „Diagnosedatei herunterladen“, erstellt ein bis zwei Minuten nach Einschalten des Ofens oder unmittelbar nach Auftreten des Fehlers;</li>
+  <li>was auf dem Ofen-Display angezeigt wird, einschließlich etwaiger Fehlercodes.</li>
+</ul>
+<p>Die Diagnosedatei enthält den Zustand des Sticks, die Verbindung, alle Messwerte und das Kommunikationsprotokoll. Ihr WLAN-Name und die MAC-Adresse des Sticks werden darin unkenntlich gemacht, das WLAN-Passwort wird niemals aufgenommen.</p>
+<p>Bei Stick-Firmware 3.6.1 oder älter gibt es diese Schaltfläche noch nicht: Senden Sie in diesem Fall die Ausgabe von <code>http://open-firenet.local/api/state</code> und das Protokoll (Reiter Diagnose, „Herunterladen“ im Bereich Protokoll).</p>

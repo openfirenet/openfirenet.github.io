@@ -49,6 +49,30 @@ LABELS = {
            "not_described": "Non décrits ici.", "list_of": "liste de", "object": "objet", "any_name_to": "tout nom",
            "range": "{lo} à {hi}", "or_null": "ou", "default": "Par défaut : {value}.", "fields_see": "Champs : voir", "a_list_of": "Une liste de :",
            "request_body": "Corps de la requête", "example": "Exemple", "answer": "Réponse"},
+    "de": {"title": "API-Referenz", "lead": "Alle Endpunkte des Sticks, mit Feldern, Typen, Einheiten und Wertebereichen. "
+           "Erstellt aus der {link}OpenAPI-Beschreibung</a> der Firmware {version}.", "endpoints": "Endpunkte",
+           "endpoint": "Endpunkt", "purpose": "Zweck", "objects": "Objekte",
+           "objects_lead": "Die mit dem Stick ausgetauschten Objekte, wie oben referenziert.", "field": "Feld", "type": "Typ",
+           "description": "Beschreibung", "required": "erforderlich", "any_name": "jeder andere Name", "other_fields": "weitere Felder",
+           "not_described": "Hier nicht beschrieben.", "list_of": "Liste von", "object": "Objekt", "any_name_to": "jeder Name",
+           "range": "{lo} bis {hi}", "or_null": "oder", "default": "Standard: {value}.", "fields_see": "Felder: siehe", "a_list_of": "Eine Liste von:",
+           "request_body": "Anfrage-Body", "example": "Beispiel", "answer": "Antwort"},
+    "it": {"title": "Riferimento API", "lead": "Tutti gli endpoint del bridge, con relativi campi, tipi, unità e intervalli. "
+           "Generato dalla {link}descrizione OpenAPI</a> del firmware {version}.", "endpoints": "Endpoint",
+           "endpoint": "Endpoint", "purpose": "Scopo", "objects": "Oggetti",
+           "objects_lead": "Gli oggetti scambiati con il bridge, a cui si fa riferimento sopra.", "field": "Campo", "type": "Tipo",
+           "description": "Descrizione", "required": "obbligatorio", "any_name": "qualsiasi altro nome", "other_fields": "altri campi",
+           "not_described": "Non descritti qui.", "list_of": "elenco di", "object": "oggetto", "any_name_to": "qualsiasi nome",
+           "range": "da {lo} a {hi}", "or_null": "o", "default": "Predefinito: {value}.", "fields_see": "Campi: vedi", "a_list_of": "Un elenco di:",
+           "request_body": "Corpo della richiesta", "example": "Esempio", "answer": "Risposta"},
+    "es": {"title": "Referencia de la API", "lead": "Todos los endpoints del pincho, con sus campos, tipos, unidades y rangos. "
+           "Generada a partir de la {link}descripción OpenAPI</a> del firmware {version}.", "endpoints": "Endpoints",
+           "endpoint": "Endpoint", "purpose": "Propósito", "objects": "Objetos",
+           "objects_lead": "Los objetos intercambiados con el pincho, referenciados arriba.", "field": "Campo", "type": "Tipo",
+           "description": "Descripción", "required": "obligatorio", "any_name": "cualquier otro nombre", "other_fields": "otros campos",
+           "not_described": "No descritos aquí.", "list_of": "lista de", "object": "objeto", "any_name_to": "cualquier nombre",
+           "range": "{lo} a {hi}", "or_null": "o", "default": "Por defecto: {value}.", "fields_see": "Campos: ver", "a_list_of": "Una lista de :",
+           "request_body": "Cuerpo de la petición", "example": "Ejemplo", "answer": "Respuesta"},
 }
 
 

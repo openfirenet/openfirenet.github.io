@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="it" data-page="compatibility">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compatibilità stufe - Open Firenet</title>
+<meta name="description" content="Quali stufe a pellet RIKA e quali versioni di firmware funzionano con Open Firenet, e quali parametri possono essere letti e regolati.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/compatibility.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/compatibility.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/compatibility.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/compatibility.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/compatibility.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/compatibility.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group active">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html" class="active" aria-current="page">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../compatibility.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/compatibility.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/compatibility.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/compatibility.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/compatibility.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Compatibilità delle stufe</h1>
+<p class="lead">La compatibilità dipende dalla versione del firmware della scheda madre della stufa e non dal nome commerciale del modello. Ogni generazione software adotta una variante specifica del protocollo; il bridge riconosce e seleziona automaticamente quella corretta.</p>
+
+<h2>Per versione di firmware</h2>
+<p>La versione è riportata nel menu Info sul display della stufa.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware stufa</th><th>Stato</th><th>Lettura</th><th>Comandi</th></tr>
+  <tr>
+    <td><b>2.30</b><br>es. INDUO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente. Il funzionamento a legna è monitorato passo dopo passo (con firmware del bridge 4.1 o successivo). Finora è stata verificata una stufa INDUO con funzionamento sia a pellet che a legna.</td>
+  </tr>
+  <tr>
+    <td><b>2.29</b><br>es. DOMO, DOMO BACK, PRIMO MULTIAIR, SUMO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Supporto completo: accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente, ventilatori MultiAir, forno (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>es. LIVO, INDUO II, SONO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente, ventilatori MultiAir</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>es. INDUO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente</td>
+  </tr>
+  <tr>
+    <td><b>2.25</b><br>es. SUMO</td>
+    <td><span class="badge partial">Parziale</span></td>
+    <td>Stato, temperature, ingressi e regolazioni. Temperatura ambiente in gradi interi</td>
+    <td>Modalità, potenza manuale, temperatura impostata, spegnimento e programmazione oraria con <b>una fascia al giorno</b> (verificati su stufa reale). <b>Non ancora provati su stufa:</b> accensione, temperatura ridotta, antigelo, livello di potenza comfort. Richiede firmware del bridge 4.9 o successivo. Inviateci pure il file di diagnostica se effettuate dei test.</td>
+  </tr>
+  <tr>
+    <td><b>Precedente a 2.25</b></td>
+    <td><span class="badge unknown">Non testato</span></td>
+    <td colspan="2">Nessun riscontro finora pervenuto. Le prove della comunità sono benvenute.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>Il firmware 2.28</b> richiede il firmware del bridge 4.0 o successivo per tutte le funzioni: con versioni precedenti alla 3.6.1 la stufa poteva visualizzare l'avviso „FIRENET UPDATE“ o il codice UW29 invece di collegarsi, e prima della 4.0 il bridge supportava solo accensione/spegnimento, modalità, potenza e temperatura.</p>
+</div>
+
+<h2>Primo avvio</h2>
+<p>Al primo collegamento con una stufa, il bridge prova in sequenza le tre varianti note del protocollo e memorizza quella a cui la stufa risponde. Questo processo richiede circa sei secondi; successivamente il bridge si avvierà direttamente con la variante corretta. Non è necessaria alcuna configurazione manuale.</p>
+
+<h2>Ventilatori MultiAir</h2>
+<p>I comandi per i ventilatori MultiAir compaiono automaticamente nella pagina web quando la stufa si identifica con uno dei seguenti modelli:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modello</th><th>MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>DOMO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>PARO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>SONO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>CONNECT</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+</table>
+</div>
+<p>Su qualunque altro modello, la scheda Stufa mostra il collegamento „La mia stufa ha MultiAir: mostra i controlli“. Utilizzatelo se la stufa ne è provvista e segnalatecelo in modo da aggiungerla alla lista.</p>
+
+<h2>Hardware del bridge</h2>
+<p>Il firmware è testato sull'ESP32-S3. La scheda deve esporre l'USB nativo del chip (USB OTG): la stufa opera come host USB e il bridge si comporta come periferica seriale USB (CDC-ACM).</p>
+<ul>
+  <li>ESP32-S3 con USB nativo: pienamente supportato.</li>
+  <li>ESP32-S2: dispone di USB nativo e potrebbe funzionare; non testato.</li>
+  <li>ESP32 classico, ESP32-C3 e schede con solo convertitore seriale: non possono funzionare.</li>
+</ul>
+
+<h2>Segnalateci la vostra stufa</h2>
+<p>Se la vostra stufa o versione di firmware non compare nell'elenco, o manifesta anomalie, aprite una <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> indicando modello, versione firmware, log della scheda Diagnostica e la risposta restituita da <code>http://open-firenet.local/api/state</code>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

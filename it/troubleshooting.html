@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="it" data-page="troubleshooting">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risoluzione problemi - Open Firenet</title>
+<meta name="description" content="Cosa verificare quando il bridge Open Firenet non si collega alla stufa, non è raggiungibile o un aggiornamento fallisce, e come segnalare un problema.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/troubleshooting.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/troubleshooting.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/troubleshooting.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/troubleshooting.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/troubleshooting.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/troubleshooting.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html" class="active" aria-current="page">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../troubleshooting.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/troubleshooting.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/troubleshooting.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/troubleshooting.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/troubleshooting.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Risoluzione problemi</h1>
+<p class="lead">Iniziate dalla pagina del bridge all'indirizzo <code>http://open-firenet.local</code>: dalla versione 3.2 indica chiaramente il motivo dell'assenza di collegamento con la stufa.</p>
+
+<h2>La stufa non è collegata</h2>
+
+<details open>
+  <summary>Banner: "Il bridge non è collegato alla stufa via USB"</summary>
+  <p>La stufa non rileva affatto il bridge. Verificate nell'ordine:</p>
+  <ul>
+    <li><b>La porta USB della scheda.</b> Sulle schede dotate di due porte USB, la stufa deve essere collegata a quella denominata "USB" o "USB OTG", non a quella "UART" o "COM".</li>
+    <li><b>Il cavo.</b> Deve essere un cavo dati. Molti cavi corti forniscono esclusivamente alimentazione.</li>
+    <li><b>La stufa.</b> Deve essere accesa: è la sua presa USB che alimenta la scheda.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Banner: "La stufa non risponde"</summary>
+  <p>La stufa rileva il bridge ma non ha inviato alcun dato. Spegnete la stufa dall'interruttore generale per un minuto, riaccendetela e attendete due minuti. Se la situazione non cambia, scaricate il registro (scheda Diagnostica) e <a href="#report">segnalate il problema</a>.</p>
+</details>
+
+<details>
+  <summary>La stufa si riavvia quando viene collegato il bridge</summary>
+  <p>La scheda assorbe probabilmente troppa corrente dalla presa USB della stufa all'avvio. È un fenomeno raro; si è verificato con un bridge dotato di display. Inserite una prolunga USB tra la stufa e la scheda: consultate la sezione <a href="hardware.html#power">Hardware</a>.</p>
+</details>
+
+<details>
+  <summary>Lo schermo della stufa mostra "FIRENET UPDATE" o il codice UW29 (o un altro codice UW)</summary>
+  <p>Entrambi i messaggi derivano dalla verifica del bridge da parte della stufa: "FIRENET UPDATE" indica che la stufa ritiene obsoleta la versione del bridge e propone di aggiornarla; UW29 indica che non ha ricevuto un'identificazione valida in tempo utile. Non confermate l'aggiornamento sulla stufa. Aggiornate invece il firmware del bridge: le versioni precedenti alla 3.6.1 potevano non superare questo controllo sulle stufe con firmware 2.28. Se il problema persiste con l'ultima versione, <a href="#report">aprite una segnalazione</a> allegando il registro.</p>
+</details>
+
+<details>
+  <summary>La pagina mostra "In attesa della stufa" e i valori sono disattivati</summary>
+  <p>Il bridge non ha ancora ricevuto dati dalla stufa. Subito dopo l'accensione questo comportamento è normale per qualche secondo. Se persiste, leggete il banner di avviso in alto.</p>
+</details>
+
+<h2>La pagina non è raggiungibile</h2>
+
+<details>
+  <summary><code>http://open-firenet.local</code> non si apre</summary>
+  <ul>
+    <li>Alcune reti e dispositivi Android non risolvono i nomi <code>.local</code>. Utilizzate l'indirizzo IP: la scheda Scansione di rete dell'installer lo mostra, così come il vostro router.</li>
+    <li>Il vostro dispositivo deve trovarsi sulla stessa rete locale del bridge.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>La pagina mostra "Il bridge non risponde sotto questo nome"</summary>
+  <p>A partire dal firmware 4.0 il bridge risponde solo al suo indirizzo IP e a <code>open-firenet.local</code>. Se aprite la pagina con un altro nome, ad esempio quello assegnato dal router (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) o un vostro dominio, compare questo avviso con un collegamento al relativo indirizzo IP.</p>
+  <ul>
+    <li>Seguite il collegamento, aprite la scheda Bridge, Rete, sezione "Accesso alla pagina", e aggiungete il nome desiderato (uno per riga, massimo 8). Il bridge risponderà immediatamente anche a tale indirizzo.</li>
+    <li>Ogni nome deve contenere almeno un punto. L'inserimento di <code>example.org</code> abilita anche <code>stufa.example.org</code>.</li>
+  </ul>
+  <p>Questa misura impedisce a pagine aperte nel browser da altri siti web di leggere o inviare comandi al bridge.</p>
+</details>
+
+<details>
+  <summary>Il bridge non è più raggiungibile sulla rete</summary>
+  <p>Quando non riesce a connettersi al Wi-Fi, il bridge entra in modalità configurazione creando la rete <code>Open-Firenet-Setup</code>. Collegatevi ad essa e reinserite i dati della vostra rete. Sono supportate esclusivamente le reti a 2,4 GHz.</p>
+  <p>Dal firmware 4.0 il bridge si riconnette automaticamente: dopo una disconnessione continua a ritentare, e se si avvia prima del router (ad esempio dopo un'interruzione di corrente), esce dalla modalità di configurazione non appena la rete risponde. Con versioni precedenti rimane offline fino al riavvio: scollegetelo, ricollegatelo e procedete all'aggiornamento.</p>
+  <p>Dal firmware 4.0, se è impostata una password Wi-Fi, il bridge si connette solo a reti protette (WPA o superiore): non si collegherà più a reti aperte o protette dal vecchio WEP che condividano lo stesso SSID.</p>
+</details>
+
+<details>
+  <summary>Disconnessioni Wi-Fi frequenti o risposte lente della pagina</summary>
+  <p>Dal firmware 4.0, nella scheda Bridge è presente l'interruttore "Risparmio energetico Wi-Fi" (sotto Rete). È attivo per impostazione predefinita: il bridge scalda meno e consuma meno energia, con una latenza di risposta fino a un quarto di secondo. Disattivateloper stabilizzare la connessione o se desiderate risposte più rapide; la modifica è immediata.</p>
+  <p>La sezione "Stato del bridge" nella scheda Diagnostica riporta il conteggio delle disconnessioni Wi-Fi dall'ultimo avvio, consentendovi di verificare i benefici della modifica.</p>
+</details>
+
+<h2 id="ota">Aggiornamenti</h2>
+
+<details>
+  <summary>Windows mostra "PC protetto da Windows" o macOS rifiuta l'apertura</summary>
+  <p>L'installer non dispone di un certificato di firma commerciale a pagamento, pertanto il sistema operativo mostra un avviso. Questo comportamento è del tutto normale e non indica alcun pericolo per la sicurezza.</p>
+  <ul>
+    <li><b>Windows:</b> nella schermata blu di Microsoft Defender SmartScreen, fate clic su <b>Ulteriori informazioni</b> e poi su <b>Esegui comunque</b>.</li>
+    <li><b>macOS:</b> dopo l'avviso aprite <b>Impostazioni di Sistema</b>, andate in <b>Privacy e sicurezza</b>, scorrete fino alla sezione Sicurezza e fate clic su <b>Apri comunque</b>.</li>
+  </ul>
+  <p>Scaricate l'installer esclusivamente dalla <a href="https://github.com/openfirenet/open-firenet-installer/releases">pagina dei rilasci</a>. Per verificare l'integrità del file, confrontate il suo hash SHA-256 con il file <code>SHA256SUMS</code> pubblicato insieme alla release.</p>
+</details>
+
+<details>
+  <summary>L'aggiornamento wireless fallisce per timeout</summary>
+  <p>Un aggiornamento wireless richiede che il computer e il bridge possano comunicare reciprocamente in entrambe le direzioni: l'installer invia un invito al bridge (porta UDP 3232), dopodiché il bridge si riconnette al computer per scaricare il firmware. Nelle reti con segmenti separati (VLAN, Wi-Fi ospiti) o in presenza di un firewall sul computer, questa comunicazione viene bloccata.</p>
+  <ul>
+    <li>Collegate il computer alla stessa rete del bridge, oppure</li>
+    <li>autorizzate le connessioni in entrata dalla rete locale nel firewall del computer, oppure</li>
+    <li>eseguite l'aggiornamento via USB.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Il firmware è troppo grande per l'aggiornamento wireless</summary>
+  <p>Un bridge programmato inizialmente da Arduino IDE con lo schema di partizioni predefinito dispone di slot da 1.310.720 byte. I firmware dalla versione 3.5.0 in poi superano tale dimensione: il bridge rifiuta l'aggiornamento e l'installer va in timeout. L'installer 1.6.0 segnala espressamente questa condizione e rifiuta l'operazione con firmware 3.6.0 o successivo.</p>
+  <ul>
+    <li>Riprogrammate il bridge via USB con l'installer selezionando la modalità <b>Prima installazione</b>. È l'unica modalità che riscrive la tabella delle partizioni; la modalità <b>Aggiornamento</b> mantiene lo schema precedente. Sarà necessario reinserire i dati Wi-Fi, dopodiché gli aggiornamenti wireless funzioneranno regolarmente.</li>
+    <li>Se compilate da sorgente in Arduino IDE, selezionate Strumenti &gt; Partition Scheme &gt; "Minimal SPIFFS (1.9MB APP with OTA)".</li>
+  </ul>
+  <p>I bridge installati direttamente tramite l'installer non sono interessati da questo limite.</p>
+</details>
+
+<details>
+  <summary>Dopo l'aggiornamento al firmware 4.0 qualcosa ha smesso di funzionare</summary>
+  <p>Il firmware 4.0 blocca le richieste provenienti da pagine di altri siti web. Si verificano tre cambiamenti principali:</p>
+  <ul>
+    <li><b>Home Assistant mostra la stufa come non disponibile, oppure la pagina non si carica:</b> il bridge è stato configurato o aperto tramite un nome host assegnato dal router. Utilizzate il suo indirizzo IP o <code>open-firenet.local</code>, oppure aggiungete il nome host nella pagina del bridge (vedi sopra "Il bridge non risponde sotto questo nome"). Aggiornate l'integrazione Home Assistant alla versione 2.6.0 o successiva, che fornisce indicazioni chiare in merito.</li>
+    <li><b>Una dashboard personalizzata su un altro host non riesce più a leggere il bridge dal browser:</b> il bridge non consente più richieste cross-origin da altre pagine. Eseguite le chiamate tramite script, Home Assistant, Node-RED o utilizzate MQTT.</li>
+    <li><b>Uno script riavviava il bridge tramite richiesta GET:</b> <code>/api/restart</code> richiede ora obbligatoriamente il metodo POST.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Dopo l'aggiornamento al firmware 4.1 un'automazione sullo stato della stufa non si attiva più</summary>
+  <p>Dal firmware 4.1 una stufa spenta viene segnalata come "Spenta" (stato <code>off</code>). "Standby" (<code>standby</code>) è riservato alle stufe accese in attesa di richiesta termica. Le versioni precedenti riportavano entrambi i casi come "Standby": un'automazione o uno script che controllava <code>standby</code> per rilevare la stufa spenta deve ora verificare lo stato <code>off</code>.</p>
+</details>
+
+<details>
+  <summary>L'installer richiede una password di aggiornamento, o l'ho dimenticata</summary>
+  <p>Dal firmware 4.0 è possibile proteggere gli aggiornamenti wireless con una password. Si imposta o rimuove tramite l'installer collegando il bridge via USB al computer (scheda Wi-Fi, "Password di aggiornamento"), mai via rete. L'installer richiederà la password a ogni aggiornamento senza memorizzarla.</p>
+  <p>In caso di smarrimento: riprogrammate il bridge una volta via USB in modalità "Prima installazione". La password verrà cancellata e potrete reinserire le credenziali Wi-Fi.</p>
+</details>
+
+<details>
+  <summary>La versione non è cambiata dopo un aggiornamento</summary>
+  <p>Verificate la versione riportata accanto al titolo nella pagina web del bridge. Con un segnale Wi-Fi debole l'aggiornamento può fallire silenziosamente; eseguite l'aggiornamento via USB tramite l'installer.</p>
+</details>
+
+<h2>Valori</h2>
+
+<details>
+  <summary>La temperatura ambiente mostra "--"</summary>
+  <p>La vostra stufa non dispone di sonda ambiente RIKA. In Home Assistant è possibile visualizzare un altro sensore sul termostato: consultate la sezione <a href="home-assistant.html">Home Assistant</a>.</p>
+</details>
+
+<details>
+  <summary>Il valore delle serrande dell'aria sembra dieci volte più piccolo rispetto al display della stufa</summary>
+  <p>Il display della stufa mostra l'apertura delle serrande in millesimi (‰), mentre il bridge la indica in percentuale: 50 ‰ sullo schermo corrispondono al 5 % sulla pagina.</p>
+</details>
+
+<details>
+  <summary>Ho modificato un'impostazione MultiAir ma il display della stufa mostra ancora il vecchio valore</summary>
+  <p>L'impostazione viene applicata immediatamente. Tuttavia abbiamo riscontrato su diverse versioni di firmware che il display della stufa non aggiorna il menu MultiAir mentre rimane aperto: uscite dal menu e riapritelo per visualizzare il nuovo valore. Gli altri parametri, come la potenza di riscaldamento, si aggiornano subito a schermo.</p>
+</details>
+
+<h2 id="diagnostics">La scheda Diagnostica</h2>
+<p>La scheda Diagnostica della pagina web del bridge (<code>http://open-firenet.local/#diagnostics</code>) riunisce tutti gli elementi utili per comprendere un'anomalia: lo stato del bridge stesso (causa dell'ultimo riavvio, memoria, Wi-Fi, numero di connessioni stabilite e perse con la stufa), lo stato del collegamento, il registro della comunicazione e tutti i valori comunicati dalla stufa. Il pulsante "Scarica file diagnostico" raccoglie tutti i dati in un file unico da allegare a una segnalazione.</p>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-diagnostics.png" alt="Scheda Diagnostica: stato del bridge, collegamento con la stufa, registro di scambio" width="760">
+</figure>
+
+<h2>MQTT</h2>
+
+<details>
+  <summary>Il badge MQTT mostra "Rifiutato: utente o password errati"</summary>
+  <p>Il broker ha respinto la connessione del bridge. Reinserite la password nella scheda Bridge e salvate: per sicurezza il campo è vuoto e mostra "Invariato" una volta memorizzata una password.</p>
+</details>
+
+<details>
+  <summary>Il badge MQTT mostra "Broker non raggiungibile"</summary>
+  <p>Verificate l'indirizzo del broker e la porta (1883 per impostazione predefinita), oltre all'accessibilità del broker dalla vostra rete. Il bridge ritenta la connessione ogni 10 secondi; il dialogo con la stufa non viene interrotto.</p>
+</details>
+
+<details>
+  <summary>Il badge MQTT mostra "Certificato non attendibile"</summary>
+  <p>TLS è attivo e il bridge rifiuta il certificato del broker. Se il broker utilizza un certificato autofirmato, incollate il certificato della CA emittente nella scheda MQTT: consultate la sezione <a href="mqtt.html#tls">MQTT, connessione cifrata</a>. In caso contrario, sono accettati solo certificati emessi da CA pubbliche corrispondenti all'indirizzo configurato.</p>
+</details>
+
+<details>
+  <summary>Il badge MQTT mostra "Connessione sicura non riuscita"</summary>
+  <p>L'handshake TLS con il broker è fallito prima della verifica del certificato. La causa più frequente è l'abilitazione di TLS sulla porta non cifrata del broker: TLS risiede tipicamente sulla porta 8883, mentre il protocollo non cifrato è sulla porta 1883.</p>
+</details>
+
+<details>
+  <summary>La stufa compare due volte in Home Assistant</summary>
+  <p>L'integrazione Open Firenet e Home Assistant Discovery sono entrambe attive. Mantenetene una sola: deselezionate "Home Assistant Discovery" nella scheda MQTT del bridge (le entità duplicate verranno rimosse) oppure rimuovete l'integrazione.</p>
+</details>
+
+<details>
+  <summary>Ho selezionato "Home Assistant Discovery" ma non compare nulla</summary>
+  <p>Verificate che sia selezionato anche "Abilita MQTT", che lo stato sia su "Connesso" e che l'integrazione MQTT di Home Assistant sia configurata sullo stesso broker.</p>
+</details>
+
+<details>
+  <summary>Un comando inviato via MQTT viene ignorato</summary>
+  <p>I comandi vengono ignorati finché la stufa non è collegata, durante i primi secondi dall'avvio in cui il bridge non ha ancora acquisito i parametri della stufa, e quando vengono pubblicati con il flag retain attivo. Consultate la sezione <a href="mqtt.html">MQTT</a>.</p>
+</details>
+
+<h2 id="report">Segnalare un problema</h2>
+<p>Aprite una <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> indicando:</p>
+<ul>
+  <li>modello e versione del firmware della stufa (menu Info della stufa);</li>
+  <li>versione del firmware del bridge (accanto al titolo nella pagina web);</li>
+  <li>il file di diagnostica: scheda Diagnostica, "Scarica file diagnostico", generato uno o due minuti dopo l'accensione della stufa o subito dopo il manifestarsi dell'anomalia;</li>
+  <li>quanto visualizzato sullo schermo della stufa, inclusi eventuali codici di errore.</li>
+</ul>
+<p>Il file di diagnostica include lo stato del bridge, il collegamento, tutti i parametri e il registro delle comunicazioni. Il nome della rete Wi-Fi e l'indirizzo MAC del bridge vengono mascherati; la password Wi-Fi non viene mai memorizzata né inclusa.</p>
+<p>Con firmware del bridge 3.6.1 o precedenti questa funzione non è presente: inviate l'output di <code>http://open-firenet.local/api/state</code> e il log (scheda Diagnostica, "Scarica" nella sezione registro).</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

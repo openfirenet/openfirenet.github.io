@@ -1,0 +1,50 @@
+<!-- source: 64a7f60d421e -->
+<!-- title: Pantalla del pincho - Open Firenet -->
+<!-- description: La LilyGO T-Dongle-S3 muestra el estado de la estufa, las temperaturas y la dirección IP en su pantalla a color. Cómo activarla y ajustarla. -->
+<h1>La pantalla de la LilyGO T-Dongle-S3</h1>
+<p class="lead">La LilyGO T-Dongle-S3 cuenta con una pantalla a color compacta. A partir de Open Firenet 4.5, permite consultar el estado de la estufa de un vistazo, sin necesidad de abrir la página web.</p>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Secuencia de vistas: logotipo de arranque, estado de la estufa, temperatura ambiente y potencia" width="760">
+  <figcaption>Pantalla del dispositivo, generada directamente por el controlador de pantalla del firmware</figcaption>
+</figure>
+
+<h2>Datos mostrados</h2>
+<p>Tras una animación inicial del logotipo, los valores van alternando secuencialmente: estado de la estufa, temperatura ambiente con su valor de consigna, temperatura de llama, potencia de calefacción (o nivel confort), dirección IP del pincho, pellets restantes hasta el mantenimiento, horas de funcionamiento, señal Wi-Fi, estado de conexión MQTT y versión del firmware. Las pantallas asociadas a valores que la estufa no reporta se omiten de forma automática.</p>
+<p>En caso de anomalía, se visualiza una vista de aviso permanente hasta su resolución: error de estufa, tapa del depósito abierta, falta de comunicación con la estufa o desconexión Wi-Fi.</p>
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-all.png" alt="Todas las pantallas: logotipo, estado, ambiente, llama, potencia, dirección, mantenimiento, horas, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>Todas las pantallas con valores de ejemplo</figcaption>
+</figure>
+
+<h2>Activación</h2>
+<p>La pantalla está <b>desactivada por defecto</b>: en otras placas ESP32-S3 los pines utilizados podrían tener otras funciones asignadas. Actívela únicamente si utiliza un modelo LilyGO T-Dongle-S3 genuino.</p>
+<ol>
+  <li>Abra la página web del pincho, acceda a la pestaña <b>Pincho</b> y seleccione la subpestaña <b>Pantalla</b>.</li>
+  <li>Seleccione <b>LilyGO T-Dongle-S3</b> como placa con pantalla y confirme el mensaje de advertencia.</li>
+  <li>Reinicie el pincho cuando la interfaz lo solicite. La pantalla se encenderá mostrando el logotipo.</li>
+</ol>
+<p>El interruptor <b>Pantalla encendida</b> permite apagar por completo la pantalla y su retroiluminación en cualquier momento, conservando la configuración.</p>
+
+<h2>Ajustes</h2>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-screen.png" alt="Subpestaña Pantalla en la web del pincho: hardware, brillo, temporización y vistas activas" width="760">
+  <figcaption>Pincho &gt; Pantalla</figcaption>
+</figure>
+<ul>
+  <li><b>Vistas mostradas</b>: marque las pantallas que desea conservar y arrástrelas para ordenar su secuencia.</li>
+  <li><b>Duración por pantalla</b>: configurable de 2 a 30 segundos.</li>
+  <li><b>Brillo de retroiluminación</b>: ajustable de 5 a 100 %.</li>
+  <li><b>Idioma de pantalla</b>: español, inglés, francés, alemán o italiano. Al activarse toma el idioma de la página web.</li>
+  <li><b>Girar la pantalla 180°</b>: útil si el pincho queda invertido según la posición del conector USB de la estufa.</li>
+  <li><b>Atenuar tras inactividad</b>: reduce el brillo a un nivel fijado (de 0 a 50 %) tras un tiempo sin pulsaciones (de 30 segundos a 1 hora). A 0 %, la pantalla entra en reposo total.</li>
+  <li><b>Botón BOOT del pincho</b>: despierta la pantalla atenuada y avanza a la siguiente vista cuando está encendida. Una alerta o cambio de estado de la estufa también despiertan la pantalla automáticamente.</li>
+</ul>
+<p>Los cambios se guardan en la memoria permanente del pincho al pulsar <b>Aplicar</b>.</p>
+
+<h2>Notas prácticas</h2>
+<ul>
+  <li>Durante nuestras pruebas, la pantalla generaba un pico de consumo en el arranque que forzaba el reinicio de la estufa al conectar el pincho directamente. <a href="hardware.html#power">Un cable alargador USB</a> solucionó la incidencia.</li>
+  <li>Open Firenet no admite pantallas conectadas a otras placas ESP32.</li>
+</ul>
+<p>Para dudas o incidencias con la pantalla: abra una <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">issue</a>.</p>

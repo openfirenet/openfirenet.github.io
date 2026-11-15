@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="de" data-page="hardware">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hardware - Open Firenet</title>
+<meta name="description" content="Welche ESP32-S3-Boards als Open-Firenet-Stick für RIKA-Pelletöfen funktionieren: worauf zu achten ist und bisher getestete Boards.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/hardware.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/hardware.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/hardware.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/hardware.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/hardware.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/hardware.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group active">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html" class="active" aria-current="page">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../hardware.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/hardware.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/hardware.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/hardware.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/hardware.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Hardware</h1>
+<p class="lead">Der Stick ist ein ESP32-S3-Board, das an die USB-Buchse des Ofens angeschlossen wird. Viele Boards sind geeignet; diese Seite erklärt die Voraussetzungen und listet funktionierende Modelle auf.</p>
+
+<h2>Voraussetzungen für das Board</h2>
+<ul>
+  <li><b>Ein ESP32-S3-Chip.</b> Kein alter ESP32, ESP32-C3 oder ESP32-S2: Die Firmware ist ausschließlich für den S3 ausgelegt.</li>
+  <li><b>Nativer USB-Port des Chips als Buchse herausgeführt.</b> Der Ofen kommuniziert über USB: Der USB-Anschluss des Boards muss direkt mit dem ESP32-S3 verbunden sein, nicht über einen seriellen Wandlerbaustein (CH340, CP2102 usw.).</li>
+  <li><b>Mindestens 4 MB Flash-Speicher.</b> Fast alle ESP32-S3-Boards verfügen über mindestens 4 MB.</li>
+</ul>
+<p>Nicht erforderlich: Zusätzlicher PSRAM-Speicher, Display, Akku. Eine externe Antenne ist hilfreich, wenn der Ofen weit vom WLAN-Zugangspunkt entfernt steht.</p>
+
+<div class="note">
+  <p><b>Boards mit zwei USB-Ports:</b> Der Ofen muss an den mit „USB“ oder „USB OTG“ beschrifteten Port angeschlossen werden (nativer USB des Chips). Der mit „UART“ oder „COM“ beschriftete Port dient nur zum Flashen und für Logs. Dies ist der häufigste Fehler; die Seite des Sticks warnt davor.</p>
+</div>
+
+<h2>Das Kabel</h2>
+<p>Der Ofen besitzt eine USB-A-Buchse, an der regulär der RIKA Firenet Stick angeschlossen wird. Verwenden Sie ein Kabel oder einen Adapter vom Anschluss Ihres Boards auf USB-A-Stecker, und stellen Sie sicher, dass es Daten überträgt: Viele kurze Kabel sind reine Ladekabel.</p>
+
+<h2>Boards</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Board</th><th>Status</th><th>Anschluss</th><th>Hinweise</th></tr>
+  <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, Modul N16R8</td>
+    <td><span class="badge ok">Getestet</span></td>
+    <td>2 × USB-C</td>
+    <td>Das gängige Entwicklerboard mit zwei USB-C-Ports und 44 Pins, unter vielen Markennamen erhältlich. Als Referenzboard für Open Firenet verwendet. Den Ofen an den Port „USB“ anschließen, nicht an „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3-DevKitC-1 N16R8 Kit mit Gehäuse</b> und externem Antennenanschluss</td>
+    <td><span class="badge ok">Gemeldet</span></td>
+    <td>2 × USB-C</td>
+    <td>Dasselbe Board im Set mit verschraubtem grauem Gehäuse und Anschluss für externe Antenne (z. B. von Heemol). Kein Löten nötig; die Antenne hilft bei schwachem Empfang. Ein Nutzer verwendet dieses Kit erfolgreich am Ofen. Gleiche Regel: Ofen an den Port „USB“.</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (Modell FNK0099, 16 MB Flash, 8 MB PSRAM)</td>
+    <td><span class="badge ok">Gemeldet</span></td>
+    <td>2 USB-Ports</td>
+    <td>Im Zweierpack erhältliches Entwicklerboard. Von einem Nutzer als funktionierend bestätigt. Besitzt zwei USB-Ports: Der Ofen kommt an den nativen Port („USB“ bzw. „USB-OTG“), nicht an „UART“.</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB Flash, 8 MB PSRAM)</td>
+    <td><span class="badge partial">Erwartet</span></td>
+    <td>2 × USB-C</td>
+    <td>Im Doppelpack erhältliches Entwicklerboard. Ein Nutzer hat Open Firenet über den Installer aufgespielt und greift auf die Seite zu. Noch nicht direkt am Ofen bestätigt. Gleiche Regel: Ofen an „USB“, nicht an „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB Flash, 8 MB PSRAM)</td>
+    <td><span class="badge ok">Gemeldet</span></td>
+    <td>2 × USB-C</td>
+    <td>Verbreiteter Klon des DevKitC-1 mit zwei USB-C-Ports und RGB-LED. Der Ofen kommt an den Port „USB“. Kompatibel mit dem unten vorgestellten 3D-Druck-Magnetgehäuse.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB Flash, 2 MB PSRAM)</td>
+    <td><span class="badge ok">Gemeldet</span></td>
+    <td>USB-C</td>
+    <td>Kompaktes Entwicklerboard (Format ESP32-S3-Zero) im Zweierpack, nur mit nativem USB. Von einem Nutzer als funktionierend gemeldet.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (mit Display)</td>
+    <td><span class="badge ok">Getestet</span></td>
+    <td>USB-A-Stecker</td>
+    <td>Stick mit integriertem USB-A-Stecker. <b>Kann ein USB-Verlängerungskabel erfordern</b> zwischen Ofen und Stick, siehe unten. Das Display zeigt Ofenstatus und Temperaturen seit Open Firenet 4.5: siehe <a href="screen.html">Display des Sticks</a>. Zum Flashen direkt an den PC anschließen.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (ohne Display)</td>
+    <td><span class="badge partial">Erwartet</span></td>
+    <td>USB-A-Stecker</td>
+    <td>Gleiches Board wie die Display-Version; am Ofen noch nicht getestet.</td>
+  </tr>
+  <tr>
+    <td><b>M5Stamp S3</b></td>
+    <td><span class="badge partial">Erwartet</span></td>
+    <td>USB-C</td>
+    <td>Nur nativer USB. Noch keine Rückmeldung von einem Ofen.</td>
+  </tr>
+  <tr>
+    <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td><span class="badge partial">Erwartet</span></td>
+    <td>USB-C</td>
+    <td>Nur nativer USB. Noch keine Rückmeldung von einem Ofen.</td>
+  </tr>
+</table>
+</div>
+<p><span class="badge ok">Getestet</span> durch das Projekt an einem echten Ofen. <span class="badge ok">Gemeldet</span> als funktionierend durch einen Nutzer. <span class="badge partial">Erwartet</span>: Sollte anhand der technischen Daten funktionieren, bisher ohne bestätigte Rückmeldung.</p>
+
+<div class="note">
+  <p><b>LilyGO T-Dongle-S3 mit Display: USB-Verlängerungskabel bereithalten.</b> Bei unseren Tests zog der Stick beim direkten Einstecken am Ofen durch das Display zu viel Einschaltstrom, woraufhin der Ofen neu startete. Mit einem kurzen USB-Verlängerungskabel dazwischen funktionierte es problemlos, da das Kabel den Stromstoß dämpft. Dies tritt nicht zwangsläufig bei jedem Stick und Ofen auf.</p>
+</div>
+
+<h3 id="power">Wenn der Ofen beim Einstecken des Sticks neu startet</h3>
+<p>Der USB-Anschluss des Ofens liefert nur einen begrenzten Strom. Ein Board mit hohem Einschaltstrom (Display, LEDs, Zusatzmodule) kann einen Neustart des Ofens auslösen. Bei den meisten Boards passiert dies nicht. Tritt es dennoch auf, schließen Sie ein USB-Verlängerungskabel zwischen Ofen und Board an.</p>
+
+<h3>Boards nur mit nativem USB</h3>
+<p>Sticks und Miniboards wie der T-Dongle-S3, das M5Stamp S3 oder das XIAO besitzen nur einen einzigen USB-Port (den nativen). Er dient sowohl zum Flashen am PC als auch zur Kommunikation mit dem Ofen. Falls der Installer das Board nicht findet, halten Sie beim Einstecken die BOOT-Taste gedrückt.</p>
+
+<h2>Gehäuse und 3D-Druck</h2>
+<p>Sie können das Board offen betreiben, ein Gehäuse schützt jedoch vor Staub und sorgt für eine saubere Installation hinter dem Ofen.</p>
+<img class="shot" src="../assets/img/magnetic-case.webp" alt="Das magnetische Gehäuse, in Schwarz mit Open-Firenet-Logo gedruckt, neben vier Neodym-Magneten" width="600">
+<p><small>Das magnetische Gehäuse. Foto: tatutsa888.</small></p>
+<ul>
+  <li>
+    <b><a href="https://www.printables.com/model/1892285-open-firenet-esp32-s3-magnetic-case-for-pellet-sto" target="_blank" rel="noopener">Magnetgehäuse von tatutsa888</a></b> (Printables, kostenloses 3D-Modell):
+    Speziell für Open Firenet auf einem YD-ESP32-S3 oder DevKitC-1 entwickelt. Rastet schraubenlos ein, haftet dank Neodym-Magneten direkt am Blech des Ofens und verdeckt Buchse sowie Kabel. Empfohlen wird der Druck in PETG oder ABS wegen der Wärmeentwicklung am Ofen.
+  </li>
+  <li>
+    <b>Heemol-Kit mit Gehäuse:</b> Wenn Sie keinen 3D-Drucker haben: Manche ESP32-S3 DevKitC-1 Boards werden fertig mit verschraubtem Gehäuse und externer WLAN-Antenne angeboten (siehe Tabelle oben).
+  </li>
+</ul>
+
+<h2>Ihr Board funktioniert? Geben Sie uns Feedback</h2>
+<p>Diese Liste lebt von Erfahrungsberichten. Ob Ihr Board einwandfrei funktioniert oder nicht: Erstellen Sie einen <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">Bericht „It works on my stove“</a> mit dem genauen Boardnamen und Ihrem Ofenmodell. Das hilft anderen Nutzern bei der Auswahl.</p>
+
+<h2>Nächste Schritte</h2>
+<div class="grid">
+  <div class="card"><h3>Erste Schritte</h3><p>Board flashen und am Ofen anschließen.</p><p class="more"><a href="get-started.html">Schritt für Schritt</a></p></div>
+  <div class="card"><h3>Kompatibilität</h3><p>Welche Öfen und Firmware-Versionen unterstützt werden.</p><p class="more"><a href="compatibility.html">Ofen-Kompatibilität</a></p></div>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="de" data-page="home-assistant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home-Assistant-Integration - Open Firenet</title>
+<meta name="description" content="Installation der Open-Firenet-Integration in Home Assistant über HACS und Steuerung eines RIKA-Pelletöfens als Thermostat mit allen Sensoren.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/home-assistant.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/home-assistant.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/home-assistant.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/home-assistant.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/home-assistant.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/home-assistant.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html" class="active" aria-current="page">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../home-assistant.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/home-assistant.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/home-assistant.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/home-assistant.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/home-assistant.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Home Assistant</h1>
+<p class="lead">Die Integration bindet Ihren Ofen als vollwertigen Thermostat in Home Assistant ein, inklusive Gebläsen, Schaltern, Sensoren und Diagnosedaten. Sie kommuniziert direkt im lokalen Netzwerk mit dem Stick: Ohne Cloud.</p>
+<p>Nutzen Sie ein anderes System (Jeedom, openHAB, Node-RED, Domoticz...)? Siehe <a href="mqtt.html">MQTT</a>. Falls Sie keine Integration installieren möchten, kann der Stick den Ofen auch über <a href="mqtt.html#discovery">MQTT Discovery</a> in Home Assistant bereitstellen (mit reduziertem Funktionsumfang).</p>
+
+<h2>Voraussetzungen</h2>
+<ul>
+  <li>Ein mit Open Firenet geflashter Stick, der am Ofen angeschlossen und im Netzwerk erreichbar ist (siehe <a href="get-started.html">Erste Schritte</a>).</li>
+  <li>Home Assistant 2024.1 oder neuer.</li>
+  <li>HACS (empfohlen für einfache Installation und Updates).</li>
+</ul>
+
+<h2>Installation über HACS</h2>
+<ol class="steps">
+  <li><p>Suchen Sie in HACS nach <b>Open Firenet</b> und klicken Sie auf <b>Herunterladen</b>.</p></li>
+  <li><p>Starten Sie Home Assistant neu.</p></li>
+</ol>
+<p>Open Firenet ist im HACS-Standardkatalog enthalten. Sollte die Suche erfolglos sein, fügen Sie das Repository manuell hinzu: Öffnen Sie in HACS oben rechts das Menü, wählen Sie <b>Benutzerdefinierte Repositories</b>, tragen Sie <code>https://github.com/openfirenet/open-firenet-ha</code> mit der Kategorie <b>Integration</b> ein und suchen Sie erneut.</p>
+<p>Ohne HACS: Kopieren Sie den Ordner <code>custom_components/open_firenet/</code> aus dem <a href="https://github.com/openfirenet/open-firenet-ha">Repository</a> in das Verzeichnis <code>config/custom_components/</code> Ihrer Home-Assistant-Installation und starten Sie neu.</p>
+
+<h2>Ofen hinzufügen</h2>
+<ol class="steps">
+  <li><p>Gehen Sie zu <b>Einstellungen &gt; Geräte &amp; Dienste &gt; Integration hinzufügen</b>.</p></li>
+  <li><p>Suchen Sie nach <b>Open Firenet</b>.</p></li>
+  <li><p>Geben Sie die Adresse des Sticks ein (<code>open-firenet.local</code> oder dessen IP-Adresse) sowie das Abfrageintervall (Standard: 30 Sekunden). Ein benutzerdefinierter Router-Hostname funktioniert erst, nachdem er auf der Stick-Webseite freigegeben wurde (Reiter Stick &gt; Abschnitt „Seitenzugriff“).</p></li>
+</ol>
+
+<h2>Verfügbare Entitäten</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Typ</th><th>Entitäten</th></tr>
+  <tr><td>Thermostat</td><td>Ein/Aus, Solltemperatur (14 bis 28 °C), Betriebsart (Manuell, Auto, Komfort), Heizleistung (30 bis 100 %)</td></tr>
+  <tr><td>Gebläse</td><td>MultiAir 1 und 2: Ein/Aus, Auto oder Geschwindigkeitsstufen 1 bis 5, Konvektionskorrektur. Standardmäßig aktiv für <a href="compatibility.html">Modelle mit Serienausstattung</a>; bei nachgerüsteten Öfen aktivieren Sie „Mein Ofen hat MultiAir“ im Dialog <b>Konfigurieren</b> der Integration (seit Version 2.8)</td></tr>
+  <tr><td>Schalter</td><td>Wöchentlicher Heizplan, Frostschutz, Eco-Modus (bei unterstützten Öfen)</td></tr>
+  <tr><td>Heizplan</td><td>Schaltfläche zum Übertragen des Home-Assistant-Zeitplans an den Ofen; Start- und Endzeit für jedes Zeitfenster (standardmäßig deaktiviert; 14 statt 28 Entitäten bei Firmware 2.25)</td></tr>
+  <tr><td>Zahlenwerte</td><td>Absenktemperatur, Frostschutz-Temperatur, Raumfühler-Kalibrierung, Backfach-Temperatur (DOMO BACK)</td></tr>
+  <tr><td>Sensoren</td><td>Raumtemperatur, Flammentemperatur, Mainboard-Temperatur, Pelletverbrauch, Betriebsstunden, Wartungs-Countdown, Ist-Heizleistung, Gebläse- und Schneckendrehzahl, Ofenstatus, WLAN-Signalstärke, Luftklappenposition</td></tr>
+  <tr><td>Diagnose</td><td>Verbindung zum Ofen, Verbrennung aktiv, Ofenstörung, Behälterdeckel offen, Eco-Modus verfügbar, Fehler- und Warncodes</td></tr>
+</table>
+</div>
+
+<h2 id="card">Dashboard-Karte (Lovelace)</h2>
+<p><a href="https://github.com/homeassistant-fr-ecosystem/open-firenet-card">Open Firenet Card</a> ist eine Lovelace-Karte von Sylvain Guernion (<a href="https://github.com/sguernion">@sguernion</a>). Sie fasst Ofenstatus, Temperaturen und Verbrauch in einer Karte zusammen und erlaubt die direkte Steuerung. Zur Installation fügen Sie das Repository in HACS als benutzerdefiniertes Repository mit der Kategorie <b>Dashboard</b> hinzu.</p>
+
+<h2 id="schedule">Wöchentlicher Heizplan</h2>
+<p>Der Ofen speichert seinen eigenen Wochenplan: Bis zu zwei Zeitfenster pro Tag (eines bei Firmware 2.25), in denen geheizt wird. Seit Version 2.6 der Integration können Sie diesen Plan bequem über die Home-Assistant-Zeitplan-Entität (Schedule) erstellen und an den Ofen übertragen. Der Plan läuft danach autark im Ofen weiter – auch wenn Home Assistant oder das WLAN ausfällt.</p>
+
+<h3>1. Woche einrichten</h3>
+<ol>
+  <li>Öffnen Sie in Home Assistant <b>Einstellungen &gt; Geräte &amp; Dienste &gt; Helfer</b> und klicken Sie auf <b>Helfer erstellen</b>.</li>
+  <li>Wählen Sie <b>Zeitplan</b> und vergeben Sie einen Namen (z. B. „Ofen“).</li>
+  <li>Ziehen Sie auf der Wochenübersicht mit der Maus Zeitfenster auf. Ein Klick auf ein Zeitfenster erlaubt das exakte Einstellen oder Löschen.</li>
+  <li>Erstellen Sie maximal <b>zwei Zeitfenster pro Tag</b> (Hardwaregrenze des Ofens). Leere Tage bedeuten, dass an diesen Tagen nicht nach Plan geheizt wird.</li>
+</ol>
+
+<h3>2. Zeitplan in der Integration zuweisen</h3>
+<ol>
+  <li>Öffnen Sie <b>Einstellungen &gt; Geräte &amp; Dienste &gt; Open Firenet</b> und klicken Sie auf <b>Konfigurieren</b>.</li>
+  <li>Wählen Sie unter „Zu übertragender Zeitplan“ den erstellten Zeitplan aus und bestätigen Sie.</li>
+</ol>
+<p>Dieser Schritt ist nur einmal erforderlich.</p>
+
+<h3>3. An den Ofen übertragen</h3>
+<ol>
+  <li>Öffnen Sie die Geräteseite des Ofens (<b>Einstellungen &gt; Geräte &amp; Dienste &gt; Open Firenet</b> &gt; Ofen).</li>
+  <li>Klicken Sie im Bereich „Konfiguration“ auf <b>Zeitplan an den Ofen übertragen</b>.</li>
+</ol>
+<p>Der gesamte Wochenplan wird auf einmal übertragen und überschreibt den bisherigen Plan des Ofens vollständig. Sie können das Ergebnis auf der Webseite des Sticks (Reiter Ofen &gt; „Heizzeiten“) kontrollieren.</p>
+
+<h3>4. Heizplan aktivieren</h3>
+<p>Die Übertragung befüllt den Speicher des Ofens; der Schalter <b>Heizplan</b> bestimmt, ob der Ofen diesem Plan folgt. Aktivieren Sie ihn auf der Geräteseite oder per Automation.</p>
+
+<div class="note">
+  <p><b>Nach jeder Änderung im Zeitplan erneut übertragen:</b> Änderungen in Home Assistant werden nicht automatisch übertragen. Der Ofen behält stets den zuletzt empfangenen Plan bei.</p>
+</div>
+
+<h3>Wichtige Hinweise</h3>
+<ul>
+  <li><b>Mehr als zwei Zeitfenster pro Tag:</b> Die Übertragung wird mit einer Fehlermeldung abgelehnt, und es wird nichts an den Ofen gesendet.</li>
+  <li><b>Zeitfenster bis Mitternacht:</b> Werden protokolbedingt automatisch als 23:59 Uhr übertragen.</li>
+  <li><b>Ofen-Heizplan leeren:</b> Alle Zeiten im Helfer entfernen und erneut auf die Übertragen-Schaltfläche klicken.</li>
+  <li><b>Der Zeitplan-Helfer schaltet nicht selbst:</b> Er dient rein als statische Vorlage für den Ofen; sein eigener Zustand (an/aus) wird von der Integration ignoriert.</li>
+  <li><b>Für Automationen:</b> Jedes Zeitfenster existiert auch als separate Start- und Endzeit-Entität mit Schaltflächen zum Senden und Verwerfen. Diese sind standardmäßig deaktiviert und können bei Bedarf auf der Geräteseite aktiviert werden.</li>
+</ul>
+
+<h2>Ofen ohne RIKA-Raumfühler</h2>
+<p>Falls Ihr Ofen keinen Raumfühler besitzt, wird keine Raumtemperatur gemessen. Sie können auf dem Thermostat in Home Assistant stattdessen die Temperatur eines beliebigen anderen Sensors anzeigen lassen: Öffnen Sie den Dialog <b>Konfigurieren</b> der Integration und wählen Sie den Sensor aus.</p>
+<div class="note">
+  <p>Dies ändert nur den Anzeigewert des Thermostats. Der Ofen regelt weiterhin nach seinen eigenen internen Parametern. Um den Ofen anhand eines externen Sensors ein- und auszuschalten, nutzen Sie das Generic Thermostat von Home Assistant oder Automationen.</p>
+</div>
+
+<h2>Fehlerbehebung</h2>
+<p>Falls Entitäten nicht verfügbar sind, prüfen Sie zunächst, ob <code>http://open-firenet.local</code> erreichbar ist und den Ofen als verbunden anzeigt. Siehe auch <a href="troubleshooting.html">Fehlerbehebung</a> oder erstellen Sie ein Issue im <a href="https://github.com/openfirenet/open-firenet-ha/issues">Integrations-Repository</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

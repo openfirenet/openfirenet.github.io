@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="de" data-page="mqtt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQTT - Open Firenet</title>
+<meta name="description" content="Den Zustand eines RIKA-Pelletofens an einen MQTT-Broker senden und über Jeedom, openHAB, Node-RED, Domoticz oder beliebige MQTT-Clients steuern.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/mqtt.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/mqtt.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/mqtt.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/mqtt.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/mqtt.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/mqtt.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html" class="active" aria-current="page">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../mqtt.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/mqtt.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/mqtt.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/mqtt.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/mqtt.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>MQTT</h1>
+<p class="lead">Der Stick kann den Zustand des Ofens an Ihren MQTT-Broker senden und Steuerbefehle empfangen. Dies ist die Schnittstelle für Hausautomationssysteme abseits von Home Assistant: Jeedom, openHAB, Node-RED, Domoticz und alle MQTT-Clients.</p>
+
+<div class="note">
+  <p>MQTT ist optional und standardmäßig deaktiviert. Es erfordert Stick-Firmware 3.3 oder neuer sowie einen Broker in Ihrem Netzwerk (beispielsweise Mosquitto). Für Home Assistant bleibt die <a href="home-assistant.html">Integration</a> die vollständigste Lösung; die <a href="#discovery">MQTT-Erkennung</a> ist die Alternative, für die nichts installiert werden muss.</p>
+</div>
+
+<h2>Einrichtung</h2>
+<ol>
+  <li>Öffnen Sie die Webseite des Sticks und wechseln Sie in den Reiter <b>Stick</b> (<code>http://open-firenet.local/#bridge</code>) und dort in den Bereich <b>MQTT</b>.</li>
+  <li>Geben Sie <b>Broker-Adresse</b> und <b>Port</b> (standardmäßig 1883) ein, sowie Benutzername und Passwort, falls Ihr Broker danach fragt.</li>
+  <li>Aktivieren Sie <b>MQTT aktivieren</b> und speichern Sie. Der Status wechselt innerhalb weniger Sekunden auf „Verbunden“.</li>
+</ol>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-mqtt.png" alt="Reiter Stick, MQTT-Einstellungen" width="760">
+</figure>
+
+<h2>Was der Stick sendet</h2>
+<p>Alle Topics beginnen mit einem Basis-Topic, standardmäßig <code>openfirenet</code>. Ändern Sie dieses in den Einstellungen, wenn Sie mehrere Sticks betreiben.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Inhalt</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> oder <code>offline</code>. Der Broker setzt diesen Wert selbstständig auf <code>offline</code>, sobald der Stick nicht mehr erreichbar ist.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Eine JSON-Nachricht mit den Objekten <code>device</code>, <code>stove</code>, <code>sensors</code> und <code>controls</code>, mit denselben Bezeichnungen und Einheiten wie in der <a href="api.html">REST-API</a>. Wird bei jeder Änderung gesendet, maximal alle 5 Sekunden und mindestens einmal pro Minute.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Dieselben Werte einzeln pro Topic für Systeme, die einfache Werte bevorzugen: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Alles wird mit gesetztem Retain-Flag gesendet, sodass ein Client unmittelbar nach dem Abonnieren die aktuellen Werte erhält. <code>openfirenet/device/connected</code> gibt an, ob der Stick mit dem Ofen verbunden ist; solange dies nicht der Fall ist, werden nur die Werte für <code>device</code> und <code>health</code> veröffentlicht.</p>
+<p>Seit Firmware 3.7 liefert <code>openfirenet/health/&lt;name&gt;</code> den Betriebszustand des Sticks selbst: <code>restart_reason</code> (Ursache des letzten Neustarts), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> und <code>mqtt_disconnects</code>. Die Zähler starten bei jedem Start bei null. Ein Alarm bei <code>stove_link_losses</code> oder bei einer Änderung von <code>restart_reason</code> informiert Sie, wenn etwas schiefgegangen ist.</p>
+
+<h2>Befehle senden</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Nutzlast</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, oder <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> oder <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>30 bis 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>14 bis 28, in ganzen Graden</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Mehrere Einstellungen auf einmal im JSON-Format: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>Die übrigen Einstellungen der <a href="api.html">REST-API</a> (Frostschutz, MultiAir-Gebläse, Zeitplan...) werden auf die gleiche Weise unter den gleichen Namen akzeptiert.</p>
+<pre><code># 21 °C mit dem Mosquitto-Befehlszeilen-Client senden
+mosquitto_pub -h 192.168.1.10 -u meinuser -P meinpasswort \
+  -t openfirenet/set/target_temperature -m 21
+
+# Alle Meldungen des Sticks beobachten
+mosquitto_sub -h 192.168.1.10 -u meinuser -P meinpasswort -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Veröffentlichen Sie Befehle nicht mit gesetztem Retain-Flag.</b> Der Broker würde sie bei jeder Neuverbindung erneut senden und könnte den Ofen eigenständig einschalten; aus diesem Grund ignoriert der Stick solche Befehle. Befehle werden zudem ignoriert, solange der Ofen nicht verbunden ist.</p>
+</div>
+
+<h2 id="discovery">Home-Assistant-Erkennung</h2>
+<p>Seit Firmware 3.4 kann der Stick den Ofen auch der MQTT-Integration von Home Assistant ankündigen: Aktivieren Sie <b>Home-Assistant-Erkennung</b> in der MQTT-Karte und speichern Sie. Der Ofen erscheint daraufhin automatisch in Home Assistant als ein Gerät mit:</p>
+<ul>
+  <li>einem Thermostat: Ein / Aus, Zieltemperatur und die Betriebsmodi manuell / auto / Komfort als Voreinstellungen;</li>
+  <li>der Heizleistung, der Absenk- und Frostschutztemperatur sowie der Raumfühler-Kalibrierung;</li>
+  <li>Schaltern für Zeitplan, Frostschutz und Eco-Modus;</li>
+  <li>den Sensoren: Temperaturen, verbrauchte Pellets, Service-Countdown, Status sowie Fehler- und Warncodes.</li>
+</ul>
+<p>Home Assistant muss seine MQTT-Integration mit demselben Broker verbunden haben. Wird die Option deaktiviert, werden die Entitäten wieder entfernt.</p>
+<div class="note">
+  <p><b>Verwenden Sie nur eine der beiden Methoden.</b> Wenn Sie bereits die <a href="home-assistant.html">Open-Firenet-Integration</a> nutzen, lassen Sie die Erkennung deaktiviert: Der Ofen wäre sonst doppelt vorhanden. Die Integration bleibt die umfassendste Lösung: Sie enthält zusätzlich die MultiAir-Gebläse, den Wochenplan (kopiert von einem Home-Assistant-Zeitplan) und den Außentemperaturfühler. Über MQTT können die Zeitfenster zwar geschrieben, aber nicht ausgelesen werden.</p>
+</div>
+
+<h2 id="tls">Verschlüsselte Verbindung (TLS)</h2>
+<p>Seit Firmware 3.5 kann der Stick einen Broker erreichen, der TLS nutzt (üblicherweise auf Port 8883): Aktivieren Sie <b>Verschlüsselte Verbindung (TLS)</b> in der MQTT-Karte. Der Stick überprüft das Zertifikat des Brokers auf eine von zwei Arten:</p>
+<ul>
+  <li><b>Keine weiteren Eingaben erforderlich</b>, wenn das Zertifikat von einer öffentlichen Zertifizierungsstelle für den als Broker-Adresse eingetragenen Namen signiert ist: ein gehosteter Broker oder ein Broker im Heimnetz mit Let's-Encrypt-Zertifikat.</li>
+  <li><b>Fügen Sie das Zertifikat Ihrer eigenen Zertifizierungsstelle</b> in das erscheinende Feld ein, wenn es sich um einen lokalen Broker mit selbstsigniertem Zertifikat handelt. Es handelt sich um den Text, der mit <code>-----BEGIN CERTIFICATE-----</code> beginnt. Der Name im Broker-Zertifikat wird dann nicht überprüft, da ein solcher Broker üblicherweise über seine IP-Adresse aufgerufen wird.</li>
+</ul>
+<div class="note">
+  <p><b>Nur wenn nötig.</b> Verschlüsselung ist anspruchsvoll für diesen kleinen Chip: Sie belegt bei bestehender Verbindung etwa 50 kB Arbeitsspeicher. Bei einem Broker im eigenen Netzwerk bleibt unverschlüsseltes MQTT die einfachste Wahl. Verwenden Sie TLS, wenn der Broker es erfordert oder sich außerhalb Ihres Netzwerks befindet.</p>
+</div>
+
+<h2>Gut zu wissen</h2>
+<ul>
+  <li>Ohne TLS ist die Verbindung unverschlüsselt: Für einen Broker im lokalen Netzwerk völlig ausreichend, darüber hinaus jedoch nicht.</li>
+  <li>Ist der Broker nicht erreichbar, versucht der Stick die Verbindung selbstständig alle 10 Sekunden erneut (alle 30 Sekunden mit TLS). Die Verbindung zum Ofen bleibt davon unberührt.</li>
+</ul>
+<p>Funktioniert etwas nicht? Siehe <a href="troubleshooting.html">Fehlerbehebung</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

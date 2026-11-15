@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="de" data-page="api-reference">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API-Referenz - Open Firenet</title>
+<meta name="description" content="Alle Endpunkte der Open-Firenet-Bridge, mit Feldern, Typen, Einheiten und Wertebereichen.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/api-reference.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/api-reference.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/api-reference.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/api-reference.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/api-reference.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/api-reference.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html" class="active" aria-current="page">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../api-reference.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/api-reference.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/api-reference.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/api-reference.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/api-reference.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>API-Referenz</h1>
+<p class="lead">Alle Endpunkte des Sticks, mit Feldern, Typen, Einheiten und Wertebereichen. Erstellt aus der <a href="../openapi.yaml">OpenAPI-Beschreibung</a> der Firmware 4.9.1.</p>
+<p>Lokale REST-API der Open-Firenet-Bridge, dem ESP32-S3, der den RIKA Firenet Stick ersetzt. Sie wird in Ihrem Netzwerk unter <code>http://open-firenet.local</code> (oder der IP-Adresse des Sticks) bereitgestellt, ohne API-Schlüssel oder Benutzerkonto.</p>
+<p>Die Einheiten sind natürlich: Temperaturen in °C, Leistung in Prozent, lesbare Betriebsart-Namen.</p>
+<p><b>Feldnamen.</b> Hier werden nur die empfohlenen Namen beschrieben, wie sie von der Home-Assistant-Integration und von MQTT verwendet werden. Aus historischen Gründen akzeptiert der Stick in Steuerbefehlen auch ältere Aliase (z. B. <code>tempRoomTarget</code> für <code>target_temperature</code> oder die Textform <code>onOff=1; heatingPower=70;</code>), und <code>GET /api/controls</code> gibt die Werte auch unter den originalen Ofenbezeichnungen und -einheiten zurück (<code>onOff</code>, <code>tempRoomTarget</code> in Zehntelgrad...). Neuer Code sollte sich nicht darauf stützen.</p>
+<p><b>Zugriffsberechtigung.</b> Programme in Ihrem Netzwerk (Home Assistant, Skripte, <code>curl</code>) und die Webseite des Sticks selbst. Eine im Browser geöffnete Seite einer fremden Domain kann dies nicht: Der Stick sendet keine Cross-Origin-Freigabe und antwortet mit 403 auf Anfragen, die eine andere Seite als Origin angeben oder an einen anderen Namen als seine IP-Adresse, einen Namen ohne Punkt, einen <code>.local</code>-Namen oder eine im Reiter Stick im Abschnitt Seitenzugriff (<code>/api/access</code>) hinzugefügte Domain gerichtet sind. Die 403-Antwort ist JSON: <code>refused</code> nennt die abgelehnte Prüfung (<code>host</code> oder <code>origin</code>) und <code>ip</code> nennt die funktionierende IP-Adresse.</p>
+<p><b>Vor dem Verbindungsaufbau.</b> Solange der Ofen noch nicht geantwortet hat, ist <code>version_ack</code> gleich <code>false</code>, Ofenmodell und Firmware-Version sind <code>null</code>, und die übrigen Werte sind Standardwerte, keine Messungen.</p>
+<h2>Endpunkte</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpunkt</th><th>Zweck</th></tr>
+  <tr><td><a href="#get-api-state"><span class="method get">GET</span> <code>/api/state</code></a></td><td>Alles auf einmal</td></tr>
+  <tr><td><a href="#get-api-controls"><span class="method get">GET</span> <code>/api/controls</code></a></td><td>Aktuelle Einstellungen</td></tr>
+  <tr><td><a href="#post-api-controls"><span class="method post">POST</span> <code>/api/controls</code></a></td><td>Einstellungen ändern</td></tr>
+  <tr><td><a href="#get-api-schedule"><span class="method get">GET</span> <code>/api/schedule</code></a></td><td>Wöchentlicher Heizplan</td></tr>
+  <tr><td><a href="#post-api-schedule"><span class="method post">POST</span> <code>/api/schedule</code></a></td><td>Wöchentlichen Heizplan ändern</td></tr>
+  <tr><td><a href="#get-api-mqtt"><span class="method get">GET</span> <code>/api/mqtt</code></a></td><td>MQTT-Einstellungen und Verbindungsstatus</td></tr>
+  <tr><td><a href="#post-api-mqtt"><span class="method post">POST</span> <code>/api/mqtt</code></a></td><td>MQTT-Einstellungen ändern</td></tr>
+  <tr><td><a href="#get-api-version"><span class="method get">GET</span> <code>/api/version</code></a></td><td>Firmware-Version des Sticks</td></tr>
+  <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Vom Stick erkannte WLAN-Netzwerke</td></tr>
+  <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>WLAN-Netzwerk einstellen, dann neu starten</td></tr>
+  <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Gespeicherte Einstellungen löschen und im Setup-Modus neu starten</td></tr>
+  <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Domains, unter denen der Stick Antworten akzeptiert</td></tr>
+  <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Zusätzliche Domains festlegen</td></tr>
+  <tr><td><a href="#get-api-display"><span class="method get">GET</span> <code>/api/display</code></a></td><td>Seiten des integrierten Mini-Displays</td></tr>
+  <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Display-Board auswählen und Ansichten anordnen</td></tr>
+  <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Ob der WLAN-Energiesparmodus aktiv ist</td></tr>
+  <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>WLAN-Energiesparmodus ein- oder ausschalten</td></tr>
+  <tr><td><a href="#get-api-log-size"><span class="method get">GET</span> <code>/api/log_size</code></a></td><td>Größe des Kommunikationsprotokoll-Speichers</td></tr>
+  <tr><td><a href="#post-api-log-size"><span class="method post">POST</span> <code>/api/log_size</code></a></td><td>Größe des Protokollspeichers wählen</td></tr>
+  <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Stick neu starten</td></tr>
+  <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>Status des Firmware-Updates</td></tr>
+  <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Update-Prüfung oder Installation anstoßen, oder Einstellungen für automatische Prüfung ändern</td></tr>
+  <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Pause zwischen gesendeten Telegrammen an den Ofen</td></tr>
+  <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Pause zwischen gesendeten Telegrammen an den Ofen ändern</td></tr>
+  <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Protokoll der Kommunikation mit dem Ofen</td></tr>
+</table>
+</div>
+<h2 id="stove">Ofen</h2>
+<p>Den Ofen auslesen und Einstellungen ändern</p>
+<div class="endpoint" id="get-api-state">
+<h3><span class="method get">GET</span> <code>/api/state</code></h3>
+<p><b>Alles auf einmal</b></p>
+<p>Stick, Ofen, Sensoren, Einstellungen und Verbindungsdiagnose. Dies wird von der Webseite und der Home-Assistant-Integration abgefragt.</p>
+<h4>Antwort 200 <small>Aktueller Zustand</small></h4>
+<p>Felder: siehe <a href="#schema-state">State</a>.</p>
+</div>
+<div class="endpoint" id="get-api-controls">
+<h3><span class="method get">GET</span> <code>/api/controls</code></h3>
+<p><b>Aktuelle Einstellungen</b></p>
+<h4>Antwort 200 <small>Die Einstellungen unter den empfohlenen Namen (die ofeneigenen Namen und Einheiten werden ebenfalls zurückgegeben)</small></h4>
+<p>Felder: siehe <a href="#schema-controls">Controls</a>.</p>
+</div>
+<div class="endpoint" id="post-api-controls">
+<h3><span class="method post">POST</span> <code>/api/controls</code></h3>
+<p><b>Einstellungen ändern</b></p>
+<p>Senden Sie nur die zu ändernden Felder; die übrigen behalten ihren Wert. Wird ignoriert, solange der Ofen nicht verbunden ist. Bei Ofen-Firmware 2.28 werden nur <code>on</code>, <code>mode</code>, <code>power_percent</code> und <code>target_temperature</code> übernommen.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<p>Felder: siehe <a href="#schema-controlscommand">ControlsCommand</a>.</p>
+<p>21 °C im Komfortmodus:</p>
+<pre><code>{"target_temperature": 21, "mode": "comfort"}</code></pre>
+<p>Mit 80 % Leistung einschalten:</p>
+<pre><code>{"on": true, "power_percent": 80}</code></pre>
+<h4>Antwort 200 <small>Die an den Ofen gesendeten Basiseinstellungen</small></h4>
+<p>Felder: siehe <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Antwort 503 <small>Der Ofen ist nicht verbunden oder hat seine Einstellungen noch nicht übermittelt (wenige Sekunden nach Verbindungsaufbau). Es wurde nichts gesendet; bitte erneut versuchen.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-schedule">
+<h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
+<p><b>Wöchentlicher Heizplan</b></p>
+<h4>Antwort 200 <small>Die 14 Zeitfenster und die Absenktemperatur</small></h4>
+<p>Felder: siehe <a href="#schema-schedule">Schedule</a>.</p>
+</div>
+<div class="endpoint" id="post-api-schedule">
+<h3><span class="method post">POST</span> <code>/api/schedule</code></h3>
+<p><b>Wöchentlichen Heizplan ändern</b></p>
+<p>Gleiche Funktionsweise wie <code>POST /api/controls</code>; senden Sie die zu ändernden Zeitfenster unter ihrem Namen.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<p>Felder: siehe <a href="#schema-schedulecommand">ScheduleCommand</a>.</p>
+<p>Beispiel:</p>
+<pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
+<h4>Antwort 200 <small>Die an den Ofen gesendeten Basiseinstellungen</small></h4>
+<p>Felder: siehe <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Antwort 503 <small>Der Ofen ist nicht verbunden oder hat seine Einstellungen noch nicht übermittelt (wenige Sekunden nach Verbindungsaufbau). Es wurde nichts gesendet; bitte erneut versuchen.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="bridge">Stick</h2>
+<p>Einstellungen und Wartung des Sticks selbst</p>
+<div class="endpoint" id="get-api-mqtt">
+<h3><span class="method get">GET</span> <code>/api/mqtt</code></h3>
+<p><b>MQTT-Einstellungen und Verbindungsstatus</b></p>
+<h4>Antwort 200 <small>Die Einstellungen (das Passwort wird niemals zurückgegeben) und der Status</small></h4>
+<p>Felder: siehe <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="post-api-mqtt">
+<h3><span class="method post">POST</span> <code>/api/mqtt</code></h3>
+<p><b>MQTT-Einstellungen ändern</b></p>
+<p>Ein weggelassenes Feld behält seinen Wert. Der Client startet mit den neuen Einstellungen neu; der Status folgt beim nächsten GET.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<p>Felder: siehe <a href="#schema-mqttcommand">MqttCommand</a>.</p>
+<h4>Antwort 200 <small>Die gespeicherten Einstellungen</small></h4>
+<p>Felder: siehe <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="get-api-version">
+<h3><span class="method get">GET</span> <code>/api/version</code></h3>
+<p><b>Firmware-Version des Sticks</b></p>
+<h4>Antwort 200 <small>Version und Build-Datum</small></h4>
+<p>Felder: siehe <a href="#schema-version">Version</a>.</p>
+</div>
+<div class="endpoint" id="get-api-scan">
+<h3><span class="method get">GET</span> <code>/api/scan</code></h3>
+<p><b>Vom Stick erkannte WLAN-Netzwerke</b></p>
+<p>Der erste Aufruf startet einen Scan und antwortet mit 202; rufen Sie nach wenigen Sekunden erneut ab, um die Liste zu erhalten.</p>
+<h4>Antwort 200 <small>Gefundene Netzwerke (2,4 GHz), jeder Name einmal</small></h4>
+<p>Eine Liste von:</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ssid</code> <span class="req">erforderlich</span></td><td>string</td><td></td></tr>
+  <tr><td><code>rssi</code> <span class="req">erforderlich</span></td><td>integer</td><td>Signalstärke in dBm</td></tr>
+</table>
+</div>
+<h4>Antwort 202 <small>Suchlauf läuft</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>status</code></td><td><code>scanning</code></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-wifi">
+<h3><span class="method post">POST</span> <code>/api/wifi</code></h3>
+<p><b>WLAN-Netzwerk einstellen, dann neu starten</b></p>
+<p>Wird vom Setup-Formular gesendet. Antwortet mit einer HTML-Bestätigungsseite (für Captive-Portal-Browser), danach startet der Stick im neuen Netzwerk neu.</p>
+<h4>Anfrage-Body <small>application/x-www-form-urlencoded</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ssid</code> <span class="req">erforderlich</span></td><td>string</td><td></td></tr>
+  <tr><td><code>pass</code></td><td>string</td><td>Leer lassen für ein offenes Netzwerk</td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Gespeichert; der Stick startet neu</small></h4>
+<p><code>text/html</code></p>
+<h4>Antwort 400 <small>WLAN-Name fehlt</small></h4>
+<p><code>text/html</code></p>
+</div>
+<div class="endpoint" id="post-api-forget">
+<h3><span class="method post">POST</span> <code>/api/forget</code></h3>
+<p><b>Gespeicherte Einstellungen löschen und im Setup-Modus neu starten</b></p>
+<p>Löscht WLAN-Netzwerk, MQTT-Einstellungen und Telegrammpause. Der Stick spannt anschließend das Netzwerk <code>Open-Firenet-Setup</code> auf.</p>
+<h4>Antwort 200 <small>Gelöscht; der Stick startet neu</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-access">
+<h3><span class="method get">GET</span> <code>/api/access</code></h3>
+<p><b>Domains, unter denen der Stick Antworten akzeptiert</b></p>
+<p>Neben seiner IP-Adresse und <code>open-firenet.local</code>, siehe „Zugriffsberechtigung“ oben.</p>
+<h4>Antwort 200 <small>Die hinzugefügten Domains</small></h4>
+<p>Felder: siehe <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="post-api-access">
+<h3><span class="method post">POST</span> <code>/api/access</code></h3>
+<p><b>Zusätzliche Domains festlegen</b></p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>extra_hosts</code></td><td>string</td><td>Eine Domain pro Zeile (Kommas und Leerzeichen trennen ebenfalls); ein leerer Text entfernt alle Einträge. Ein Eintrag benötigt mindestens einen Punkt (<code>example.org</code>, nicht <code>org</code>) und deckt auch Unterdomänen ab. Maximal 8 Einträge zu je 63 Zeichen; unpassende Einträge werden ignoriert.</td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Die gespeicherten Domains</small></h4>
+<p>Felder: siehe <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="get-api-display">
+<h3><span class="method get">GET</span> <code>/api/display</code></h3>
+<p><b>Seiten des integrierten Mini-Displays</b></p>
+<p>Das Display bei Boards, die eines besitzen: Welches Board ausgewählt ist (<code>board</code>, Standard <code>none</code>), und während des Betriebs, welche Seiten in welcher Reihenfolge und wie lange angezeigt werden.</p>
+<h4>Antwort 200 <small>Die Einstellung</small></h4>
+<p>Felder: siehe <a href="#schema-display">Display</a>.</p>
+</div>
+<div class="endpoint" id="post-api-display">
+<h3><span class="method post">POST</span> <code>/api/display</code></h3>
+<p><b>Display-Board auswählen und Ansichten anordnen</b></p>
+<p>Wird dauerhaft gespeichert. <code>screens</code> und <code>seconds</code> werden sofort angewendet: Die aufgeführten Seiten erscheinen zuerst in dieser Reihenfolge; weggelassene folgen in ihrer bisherigen Reihenfolge. <code>board</code> wird beim nächsten Neustart aktiv. Jedes Feld kann weggelassen werden.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 bis 30</td><td>Anzeigedauer jeder Seite in Sekunden</td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 bis 100</td><td></td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 bis 3600</td><td></td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 bis 50</td><td></td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Display um 180 Grad drehen</td></tr>
+  <tr><td><code>language</code></td><td><code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Sprache der Texte auf dem Display</td></tr>
+  <tr><td><code>screens</code></td><td>Liste von Objekt</td><td></td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Die Einstellung wie gespeichert</small></h4>
+<p>Felder: siehe <a href="#schema-display">Display</a>.</p>
+<h4>Antwort 400 <small>Unbekanntes Board, unbekannte oder doppelte Seiten-ID oder Sekundenzahl außerhalb des Bereichs</small></h4>
+</div>
+<div class="endpoint" id="get-api-wifi-power-saving">
+<h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Ob der WLAN-Energiesparmodus aktiv ist</b></p>
+<p>Standardmäßig aktiv: Der Stick bleibt kühler und benötigt weniger Strom; Antworten können bis zu 250 ms verzögert sein. Ausgeschaltet: Sofortige Antwort; empfohlen bei instabilen WLAN-Netzwerken.</p>
+<h4>Antwort 200 <small>Die Einstellung</small></h4>
+<p>Felder: siehe <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="post-api-wifi-power-saving">
+<h3><span class="method post">POST</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>WLAN-Energiesparmodus ein- oder ausschalten</b></p>
+<p>Gespeichert und sofort ohne Neustart angewendet.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Die Einstellung wie gespeichert</small></h4>
+<p>Felder: siehe <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="get-api-log-size">
+<h3><span class="method get">GET</span> <code>/api/log_size</code></h3>
+<p><b>Größe des Kommunikationsprotokoll-Speichers</b></p>
+<p>Der Stick speichert die letzten ausgetauschten Telegramme mit dem Ofen (<code>/api/log</code>, Diagnose-Datei). Standardmäßig 16 kB; 32 kB verdoppelt den Verlauf und belegt 16 kB mehr RAM.</p>
+<h4>Antwort 200 <small>Die Einstellung</small></h4>
+<p>Felder: siehe <a href="#schema-logsize">LogSize</a>.</p>
+</div>
+<div class="endpoint" id="post-api-log-size">
+<h3><span class="method post">POST</span> <code>/api/log_size</code></h3>
+<p><b>Größe des Protokollspeichers wählen</b></p>
+<p>Gespeichert; wird beim nächsten Neustart angewendet (angezeigt durch <code>restart_needed</code>).</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>kb</code></td><td><code>16</code> | <code>32</code></td><td></td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Die Einstellung wie gespeichert</small></h4>
+<p>Felder: siehe <a href="#schema-logsize">LogSize</a>.</p>
+<h4>Antwort 400 <small><code>kb</code> ist weder 16 noch 32</small></h4>
+</div>
+<div class="endpoint" id="post-api-restart">
+<h3><span class="method post">POST</span> <code>/api/restart</code></h3>
+<p><b>Stick neu starten</b></p>
+<p>Der Ofen läuft unverändert weiter; die Verbindung steht nach etwa einer Minute wieder.</p>
+<h4>Antwort 200 <small>Der Stick startet neu</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-update">
+<h3><span class="method get">GET</span> <code>/api/update</code></h3>
+<p><b>Status des Firmware-Updates</b></p>
+<p>Gibt den aktuellen Selbstaktualisierungsstatus, installierte und verfügbare Versionen, Fortschritt und Einstellungen zurück.</p>
+<h4>Antwort 200 <small>Update-Status</small></h4>
+<p>Felder: siehe <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+</div>
+<div class="endpoint" id="post-api-update">
+<h3><span class="method post">POST</span> <code>/api/update</code></h3>
+<p><b>Update-Prüfung oder Installation anstoßen, oder Einstellungen für automatische Prüfung ändern</b></p>
+<p>Senden Sie <code>{"action": "check"}</code>, um GitHub-Releases zu prüfen, <code>{"action": "install"}</code>, um das verfügbare Release herunterzuladen und zu flashen (nur erlaubt, wenn der Ofen ausgeschaltet ist), oder <code>{"auto_check": true, "check_hours": 24}</code>, um periodische Prüfungen zu konfigurieren.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<p>Felder: siehe <a href="#schema-updatecommand">UpdateCommand</a>.</p>
+<h4>Antwort 200 <small>Einstellungen aktualisiert (wenn auto_check gesendet wurde)</small></h4>
+<p>Felder: siehe <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+<h4>Antwort 202 <small>Aktion akzeptiert und läuft im Hintergrund</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Antwort 400 <small>Ungültige Anfrage-Nutzlast</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h4>Antwort 409 <small>Beschäftigt, nichts zu installieren oder der Ofen ist nicht ausgeschaltet</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="diagnostics">Diagnose</h2>
+<div class="endpoint" id="get-api-txgap">
+<h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
+<p><b>Pause zwischen gesendeten Telegrammen an den Ofen</b></p>
+<h4>Antwort 200 <small>Aktuelle Pause und deren Grenzwerte</small></h4>
+<p>Felder: siehe <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="post-api-txgap">
+<h3><span class="method post">POST</span> <code>/api/txgap</code></h3>
+<p><b>Pause zwischen gesendeten Telegrammen an den Ofen ändern</b></p>
+<p>Diagnoseeinstellung, bleibt nach einem Neustart erhalten. Zu niedrig gewählt, verarbeitet der Ofen möglicherweise nur jedes zweite Telegramm.</p>
+<h4>Anfrage-Body <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ms</code> <span class="req">erforderlich</span></td><td>integer, 50 bis 600</td><td>Pause in Millisekunden</td></tr>
+</table>
+</div>
+<h4>Antwort 200 <small>Die aktuell genutzte Pause</small></h4>
+<p>Felder: siehe <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="get-log">
+<h3><span class="method get">GET</span> <code>/log</code></h3>
+<p><b>Protokoll der Kommunikation mit dem Ofen</b></p>
+<p>Klartext, eine Zeile pro Telegramm: <code>[Uptime in ms][rx|tx] Inhalt</code>. Aufeinanderfolgende identische Zeilen werden zusammengefasst (<code>xN</code>). Das WLAN-Passwort ist maskiert. Wird nur im Arbeitsspeicher gehalten (ca. die letzten 32 kB).</p>
+<h4>Antwort 200 <small>Das Protokoll</small></h4>
+<p><code>text/plain</code></p>
+</div>
+<h2 id="schemas">Objekte</h2>
+<p>Die mit dem Stick ausgetauschten Objekte, wie oben referenziert.</p>
+<h3 id="schema-display">Display</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>available</code></td><td>boolean</td><td>True, während das Display aktiv ist (entschieden beim Booten anhand von <code>board</code>); die untenstehenden Seiten können dann konfiguriert werden</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>Das vom Besitzer angegebene Board mit Display: <code>none</code> (Standard), <code>tdongle</code> (LilyGO T-Dongle-S3 mit aktivem Display) oder <code>tdongle_off</code> (gleiches Board, Display und Hintergrundbeleuchtung aus). Gespeichert; wird beim nächsten Neustart aktiv</td></tr>
+  <tr><td><code>boards</code></td><td>Liste von string</td><td>Boards, deren Display von dieser Firmware angesteuert werden kann</td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>True, wenn sich <code>board</code> von der aktuell laufenden Konfiguration unterscheidet</td></tr>
+  <tr><td><code>seconds</code></td><td>integer, 2 bis 30</td><td></td></tr>
+  <tr><td><code>brightness</code></td><td>integer, 5 bis 100</td><td>Hintergrundbeleuchtung in Prozent</td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td>Beleuchtung nach einer Weile ohne Tastendruck oder Alarm abdunkeln</td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, 30 bis 3600</td><td>Sekunden ohne Aktivität vor dem Abdunkeln</td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, 0 bis 50</td><td>Helligkeit im abgedunkelten Zustand in Prozent (0 = aus)</td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Das Display ist um 180 Grad gedreht</td></tr>
+  <tr><td><code>language</code></td><td><code></code> | <code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Sprache der Texte auf dem Display; leer, bis eine ausgewählt wird (vorher wird Englisch angezeigt)</td></tr>
+  <tr><td><code>screens</code></td><td>Liste von Objekt</td><td>Jede Seite einmal in der Reihenfolge ihrer Anzeige</td></tr>
+</table>
+</div>
+<h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-logsize">LogSize</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>kb</code></td><td>integer</td><td>Die gespeicherte Auswahl in kB</td></tr>
+  <tr><td><code>running_kb</code></td><td>integer</td><td>Die seit dem letzten Neustart genutzte Größe in kB</td></tr>
+  <tr><td><code>options</code></td><td>Liste von integer</td><td></td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>Die gespeicherte Auswahl stimmt nicht mit der aktuell genutzten überein</td></tr>
+</table>
+</div>
+<h3 id="schema-access">Access</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>Liste von string</td><td>Vom Besitzer hinzugefügte Domains</td></tr>
+  <tr><td><code>max_extra_hosts</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Name, an den diese Anfrage gerichtet war</td></tr>
+</table>
+</div>
+<h3 id="schema-health">Health</h3>
+<p>Zustand und Diagnose des Sticks. Die Zähler liegen im RAM und starten bei jedem Bootvorgang bei null. Werden auch per MQTT unter <code>&lt;base&gt;/health/&lt;name&gt;</code> veröffentlicht, außer <code>stove_last_frame_seconds</code>.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>stove_lost</code> | <code>software</code> | <code>unknown</code></td><td>Ursache des letzten Neustarts: <code>power_on</code> (Einschalten am Ofen), <code>brownout</code> (Unterspannung), <code>crash</code>, <code>watchdog</code> (Programmabsturz), <code>reset_button</code>, <code>usb</code> (Reset über USB), <code>user</code> (Neustart über Weboberfläche oder API angefordert), <code>wifi_change</code>, <code>update</code> (OTA-Update), <code>stove_silent</code> (60 Sekunden keine Daten vom Ofen empfangen), <code>stove_lost</code> (Ofen hatte Verbindung bestätigt, dann 5 Minuten verweigert), <code>software</code> (sonstiger Neustart durch Firmware)</td></tr>
+  <tr><td><code>min_free_heap</code></td><td>integer</td><td>Geringster freier Arbeitsspeicher seit dem Start in Bytes</td></tr>
+  <tr><td><code>elf_sha256</code></td><td>string</td><td>Erste Zeichen des SHA-256-Hashs der laufenden Firmware (wird nicht über MQTT gesendet)</td></tr>
+  <tr><td><code>crash</code></td><td>Objekt</td><td>Der letzte im Flash gespeicherte Absturzbericht, nur nach einem Absturz vorhanden (nicht über MQTT gesendet). Bleibt erhalten, bis ein neuer Absturz erfolgt; <code>elf_sha256</code> identifiziert die abgestürzte Firmware. Die Adressen können mit der ELF-Datei der Version analysiert werden.</td></tr>
+  <tr><td><code>chip_temperature</code></td><td>number oder <code>null</code></td><td>Temperatur des Chips in °C</td></tr>
+  <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Verlorene WLAN-Verbindungen seit dem Start</td></tr>
+  <tr><td><code>stove_last_frame_seconds</code></td><td>integer oder <code>null</code></td><td>Sekunden seit dem letzten vom Ofen empfangenen Byte; null, wenn noch nie etwas empfangen wurde</td></tr>
+  <tr><td><code>stove_detections</code></td><td>integer</td><td>Anzahl, wie oft der Ofen den Stick seit dem Start akzeptiert hat (1 bei stabiler Verbindung)</td></tr>
+  <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Anzahl der Verbindungsabbrüche zum Ofen seit dem Start</td></tr>
+  <tr><td><code>stove_rx_dropped_bytes</code></td><td>integer</td><td>Vom Ofen gesendete Bytes, für die der Stick keinen Empfangspuffer frei hatte (0 bei normalem Betrieb)</td></tr>
+  <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Verlorene Verbindungen zum MQTT-Broker seit dem Start</td></tr>
+</table>
+</div>
+<h3 id="schema-state">State</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>device</code> <span class="req">erforderlich</span></td><td><a href="#schema-device">Device</a></td><td></td></tr>
+  <tr><td><code>stove</code> <span class="req">erforderlich</span></td><td><a href="#schema-stove">Stove</a></td><td></td></tr>
+  <tr><td><code>sensors</code> <span class="req">erforderlich</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
+  <tr><td><code>controls</code> <span class="req">erforderlich</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
+  <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code>, während sich der Stick im Konfigurationsmodus befindet</td></tr>
+  <tr><td><code>wifi_power_saving</code></td><td>boolean</td><td>Ob der WLAN-Energiesparmodus aktiv ist, siehe <code>/api/wifi_power_saving</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>write_enabled</code></td><td>boolean</td><td>Immer true</td></tr>
+  <tr><td><code>version_ack</code> <span class="req">erforderlich</span></td><td>boolean</td><td>Ob der Ofen den Stick akzeptiert hat (Verbindung steht)</td></tr>
+  <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Protokollvariante, mit der der Ofen geantwortet hat: <code>V3</code> (Firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>schedule_slots_per_day</code></td><td>integer</td><td>Anzahl der Heizzeitfenster pro Tag, die der Ofen unterstützt: 2, oder 1 bei einem Ofen mit Firmware 2.25</td></tr>
+  <tr><td><code>usb</code> <span class="req">erforderlich</span></td><td>Objekt</td><td>Diagnose der USB-Verbindung</td></tr>
+  <tr><td><code>mqtt</code></td><td>Objekt</td><td></td></tr>
+  <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
+  <tr><td><code>frames_in</code></td><td>integer</td><td>Seit dem Start vom Ofen empfangene Telegramme</td></tr>
+  <tr><td><code>frames_out</code></td><td>integer</td><td>Seit dem Start an den Ofen gesendete Telegramme</td></tr>
+  <tr><td><code>revision</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>raw_sensors</code> <span class="req">erforderlich</span></td><td>Objekt, jeder Name → integer</td><td>Jeder vom Ofen gemeldete Wert unter seinem RIKA-Namen in den Einheiten des Ofens (Temperaturen oft in Zehntelgrad). Leer, bis der Ofen verbunden ist.</td></tr>
+  <tr><td><code>status</code></td><td>Objekt, jeder Name → string</td><td>Mit dem Ofen ausgetauschter Statusdatensatz (das WLAN-Passwort ist maskiert)</td></tr>
+  <tr><td><code>sensors_pos</code></td><td>Liste von integer</td><td>Die Sensordatensätze nach Index (Diagnose)</td></tr>
+  <tr><td><code>controls_pos</code></td><td>Liste von integer</td><td>Die Steuerdatensätze nach Index (Diagnose)</td></tr>
+</table>
+</div>
+<h3 id="schema-device">Device</h3>
+<p>Der Stick</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td>Firmware-Version des Sticks</td></tr>
+  <tr><td><code>app_version</code></td><td>string</td><td>Identisch mit <code>version</code></td></tr>
+  <tr><td><code>firmware_version</code></td><td>string</td><td>Identisch mit <code>version</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>mac</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_ssid</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_rssi</code></td><td>integer</td><td>WLAN-Signalstärke in dBm</td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>free_heap</code></td><td>integer</td><td>Freier Arbeitsspeicher in Bytes</td></tr>
+  <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Größe der Partition in Bytes, in die ein OTA-Update geschrieben wird. Größere Firmware muss per USB installiert werden</td></tr>
+  <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Ein Passwort wird für OTA-Updates verlangt. Wird per USB über den Installer eingerichtet oder gelöscht, niemals über das Netzwerk</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td>Identisch mit <code>version_ack</code></td></tr>
+</table>
+</div>
+<h3 id="schema-stove">Stove</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>splitlog_check</code> | <code>splitlog_refuel</code> | <code>splitlog_no_refuel</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>is_burning</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>has_error</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error_code</code></td><td>integer</td><td>0, wenn kein Fehler vorliegt</td></tr>
+  <tr><td><code>error_sub</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>warning_code</code></td><td>integer</td><td>0, wenn keine Warnung vorliegt</td></tr>
+  <tr><td><code>model</code></td><td>integer oder <code>null</code></td><td>RIKA-Modellnummer; null, bis der Ofen sie gesendet hat</td></tr>
+  <tr><td><code>model_name</code></td><td>string oder <code>null</code></td><td>Zum Beispiel <code>DOMO</code>; null, bis der Ofen den Namen gesendet hat</td></tr>
+  <tr><td><code>brand</code></td><td><code>RIKA</code> | <code>ANIMO</code> oder <code>null</code></td><td>Markeneinstellung des Ofens (Sensor <code>fabNumber</code>: 1 = RIKA, 2 = ANIMO); null, bis der Ofen sein Modell gesendet hat</td></tr>
+  <tr><td><code>mainboard_version</code></td><td>string oder <code>null</code></td><td>Ofen-Firmware, zum Beispiel <code>2.29</code>; null, bis der Ofen sie gesendet hat</td></tr>
+  <tr><td><code>firmware_build</code></td><td>string oder <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-sensors">Sensors</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>room_temperature</code></td><td>number oder <code>null</code></td><td>°C; null, wenn kein RIKA-Raumfühler angeschlossen ist</td></tr>
+  <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer oder <code>null</code></td><td>null, bis der Ofen den Wert gesendet hat (nach Neustart des Sticks)</td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer oder <code>null</code></td><td>Betriebsstunden mit Pellets; null, bis der Ofen sie gesendet hat</td></tr>
+  <tr><td><code>log_runtime</code></td><td>integer oder <code>null</code></td><td>Betriebszeit mit Scheitholz bei einem Kombiofen in Minuten (0 bei reinen Pelletöfen; null, bis der Ofen sie gesendet hat)</td></tr>
+  <tr><td><code>log_runtime_hours</code></td><td>integer oder <code>null</code></td><td>log_runtime in vollen Stunden</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer oder <code>null</code></td><td>Verbleibende Pellets bis zur nächsten Wartung; null, bis der Ofen den Wert gesendet hat</td></tr>
+  <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>power_actual_percent</code></td><td>integer</td><td>Tatsächliche Heizleistung des Ofens. Im Komfortmodus regelt der Ofen diese selbst, ungeachtet von <code>power_percent</code>. 0, wenn nicht geheizt wird.</td></tr>
+  <tr><td><code>air_flaps_percent</code></td><td>number oder <code>null</code></td><td></td></tr>
+  <tr><td><code>air_flaps_target_percent</code></td><td>number oder <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsstate">ControlsState</h3>
+<p>Die aktuellen Einstellungen</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: Feste Leistung. <code>auto</code>: Folgt dem Wochenplan. <code>comfort</code>: Regelt nach Raumtemperatur.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td>0 = Manuell, 1 = Auto, 2 = Komfort</td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td>Wochenplan Ein / Aus</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C außerhalb der Zeitfenster</td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer</td><td>0 = Automatisch, 1 bis 5</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer</td><td>Korrektur in Prozent, -30 bis +30</td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td>°C (nur DOMO BACK)</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td>Raumfühler-Kalibrierung in °C</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>eco_mode_possible</code></td><td>boolean</td><td>Ob der Ofen den Eco-Modus im Moment zulässt</td></tr>
+</table>
+</div>
+<h3 id="schema-controls">Controls</h3>
+<p>Die aktuellen Einstellungen. Die ofeneigenen Namen (<code>onOff</code>, <code>tempRoomTarget</code>...) werden ebenfalls zurückgegeben und hier nicht beschrieben.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: Feste Leistung. <code>auto</code>: Folgt dem Wochenplan. <code>comfort</code>: Regelt nach Raumtemperatur.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td></td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><i>weitere Felder</i></td><td></td><td>Hier nicht beschrieben.</td></tr>
+</table>
+</div>
+<h3 id="schema-controlscommand">ControlsCommand</h3>
+<p>Beliebige Teilmenge dieser Felder</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: Feste Leistung. <code>auto</code>: Folgt dem Wochenplan. <code>comfort</code>: Regelt nach Raumtemperatur.</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer, 30 bis 100</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number, 14 bis 28</td><td>°C in ganzen Gradstufen: Halbe Grade werden gerundet</td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number, 4 bis 10</td><td>°C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number, -4 bis 4</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer, 130 bis 340</td><td>°C (nur DOMO BACK)</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer, 0 bis 5</td><td>0 = Automatisch</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer, -30 bis 30</td><td></td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer, 0 bis 5</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer, -30 bis 30</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsresult">ControlsResult</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: Feste Leistung. <code>auto</code>: Folgt dem Wochenplan. <code>comfort</code>: Regelt nach Raumtemperatur.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-schedule">Schedule</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>active</code></td><td>boolean</td><td>Wochenplan Ein / Aus</td></tr>
+  <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Identisch mit <code>active</code>, als 0 / 1</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C außerhalb der Zeitfenster</td></tr>
+  <tr><td><code>setBackTemp</code></td><td>integer</td><td>Dasselbe in Zehntelgrad</td></tr>
+  <tr><td><code>slots</code></td><td>Objekt, jeder Name → integer</td><td>Zwei Zeitfenster pro Tag, <code>heatTime&lt;Tag&gt;&lt;1|2&gt;</code> mit Tag in Mon, Tue, Wed, Thu, Fri, Sat, Sun. Bei einem Ofen mit Firmware 2.25 wird nur das erste Fenster eines Tages genutzt; das zweite ist immer 0.</td></tr>
+  <tr><td><code>slots_per_day</code></td><td>integer</td><td>Anzahl der Zeitfenster pro Tag, die der Ofen unterstützt: 2, oder 1 bei Firmware 2.25</td></tr>
+  <tr><td><code>day_ranges</code></td><td>Objekt, jeder Name → Objekt</td><td>Nur bei Ofen-Firmware 2.25: Das tägliche Zeitfenster jedes Wochentags (Sun, Mon, ... Sat), <code>start</code> und <code>end</code> in Minuten seit Mitternacht, wie vom Ofen gespeichert (identisch mit dem ersten Zeitfenster jedes Tages in <code>slots</code>).</td></tr>
+</table>
+</div>
+<h3 id="schema-schedulecommand">ScheduleCommand</h3>
+<p><code>heating_times_active</code>, <code>setback_temperature</code> und beliebige der 14 Zeitfenster <code>heatTime&lt;Tag&gt;&lt;1|2&gt;</code></p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><i>jeder andere Name</i></td><td>integer</td><td>Ein Heizzeitfenster als Zahl: Start <code>HHMM</code> mal 10000 plus Ende <code>HHMM</code>. <code>6000800</code> bedeutet 06:00 bis 08:00, <code>17002200</code> bedeutet 17:00 bis 22:00, <code>0</code> ist ein ungenutztes Fenster.</td></tr>
+</table>
+</div>
+<h3 id="schema-mqtt">Mqtt</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td></td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password_set</code></td><td>boolean</td><td>Ob ein Passwort gespeichert ist (wird nie zurückgegeben)</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Ob Home-Assistant-Discovery-Nachrichten gesendet werden</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Ob die Broker-Verbindung verschlüsselt ist (MQTT über TLS)</td></tr>
+  <tr><td><code>ca_set</code></td><td>boolean</td><td>Ob ein CA-Zertifikat gespeichert ist (wird nicht zurückgegeben)</td></tr>
+  <tr><td><code>tls_error</code></td><td>integer</td><td>Letzter Fehlercode der TLS-Schicht, 0 wenn fehlerfrei (Diagnose)</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>certificate not trusted</code> | <code>secure connection failed</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-mqttcommand">MqttCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Broker-Adresse</td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td>Standard: <code>1883</code>.</td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password</code></td><td>string</td><td>Leer lassen, um den gespeicherten Wert zu löschen</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td>Standard: <code>openfirenet</code>.</td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Home Assistant MQTT Discovery: Der Ofen erscheint automatisch in Home Assistant. Deaktiviert lassen, wenn die Open-Firenet-Integration genutzt wird Standard: <code>False</code>.</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Verschlüsselte Verbindung (MQTT über TLS, üblicherweise Port 8883). Das Zertifikat des Brokers muss von einer öffentlichen CA oder der in ca_certificate angegebenen signiert sein Standard: <code>False</code>.</td></tr>
+  <tr><td><code>ca_certificate</code></td><td>string</td><td>Zertifikat (PEM) Ihrer eigenen Zertifizierungsstelle für Broker ohne öffentliches Zertifikat; der Name im Zertifikat wird dann nicht geprüft. Leer lassen zum Löschen. Wird mit 400 abgelehnt, wenn es kein gültiges PEM-Zertifikat ist</td></tr>
+</table>
+</div>
+<h3 id="schema-txgap">TxGap</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>ms</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>default</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>min</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>max</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-version">Version</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>app</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
+  <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-updatestatus">UpdateStatus</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>state</code> <span class="req">erforderlich</span></td><td><code>idle</code> | <code>checking</code> | <code>available</code> | <code>downloading</code> | <code>verifying</code> | <code>installing</code> | <code>error</code> | <code>restarting</code></td><td>Aktueller Lebenszyklus-Zustand des Update-Tasks</td></tr>
+  <tr><td><code>current</code> <span class="req">erforderlich</span></td><td>string</td><td>Aktuell auf dem Stick installierte Version (z. B. 4.3.1)</td></tr>
+  <tr><td><code>latest</code> <span class="req">erforderlich</span></td><td>string</td><td>Neueste auf GitHub gefundene Version, falls vorhanden</td></tr>
+  <tr><td><code>percent</code> <span class="req">erforderlich</span></td><td>integer</td><td>Fortschritt in Prozent (0 bis 100) während Download oder Flash-Vorgang</td></tr>
+  <tr><td><code>error</code> <span class="req">erforderlich</span></td><td>string</td><td>Beschreibung des letzten Fehlers, falls der Zustand error ist</td></tr>
+  <tr><td><code>stove_blocks</code> <span class="req">erforderlich</span></td><td>boolean</td><td>True, falls der Ofenzustand eine Installation verhindert (Ofen muss vollständig ausgeschaltet sein)</td></tr>
+  <tr><td><code>auto_check</code> <span class="req">erforderlich</span></td><td>boolean</td><td>Ob periodische Prüfungen im Hintergrund aktiviert sind</td></tr>
+  <tr><td><code>check_hours</code> <span class="req">erforderlich</span></td><td>integer</td><td>Intervall zwischen Prüfungen in Stunden (12, 24 oder 168)</td></tr>
+  <tr><td><code>last_check</code> <span class="req">erforderlich</span></td><td>integer</td><td>Verstrichene Sekunden seit der letzten erfolgreichen GitHub-Prüfung (-1 falls noch keine)</td></tr>
+</table>
+</div>
+<h3 id="schema-updatecommand">UpdateCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr>
+  <tr><td><code>action</code></td><td><code>check</code> | <code>install</code></td><td>Im Hintergrund auszuführende Aktion</td></tr>
+  <tr><td><code>auto_check</code></td><td>boolean</td><td>Periodische Prüfungen aktivieren oder deaktivieren</td></tr>
+  <tr><td><code>check_hours</code></td><td><code>12</code> | <code>24</code> | <code>168</code></td><td>Prüfintervall in Stunden</td></tr>
+</table>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

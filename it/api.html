@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="it" data-page="api">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API REST - Open Firenet</title>
+<meta name="description" content="Panoramica dell'API REST locale del bridge Open Firenet: lettura dello stato della stufa e invio di comandi tramite standard HTTP e JSON.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/api.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/api.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/api.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/api.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/api.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/api.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html" class="active" aria-current="page">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../api.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/api.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/api.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/api.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/api.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>API REST</h1>
+<p class="lead">Il bridge espone un'API JSON sulla vostra rete locale con unità di misura naturali: temperature in °C, potenza in percentuale e nomi leggibili delle modalità. Senza chiavi API né account.</p>
+
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Riferimento API completo</a>
+  <a class="btn ghost" href="../openapi.yaml">File OpenAPI</a>
+</div>
+
+<h2>Endpoint</h2>
+<p>Fate clic su un endpoint o su un metodo per consultarne i dettagli nel <a href="api-reference.html">riferimento API</a>.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Metodo</th><th>Scopo</th></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Tutti i dati insieme: bridge, stufa, sensori, controlli e diagnostica di collegamento</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Lettura o modifica delle impostazioni (modifiche parziali accettate)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Programmazione settimanale: 14 fasce orarie e temperatura ridotta</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Versione del firmware e data di compilazione</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>Impostazioni MQTT e stato della connessione, vedi <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Intervallo tra i messaggi inviati alla stufa (da 50 a 600 ms, predefinito 150)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Riavvia il bridge</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>Cancella le impostazioni Wi-Fi e torna in modalità configurazione</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Registro in testo semplice del dialogo con la stufa</td></tr>
+</table>
+</div>
+
+<h2>Autorizzazioni di accesso</h2>
+<p>Programmi della vostra rete locale: Home Assistant, script, <code>curl</code>, Node-RED. Oltre all'interfaccia web del bridge stesso. Dal firmware 4.0, le pagine web aperte in un browser da altri domini non possono effettuare chiamate: il bridge risponde 403 a richieste che indicano un'altra pagina come origine e non invia intestazioni cross-origin.</p>
+<p>Il bridge risponde al suo indirizzo IP, a nomi di dominio privi di punto e a <code>open-firenet.local</code>. Qualsiasi altro nome host deve essere preventivamente aggiunto nella scheda Bridge, Rete, sezione "Accesso alla pagina" (o tramite <code>/api/access</code>); in caso contrario il bridge risponde 403 con un payload JSON che indica il proprio indirizzo IP.</p>
+
+<h2>Leggere lo stato</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>La risposta è suddivisa per sezioni tematiche. Le parti più utilizzate:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Significato</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>Stato operativo, modello e versione firmware della stufa</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Codici di errore e avviso correnti, 0 in assenza di anomalie</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Temperatura ambiente, <code>null</code> quando non è collegata alcuna sonda RIKA</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Pellet complessivamente consumato e residuo prima della prossima manutenzione</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>Le impostazioni correnti</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Indica se la stufa ha accettato il bridge e la versione di protocollo con cui ha risposto: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27); <code>?</code> per stufe con firmware 2.25 che utilizzano frame numerici</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Indica se la stufa riconosce il bridge via USB e quanti byte sono stati ricevuti</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Tutti i valori comunicati dalla stufa, con la denominazione RIKA originale</td></tr>
+</table>
+</div>
+
+<h2>Inviare comandi</h2>
+<p>Inviate con metodo POST un oggetto JSON contenente solo i campi che desiderate modificare:</p>
+<pre><code># 21 °C in modalità comfort
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21, "mode": "comfort"}'
+
+# accensione all'80 % di potenza
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Valori ammessi</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>da 30 a 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>da 14 a 28 °C, in gradi interi (il mezzo grado viene arrotondato)</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, da 4 a 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>da -4,0 a +4,0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (e <code>Fan2</code>)</td><td>MultiAir: on/off, 0 = auto o da 1 a 5, regolazione da -30 a +30 %</td></tr>
+</table>
+</div>
+
+<div class="note">
+  <p>A partire dal firmware 4.0, i comandi sono accettati esclusivamente con metodi POST e PUT. Un comando inviato prima che la stufa abbia trasmesso le proprie impostazioni (bridge non ancora collegato o appena avviato) viene rifiutato con codice <code>503</code> ed errore <code>"error": "stove_not_ready"</code>. Nessun comando viene inviato alla stufa: riprovare dopo qualche secondo.</p>
+</div>
+
+<h2>Riferimento completo</h2>
+<p>Ciascun endpoint e ciascun campo, con tipo, unità e intervallo, è documentato nel <a href="api-reference.html">riferimento API</a>. È generato automaticamente dalla <a href="../openapi.yaml">descrizione OpenAPI</a> del firmware, che potete importare nei vostri strumenti (visualizzatori di documentazione, generatori di client).</p>
+<p>Il formato della programmazione oraria e le note di protocollo sono disponibili anche nel repository del firmware: <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, API REST</a> e <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

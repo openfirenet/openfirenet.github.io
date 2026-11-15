@@ -1,0 +1,50 @@
+<!-- source: 64a7f60d421e -->
+<!-- title: Schermo del bridge - Open Firenet -->
+<!-- description: Il LilyGO T-Dongle-S3 mostra lo stato della stufa, le temperature e l'indirizzo IP sul suo display a colori. Come attivarlo e configurarlo. -->
+<h1>Lo schermo del LilyGO T-Dongle-S3</h1>
+<p class="lead">Il LilyGO T-Dongle-S3 integra un display a colori compatto. A partire da Open Firenet 4.5, mostra lo stato della stufa a colpo d'occhio senza dover aprire la pagina web.</p>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Schermate del display: logo all'avvio, stato della stufa, temperatura ambiente e potenza" width="760">
+  <figcaption>Schermo del dispositivo, renderizzato direttamente dal motore grafico del firmware</figcaption>
+</figure>
+
+<h2>Informazioni visualizzate</h2>
+<p>Dopo un'animazione iniziale con il logo, i parametri si alternano ciclicamente a schermo: stato della stufa, temperatura ambiente con relativo valore impostato, temperatura di fiamma, potenza di riscaldamento (o temperatura comfort), indirizzo IP del bridge, pellet rimanente prima della manutenzione, ore di funzionamento, potenza del segnale Wi-Fi, stato di connessione MQTT e versione del firmware. Le schermate relative a dati non disponibili sulla stufa vengono automaticamente escluse dal ciclo.</p>
+<p>In caso di anomalia, compare una schermata di avviso permanente: errore della stufa, coperchio del serbatoio aperto, mancata risposta della stufa o perdita del collegamento Wi-Fi.</p>
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-all.png" alt="Tutte le schermate del display: logo, stato, ambiente, fiamma, potenza, indirizzo, manutenzione, ore, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>Tutte le schermate con valori di esempio</figcaption>
+</figure>
+
+<h2>Attivazione</h2>
+<p>Il display è <b>disattivato per impostazione predefinita</b>: su altre schede ESP32-S3 i pin corrispondenti potrebbero essere utilizzati per altri scopi. Attivatelo unicamente se utilizzate un vero LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Aprite l'interfaccia web del bridge, andate nella scheda <b>Bridge</b> e quindi nella sottoscheda <b>Schermo</b>.</li>
+  <li>Selezionate <b>LilyGO T-Dongle-S3</b> come scheda con display e confermate il messaggio di avviso.</li>
+  <li>Riavviate il bridge quando richiesto dalla pagina. Il display si accenderà mostrando il logo.</li>
+</ol>
+<p>L'interruttore <b>Schermo acceso</b> consente di spegnere completamente lo schermo e la retroilluminazione in qualsiasi momento, preservando le impostazioni.</p>
+
+<h2>Personalizzazione</h2>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-screen.png" alt="Scheda Schermo dell'interfaccia web: hardware, parametri di visualizzazione e viste selezionate" width="760">
+  <figcaption>Bridge &gt; Schermo</figcaption>
+</figure>
+<ul>
+  <li><b>Viste visualizzate</b>: spuntate le schermate desiderate e trascinatele per definirne l'ordine di sequenza.</li>
+  <li><b>Durata per schermata</b>: impostabile da 2 a 30 secondi.</li>
+  <li><b>Luminosità retroilluminazione</b>: regolabile da 5 a 100%.</li>
+  <li><b>Lingua dello schermo</b>: italiano, inglese, francese, tedesco o spagnolo. Alla prima attivazione eredita la lingua della pagina web.</li>
+  <li><b>Ruota lo schermo di 180°</b>: utile nel caso in cui la chiavetta risulti orientata capovolta in base alla presa USB della stufa.</li>
+  <li><b>Attenua dopo inattività</b>: riduce la luminosità a un valore scelto (da 0 a 50%) dopo un intervallo di inattività (da 30 secondi a 1 ora). A 0% lo schermo va in standby completo.</li>
+  <li><b>Pulsante BOOT della chiavetta</b>: risveglia lo schermo se attenuato e passa alla schermata successiva quando è attivo. Anche una notifica di avviso o un cambio di stato della stufa riaccendono automaticamente lo schermo.</li>
+</ul>
+<p>Le modifiche vengono salvate nella memoria permanente del dispositivo dopo aver fatto clic su <b>Applica</b>.</p>
+
+<h2>Note pratiche</h2>
+<ul>
+  <li>Durante le nostre prove, lo schermo assorbiva troppa corrente all'avvio, provocando il riavvio della stufa quando la chiavetta era collegata direttamente. <a href="hardware.html#power">Una prolunga USB</a> ha risolto il problema.</li>
+  <li>Open Firenet non gestisce display collegati ad altre schede ESP32.</li>
+</ul>
+<p>Per domande o problemi relativi allo schermo: aprite una <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">issue</a>.</p>

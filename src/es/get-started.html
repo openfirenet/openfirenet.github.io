@@ -1,0 +1,81 @@
+<!-- source: 77f08a09ac55 -->
+<!-- title: Primeros pasos con Open Firenet -->
+<!-- description: Hardware necesario, instalación en el ESP32-S3 con el instalador, configuración Wi-Fi y conexión a una estufa RIKA. -->
+<h1>Primeros pasos</h1>
+<p class="lead">De una placa virgen al control de su estufa desde el navegador en cinco pasos.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Compruebe la versión de firmware de su estufa</h3>
+    <p>En la pantalla de la estufa, abra el menú Info y lea la versión de software de la placa base (por ejemplo 2.27 o 2.29). Búsquela después en la <a href="compatibility.html">página de compatibilidad</a>.</p>
+  </li>
+  <li>
+    <h3>Consiga el hardware necesario</h3>
+    <p>Necesita dos cosas:</p>
+    <ul>
+      <li><b>Una placa de desarrollo ESP32-S3 con USB nativo.</b> El chip debe ser obligatoriamente un ESP32-S3: un ESP32 clásico, ESP32-C3 o una placa con un chip puente UART serie (CH340, CP2102) no funcionará.</li>
+      <li><b>Un cable de datos USB</b> que conecte la placa a la toma hembra USB-A de la estufa. Los cables de solo carga no funcionan.</li>
+    </ul>
+    <p>Para elegir el modelo y consultar placas contrastadas: consulte la página de <a href="hardware.html">Hardware</a>.</p>
+    <div class="note">
+      <p><b>Placas con dos puertos USB:</b> la estufa debe conectarse obligatoriamente al puerto etiquetado como „USB“ o „USB OTG“ (el USB nativo del chip). El puerto etiquetado como „UART“ o „COM“ solo se utiliza para grabar el firmware y ver los registros. Es el error más frecuente.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Grabe el firmware con el instalador</h3>
+    <p>Descargue el instalador para su ordenador desde la <a href="https://github.com/openfirenet/open-firenet-installer/releases">página de versiones</a> y conecte la placa al ordenador. El instalador detecta la placa, la lee y preselecciona <b>Primera instalación</b> en la pestaña Flash USB. Descarga el firmware oficial más reciente, comprueba su firma digital, lo graba en la placa y le guía a la configuración Wi-Fi.</p>
+    <figure>
+      <img class="shot" src="assets/img/usb-flasher.png" alt="Pestaña Flash USB del instalador" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Sistema</th><th>Archivo</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> o paquete <code>.deb</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>El sistema operativo puede emitir un aviso en el primer inicio.</b> La aplicación no está firmada con un certificado de desarrollador comercial de pago, por lo que Windows y macOS no la reconocen por defecto. Es algo previsto.</p>
+      <ul>
+        <li><b>Windows:</b> pantalla azul „Windows protegió su PC“ (Microsoft Defender SmartScreen). Haga clic en <b>Más información</b> y luego en <b>Ejecutar de todas formas</b>.</li>
+        <li><b>macOS:</b> el archivo es un programa estándar. En el Terminal, hágalo ejecutable con <code>chmod +x</code> seguido de su nombre y ábralo. Si macOS impide su apertura, acceda a <b>Ajustes del Sistema &gt; Privacidad y seguridad</b> y pulse <b>Abrir de todos modos</b>.</li>
+      </ul>
+      <p>Para comprobar la autenticidad del archivo descargado, compare su suma SHA-256 con el archivo <code>SHA256SUMS</code> publicado en cada versión.</p>
+    </div>
+    <p>En Linux, su usuario debe formar parte del grupo <code>dialout</code> (o <code>uucp</code>) para acceder a los puertos serie USB. Si la placa no es detectada, mantenga presionado el botón BOOT mientras la enchufa.</p>
+  </li>
+  <li>
+    <h3>Conecte el pincho a su red Wi-Fi</h3>
+    <p>Introduzca el nombre de red (SSID) y la contraseña en la pestaña Configuración Wi-Fi del instalador, o hágalo desde su móvil:</p>
+    <ol>
+      <li>Conéctese a la red Wi-Fi provisional <code>Open-Firenet-Setup</code> creada por la placa (sin contraseña).</li>
+      <li>La página de configuración se abrirá automáticamente. Si no es así, acceda a <code>http://192.168.4.1</code> en el navegador.</li>
+      <li>Seleccione su red doméstica (frecuencia de 2,4 GHz), introduzca la contraseña y guarde. La placa se reiniciará conectándose a su red.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="assets/img/wifi-setup.png" alt="Pestaña Configuración Wi-Fi del instalador" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Conéctelo a la estufa</h3>
+    <p>Conecte el puerto USB nativo de la placa a la toma USB de la estufa y apague y vuelva a encender la estufa con el interruptor principal. Tras aproximadamente un minuto, abra <code>http://open-firenet.local</code> (o la dirección IP indicada en la pestaña Detección de red del instalador).</p>
+    <p>La página mostrará el modelo de su estufa y su estado operativo. Incluye tres pestañas: <b>Estufa</b> (panel principal y controles), <b>Pincho</b> (Wi-Fi, MQTT, reinicio) y <b>Diagnóstico</b> (comunicación con la estufa, registro de tramas, todos los valores). Si aparece un aviso indicando que el pincho no está conectado a la estufa, consulte la sección de <a href="troubleshooting.html">Solución de problemas</a>.</p>
+  </li>
+</ol>
+
+<h2>Actualizaciones posteriores</h2>
+<p>Una vez integrado el pincho en su red, la pestaña Actualización Wi-Fi del instalador permite aplicar nuevas versiones de forma inalámbrica sin desconectar cables. El ordenador y el pincho deben estar en la misma red local; si la actualización falla por tiempo de espera, consulte los <a href="troubleshooting.html#ota">requisitos de red</a>.</p>
+<p>Opcional a partir del firmware 4.0: proteja las actualizaciones inalámbricas mediante contraseña. Conecte el pincho al ordenador, abra la pestaña Wi-Fi del instalador y defina una „Contraseña de actualización“. El instalador la solicitará en cada actualización inalámbrica.</p>
+
+<figure>
+  <img class="shot" src="assets/img/ota-update.png" alt="Pestaña Actualización Wi-Fi del instalador" width="640">
+</figure>
+
+<h2>Pasos siguientes</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Añada la estufa como termostato con todos sus sensores asociados.</p><p class="more"><a href="home-assistant.html">Configurar la integración</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Para Jeedom, openHAB, Node-RED, Domoticz y otros sistemas domóticos.</p><p class="more"><a href="mqtt.html">Configurar MQTT</a></p></div>
+  <div class="card"><h3>API REST</h3><p>Lea y controle la estufa mediante sus propios scripts.</p><p class="more"><a href="api.html">Visión general de la API</a></p></div>
+</div>

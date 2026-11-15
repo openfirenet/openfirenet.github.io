@@ -21,7 +21,7 @@ PAGES = ["index", "get-started", "hardware", "compatibility", "home-assistant", 
          "contribute", "screen"]
 # Languages of the site. English is the reference, at the root; each other language lives in <code>/, built from
 # src/<code>/<name>.html. A page left out of TRANSLATED is only in English, and the translated pages link to it.
-LANGS = ["en", "fr"]
+LANGS = ["en", "fr", "de", "it", "es"]
 LANG_NAMES = {"en": "English", "fr": "Français", "de": "Deutsch", "it": "Italiano", "es": "Español"}
 TRANSLATED = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
               "contribute", "screen", "api-reference"]
@@ -60,6 +60,42 @@ TEXTS = {
                              "d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.",
         "footer_contribute": "Contribuer", "footer_questions": "Questions et support",
         "footer_bridge_issues": "issues de la clé et du firmware", "footer_ha_issues": "issues de l'intégration Home Assistant",
+    },
+    "de": {
+        "nav_get_started": "Erste Schritte", "nav_stove_board": "Ofen und Hardware", "nav_compatibility": "Ofen-Kompatibilität",
+        "nav_hardware": "Hardware", "nav_screen": "Display des Sticks", "nav_integrations": "Integrationen",
+        "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "REST-API",
+        "nav_troubleshooting": "Fehlerbehebung", "nav_contribute": "Mitwirken",
+        "menu": "☰ Menü", "nav_label": "Hauptnavigation", "lang_label": "Sprache",
+        "footer_disclaimer": "Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik "
+                             "GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der "
+                             "Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.",
+        "footer_contribute": "Mitwirken", "footer_questions": "Fragen und Support",
+        "footer_bridge_issues": "Issues zu Stick und Firmware", "footer_ha_issues": "Issues zur Home-Assistant-Integration",
+    },
+    "it": {
+        "nav_get_started": "Per iniziare", "nav_stove_board": "Stufa e hardware", "nav_compatibility": "Compatibilità stufe",
+        "nav_hardware": "Hardware", "nav_screen": "Schermo del bridge", "nav_integrations": "Integrazioni",
+        "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
+        "nav_troubleshooting": "Risoluzione problemi", "nav_contribute": "Contribuire",
+        "menu": "☰ Menu", "nav_label": "Navigazione principale", "lang_label": "Lingua",
+        "footer_disclaimer": "Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA "
+                             "Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di "
+                             "interoperabilità. Uso a proprio rischio, nessuna garanzia.",
+        "footer_contribute": "Contribuire", "footer_questions": "Domande e supporto",
+        "footer_bridge_issues": "issue per il bridge e il firmware", "footer_ha_issues": "issue per l'integrazione Home Assistant",
+    },
+    "es": {
+        "nav_get_started": "Primeros pasos", "nav_stove_board": "Estufa y hardware", "nav_compatibility": "Compatibilidad de estufas",
+        "nav_hardware": "Hardware", "nav_screen": "Pantalla del pincho", "nav_integrations": "Integraciones",
+        "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
+        "nav_troubleshooting": "Solución de problemas", "nav_contribute": "Contribuir",
+        "menu": "☰ Menú", "nav_label": "Navegación principal", "lang_label": "Idioma",
+        "footer_disclaimer": "Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA "
+                             "Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con "
+                             "fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.",
+        "footer_contribute": "Contribuir", "footer_questions": "Preguntas y soporte",
+        "footer_bridge_issues": "issues del pincho y del firmware", "footer_ha_issues": "issues de la integración de Home Assistant",
     },
 }
 
@@ -169,6 +205,9 @@ GENERATED = [
     ("api-reference", "api", {
         "en": ("API reference - Open Firenet", "Every endpoint of the Open Firenet bridge, with its fields, types, units and ranges."),
         "fr": ("Référence de l'API - Open Firenet", "Toutes les adresses de la clé Open Firenet, avec leurs champs, types, unités et plages."),
+        "de": ("API-Referenz - Open Firenet", "Alle Endpunkte der Open-Firenet-Bridge, mit Feldern, Typen, Einheiten und Wertebereichen."),
+        "it": ("Riferimento API - Open Firenet", "Tutti gli endpoint del bridge Open Firenet, con relativi campi, tipi, unità e intervalli."),
+        "es": ("Referencia de la API - Open Firenet", "Todos los endpoints del pincho Open Firenet, con sus campos, tipos, unidades y rangos."),
     }, api_reference),
 ]
 

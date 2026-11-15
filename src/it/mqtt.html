@@ -1,0 +1,85 @@
+<!-- source: d6358ed95530 -->
+<!-- title: MQTT - Open Firenet -->
+<!-- description: Pubblica lo stato di una stufa a pellet RIKA su un broker MQTT e controllala da Jeedom, openHAB, Node-RED, Domoticz o qualsiasi client MQTT. -->
+<h1>MQTT</h1>
+<p class="lead">Il bridge può pubblicare lo stato della stufa sul vostro broker MQTT e accettare comandi da esso. È la soluzione ideale per i sistemi domotici diversi da Home Assistant: Jeedom, openHAB, Node-RED, Domoticz e qualsiasi client MQTT.</p>
+
+<div class="note">
+  <p>MQTT è facoltativo e disattivato per impostazione predefinita. Richiede il firmware del bridge 3.3 o successivo e un broker sulla vostra rete (come Mosquitto). Per Home Assistant, l'<a href="home-assistant.html">integrazione</a> resta la soluzione più completa; <a href="#discovery">Home Assistant Discovery</a> è l'alternativa che non richiede alcuna installazione.</p>
+</div>
+
+<h2>Configurazione</h2>
+<ol>
+  <li>Aprite la pagina del bridge e andate nella scheda <b>Bridge</b> (<code>http://open-firenet.local/#bridge</code>), quindi nella sezione <b>MQTT</b>.</li>
+  <li>Inserite l'indirizzo del broker e la porta (1883 per impostazione predefinita), insieme a nome utente e password se il broker lo richiede.</li>
+  <li>Selezionate <b>Abilita MQTT</b> e salvate. Il badge passerà a "Connesso" in pochi secondi.</li>
+</ol>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-mqtt.png" alt="Scheda Bridge, impostazioni MQTT" width="760">
+</figure>
+
+<h2>Cosa pubblica il bridge</h2>
+<p>Tutti i topic iniziano con un topic di base, per impostazione predefinita <code>openfirenet</code>. Modificatelo nelle impostazioni se utilizzate più bridge.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenuto</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> o <code>offline</code>. Il broker imposta automaticamente <code>offline</code> quando il bridge non è più raggiungibile.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Un unico messaggio JSON contenente gli oggetti <code>device</code>, <code>stove</code>, <code>sensors</code> e <code>controls</code>, con gli stessi nomi e unità dell'<a href="api.html">API REST</a>. Inviato a ogni variazione, al massimo ogni 5 secondi e almeno ogni minuto.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Gli stessi valori inviati singolarmente per topic, per i sistemi che preferiscono valori semplici: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Ogni messaggio viene pubblicato con il flag retain attivo, in modo che i client ricevano i valori correnti subito dopo la sottoscrizione. <code>openfirenet/device/connected</code> indica se il bridge è collegato alla stufa; finché non lo è, vengono pubblicati solo i valori <code>device</code> e <code>health</code>.</p>
+<p>A partire dal firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> riporta lo stato operativo del bridge stesso: <code>restart_reason</code> (causa dell'ultimo riavvio), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> e <code>mqtt_disconnects</code>. I contatori si azzerano a ogni avvio. Un allarme su <code>stove_link_losses</code> o su una modifica di <code>restart_reason</code> vi avvisa tempestivamente in caso di anomalie.</p>
+
+<h2>Inviare comandi</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Payload</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, o <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> o <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>da 30 a 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>da 14 a 28, in gradi interi</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Diverse impostazioni contemporaneamente in formato JSON: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>Le altre impostazioni dell'<a href="api.html">API REST</a> (antigelo, ventilatori MultiAir, programmazione...) vengono accettate nello stesso modo, con gli stessi nomi di campo.</p>
+<pre><code># 21 °C con il client da riga di comando Mosquitto
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# monitora tutti i messaggi pubblicati dal bridge
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Non pubblicate comandi con il flag retain attivo.</b> Il broker li ritrasmetterebbe a ogni riconnessione, rischiando di accendere la stufa autonomamente; per questo motivo il bridge li ignora. I comandi vengono ignorati anche finché la stufa non è collegata.</p>
+</div>
+
+<h2 id="discovery">Home Assistant Discovery</h2>
+<p>A partire dal firmware 3.4, il bridge può notificare la stufa all'integrazione MQTT di Home Assistant: selezionate <b>Home Assistant Discovery</b> nella scheda MQTT e salvate. La stufa comparirà automaticamente in Home Assistant come un unico dispositivo con:</p>
+<ul>
+  <li>un termostato: accensione / spegnimento, temperatura obiettivo e le modalità manuale / auto / comfort come preset;</li>
+  <li>la potenza di riscaldamento, le temperature di attenuazione e antigelo, la calibrazione della sonda ambiente;</li>
+  <li>interruttori per la programmazione oraria, l'antigelo e la modalità eco;</li>
+  <li>i sensori: temperature, pellet consumato, conto alla rovescia per la manutenzione, stato operativo e codici di errore e avviso.</li>
+</ul>
+<p>Home Assistant richiede che la propria integrazione MQTT sia connessa allo stesso broker. Deselezionando l'opzione le entità vengono rimosse.</p>
+<div class="note">
+  <p><b>Utilizzate una sola modalità.</b> Se utilizzate già l'<a href="home-assistant.html">integrazione Open Firenet</a>, lasciate disattivata la discovery MQTT: eviterete duplicati della stufa. L'integrazione resta la scelta più completa: include anche i ventilatori MultiAir, la programmazione settimanale (copiata da un programma di Home Assistant) e il sensore di temperatura esterna. Tramite MQTT le fasce orarie possono essere impostate ma non vengono pubblicate.</p>
+</div>
+
+<h2 id="tls">Connessione cifrata (TLS)</h2>
+<p>A partire dal firmware 3.5, il bridge può connettersi a un broker che supporta TLS, tipicamente sulla porta 8883: selezionate <b>Connessione cifrata (TLS)</b> nella scheda MQTT. Il bridge verifica il certificato del broker in uno dei due modi seguenti:</p>
+<ul>
+  <li><b>Nessun dato aggiuntivo richiesto</b> se il certificato è firmato da un'autorità di certificazione pubblica, per il nome specificato come indirizzo del broker: un broker gestito o un broker locale con certificato Let's Encrypt.</li>
+  <li><b>Incollate il certificato della vostra autorità CA</b> nel campo apposito, per un broker locale con certificato autofirmato. Si tratta del testo che inizia con <code>-----BEGIN CERTIFICATE-----</code>. Il nome host nel certificato del broker non viene verificato, poiché tali broker vengono solitamente contattati tramite indirizzo IP.</li>
+</ul>
+<div class="note">
+  <p><b>Solo se realmente necessario.</b> La crittografia richiede molte risorse per questo piccolo chip: occupa circa 50 kB di memoria RAM durante la connessione. Con un broker sulla propria rete locale, il protocollo MQTT non cifrato resta la scelta più semplice. Usate TLS solo quando il broker lo richiede o si trova all'esterno della vostra rete.</p>
+</div>
+
+<h2>Buono a sapersi</h2>
+<ul>
+  <li>Senza TLS la connessione non è cifrata: una soluzione accettabile per un broker sulla rete locale, ma non al di fuori di essa.</li>
+  <li>Se il broker non è raggiungibile, il bridge ritenta autonomamente ogni 10 secondi (ogni 30 secondi con TLS). La comunicazione con la stufa non ne risente.</li>
+</ul>
+<p>Qualcosa non funziona? Consulta la sezione <a href="troubleshooting.html">Risoluzione problemi</a>.</p>

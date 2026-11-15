@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es" data-page="contribute">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contribuir - Open Firenet</title>
+<meta name="description" content="Cómo ayudar a Open Firenet: compartir qué funciona en su estufa, probar, traducir, mejorar la documentación o el código.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/contribute.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/contribute.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/contribute.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/contribute.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/contribute.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/contribute.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menú</button>
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <a href="../es/get-started.html">Primeros pasos</a>
+      <details class="nav-group">
+        <summary>Estufa y hardware</summary>
+        <div class="nav-menu">
+          <a href="../es/compatibility.html">Compatibilidad de estufas</a>
+          <a href="../es/hardware.html">Hardware</a>
+          <a href="../es/screen.html">Pantalla del pincho</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integraciones</summary>
+        <div class="nav-menu">
+          <a href="../es/home-assistant.html">Home Assistant</a>
+          <a href="../es/mqtt.html">MQTT</a>
+          <a href="../es/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../es/troubleshooting.html">Solución de problemas</a>
+      <a href="../es/contribute.html" class="active" aria-current="page">Contribuir</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Idioma"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</summary>
+        <div class="nav-menu">
+          <a href="../contribute.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/contribute.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/contribute.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/contribute.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/contribute.html" hreflang="es" lang="es" data-lang="es" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Contribuir</h1>
+<p class="lead">Open Firenet es un proyecto comunitario. No hace falta saber programar para ayudar: hasta ahora, las contribuciones más útiles han sido los informes y pruebas de usuarios con estufas a las que nosotros no tenemos acceso.</p>
+
+<h2>Cuéntenos qué funciona en su estufa</h2>
+<p>Solo podemos realizar pruebas en nuestras propias estufas. Si el pincho funciona en la suya, un informe de dos minutos añade a las listas el modelo de su estufa, su versión de firmware y su placa, ayudando a otros usuarios en su elección.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Abrir un informe « It works on my stove »</a></p>
+<p>Informes más esperados:</p>
+<ul>
+  <li>estufas con firmware <b>2.30</b> (un único informe por ahora), con <b>2.25</b> (una sola estufa hasta ahora; el encendido aún no se ha probado) y con firmwares <b>más antiguos</b>, que nadie ha probado todavía;</li>
+  <li>modelos que no figuran en la <a href="compatibility.html">lista de compatibilidad</a>;</li>
+  <li>placas que no figuran en la <a href="hardware.html">lista de hardware</a>.</li>
+</ul>
+
+<h2 id="heating-cycle">Grabar un ciclo de calefacción</h2>
+<p>El pincho muestra lo que comunica la estufa: su estado, sus temperaturas, su potencia. El desarrollo de un ciclo varía entre modelos y versiones de firmware, y nosotros solo conocemos los nuestros. Una grabación de su estufa nos muestra lo que ocurre en la realidad, para que la página web y Home Assistant lo reflejen con total fidelidad.</p>
+<ol>
+  <li>Abra el <a href="https://github.com/openfirenet/open-firenet-installer/releases">instalador</a> (versión 1.10.0 o posterior) en un ordenador de su red, pestaña <b>Grabar</b>, y pulse <b>Iniciar</b> antes de encender la estufa.</li>
+  <li>Durante la fase de calentamiento, anote lo que muestra la pantalla de la estufa en los momentos destacados («Limpieza», «Poner leña»...).</li>
+  <li>Pulse <b>Detener</b> al finalizar el ciclo y luego <b>Enviarnos este archivo</b>.</li>
+</ol>
+<p>La estufa solo se lee, no se le envía ninguna orden y el archivo no incluye ni el nombre de su red Wi-Fi ni sus direcciones. Mantenga el ordenador activo sin suspensión durante la grabación. En máquinas que permanecen siempre encendidas, como una Raspberry Pi, el comando <code>open-firenet-installer record --ip</code> seguido de la dirección del pincho realiza exactamente lo mismo.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Compartir un ciclo de calefacción</a></p>
+<p>Casos más solicitados: un ciclo completo desde arranque en frío, el funcionamiento con leña en una estufa mixta y cualquier modelo o versión de firmware diferente a una DOMO en 2.29.</p>
+
+<h2>Informar de un problema</h2>
+<p>Un buen informe ahorra múltiples consultas: el modelo y versión de firmware de la estufa, la versión del pincho y el archivo de diagnóstico del pincho. La plantilla de incidencias solicita cada uno de estos datos, y la página <a href="troubleshooting.html#report">Solución de problemas</a> indica dónde localizarlos.</p>
+<p>Si está dispuesto a probar una versión de prueba en su estufa durante la búsqueda de una solución, indíquelo en la issue: así se obtuvo la compatibilidad con los firmwares 2.26, 2.27 y 2.28.</p>
+
+<h2>Traducir</h2>
+<p>La página web del pincho, la integración de Home Assistant y el instalador están disponibles en inglés, francés, alemán, italiano y español. Añadir un idioma no requiere conocimientos de programación: se copian los textos en inglés, se traducen y una herramienta de comprobación indica las cadenas que faltan.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Guía de traducción</a></p>
+<p>Este sitio web está disponible en inglés, francés, alemán, italiano y español. Una revisión de una traducción o la aportación de un nuevo idioma son siempre bienvenidas: cada página es un archivo HTML individual para traducir y el <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> explica los pasos.</p>
+
+<h2>Mejorar la documentación</h2>
+<p>Este sitio web dispone de su propio repositorio: <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. Las páginas son archivos HTML directos en la carpeta <code>src/</code>; su README describe cómo compilarlas. Cualquier corrección, explicación más clara o paso que falte es bienvenido en forma de pull request o abriendo una issue explicativa.</p>
+
+<h2>Contribuir al código</h2>
+<p>El proyecto cuenta con tres repositorios:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Repositorio</th><th>Descripción</th><th>Lenguajes</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>El firmware del pincho, con su página web y API</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>La integración para Home Assistant</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>El instalador de escritorio</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>Nuestra metodología de trabajo:</p>
+<ol>
+  <li><b>Abra primero una issue</b>, o comente en una ya existente, para consensuar el enfoque antes de dedicarle tiempo.</li>
+  <li><b>Una rama por cambio</b>, nombrada según la issue: <code>fix/42-short-description</code> o <code>feat/42-short-description</code>.</li>
+  <li><b>Ejecute las pruebas.</b> En el repositorio del firmware, <code>./test/build_and_test.sh</code> las ejecuta todas en su equipo sin necesidad de hardware: el protocolo, un simulador de estufa, la especificación de la API y las traducciones.</li>
+  <li><b>Añada una línea en <code>CHANGELOG.md</code></b> bajo « Non publié », en inglés, redactada pensando en los usuarios: qué cambia para ellos, no cómo está programado.</li>
+  <li><b>Abra una pull request</b> cuya descripción comience por <code>Fixes #42</code> (o <code>Refs #42</code> en cambios parciales). Las comprobaciones automáticas se ejecutan solas.</li>
+</ol>
+<p>Los mensajes de confirmación de git (commit) comienzan por <code>feat:</code>, <code>fix:</code>, <code>docs:</code> o <code>chore:</code>: el script de publicación los interpreta para determinar el siguiente número de versión.</p>
+<div class="note">
+  <p><b>Sobre el protocolo de la estufa:</b> fue obtenido mediante ingeniería inversa y un mensaje erróneo puede hacer que la estufa rechace el pincho. Cualquier cambio en la comunicación con la estufa debe probarse en una estufa real, idealmente en cada familia de firmware, antes de integrarse. Detalle en su pull request lo que pudo probar y lo que no.</p>
+</div>
+
+<h2>Preguntas</h2>
+<p>¿No sabe por dónde empezar o si una propuesta encaja? <a href="https://github.com/openfirenet/open-firenet/issues">Abra una issue</a> y pregunte: no hay preguntas incorrectas.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuir</a> · Preguntas y soporte: <a href="https://github.com/openfirenet/open-firenet/issues">issues del pincho y del firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de la integración de Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

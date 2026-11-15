@@ -1,0 +1,83 @@
+<!-- source: e55dd64ee274 -->
+<!-- title: Ofen-Kompatibilität - Open Firenet -->
+<!-- description: Welche RIKA-Pelletöfen und Firmware-Versionen mit Open Firenet funktionieren, und welche Werte gelesen und gesteuert werden können. -->
+<h1>Ofen-Kompatibilität</h1>
+<p class="lead">Die Kompatibilität hängt von der Firmware-Version des Ofen-Mainboards ab, nicht vom Modellnamen. Jede Firmware-Generation nutzt eine eigene Protokollvariante; der Stick ermittelt die passende Variante automatisch.</p>
+
+<h2>Nach Firmware-Version</h2>
+<p>Die Version finden Sie im Info-Menü auf dem Display Ihres Ofens.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Ofen-Firmware</th><th>Status</th><th>Lesen</th><th>Steuern</th></tr>
+  <tr>
+    <td><b>2.30</b><br>z. B. INDUO</td>
+    <td><span class="badge ok">Kompatibel</span></td>
+    <td>Alle Werte und Einstellungen</td>
+    <td>Ein/Aus, Betriebsart, Leistung, Temperatur, Heizplan, Frostschutz, Raumfühler-Kalibrierung. Der Scheitholzbetrieb wird schrittweise erfasst (ab Stick-Firmware 4.1). Bisher liegt eine Rückmeldung für einen INDUO im Pellet- und Scheitholzbetrieb vor.</td>
+  </tr>
+  <tr>
+    <td><b>2.29</b><br>z. B. DOMO, DOMO BACK, PRIMO MULTIAIR, SUMO</td>
+    <td><span class="badge ok">Kompatibel</span></td>
+    <td>Alle Werte und Einstellungen</td>
+    <td>Vollständig: Ein/Aus, Betriebsart, Leistung, Temperatur, Heizplan, Frostschutz, Raumfühler-Kalibrierung, MultiAir-Gebläse, Backfach (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>z. B. LIVO, INDUO II, SONO</td>
+    <td><span class="badge ok">Kompatibel</span></td>
+    <td>Alle Werte und Einstellungen</td>
+    <td>Ein/Aus, Betriebsart, Leistung, Temperatur, Heizplan, Frostschutz, Raumfühler-Kalibrierung, MultiAir-Gebläse</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>z. B. INDUO</td>
+    <td><span class="badge ok">Kompatibel</span></td>
+    <td>Alle Werte und Einstellungen</td>
+    <td>Ein/Aus, Betriebsart, Leistung, Temperatur, Heizplan, Frostschutz, Raumfühler-Kalibrierung</td>
+  </tr>
+  <tr>
+    <td><b>2.25</b><br>z. B. SUMO</td>
+    <td><span class="badge partial">Teilweise</span></td>
+    <td>Status, Temperaturen, Eingänge und Einstellungen. Raumtemperatur in ganzen Gradstufen</td>
+    <td>Betriebsart, manuelle Leistung, Solltemperatur, Ausschalten und Wochen-Heizplan mit <b>einem Zeitfenster pro Tag</b> (an einem echten Ofen getestet). <b>Noch nicht am Ofen getestet:</b> Zündung, Absenktemperatur, Frostschutz, Komfort-Leistungsstufe. Erfordert Stick-Firmware 4.9 oder neuer. Diagnose-Datei bei Tests gerne einsenden.</td>
+  </tr>
+  <tr>
+    <td><b>Älter als 2.25</b></td>
+    <td><span class="badge unknown">Nicht getestet</span></td>
+    <td colspan="2">Bisher keine Erfahrungsberichte. Rückmeldungen sind jederzeit willkommen.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>Firmware 2.28</b> erfordert Stick-Firmware 4.0 oder neuer für den vollen Funktionsumfang: Vor Version 3.6.1 konnte der Ofen „FIRENET UPDATE“ oder den Fehler UW29 anzeigen, und vor 4.0 unterstützte der Stick nur Ein/Aus, Betriebsart, Leistung und Temperatur.</p>
+</div>
+
+<h2>Erster Start</h2>
+<p>Beim ersten Start an einem Ofen testet der Stick nacheinander die drei Protokollvarianten und speichert diejenige, auf die der Ofen antwortet. Das dauert etwa sechs Sekunden; danach startet er künftig direkt mit der richtigen Variante. Es ist keine manuelle Konfiguration nötig.</p>
+
+<h2>MultiAir-Gebläse</h2>
+<p>Die MultiAir-Bedienelemente erscheinen auf der Seite, wenn der Ofen sich als eines dieser Modelle meldet:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modell</th><th>MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>DOMO</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>PARO</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>SONO</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>CONNECT</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Gebläse 1 und 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Gebläse 1 und 2</td></tr>
+</table>
+</div>
+<p>Bei allen anderen Modellen zeigt der Reiter Ofen den Link „Mein Ofen hat MultiAir: Einstellungen anzeigen“. Nutzen Sie diesen Link, falls Ihr Ofen mit MultiAir ausgestattet ist, und teilen Sie es uns mit, damit wir das Modell ergänzen.</p>
+
+<h2>Hardwareanforderungen</h2>
+<p>Die Firmware ist auf dem ESP32-S3 getestet. Das Board muss den nativen USB-Port des Chips (USB OTG) herausführen: Der Ofen fungiert als USB-Host und der Stick als serielles USB-Gerät (CDC-ACM).</p>
+<ul>
+  <li>ESP32-S3 mit nativem USB: Funktioniert einwandfrei.</li>
+  <li>ESP32-S2: Besitzt ebenfalls nativen USB und könnte funktionieren; ungetestet.</li>
+  <li>Klassischer ESP32, ESP32-C3 und Boards mit reinem UART-Brückenchip: Funktionieren prinzipbedingt nicht.</li>
+</ul>
+
+<h2>Berichten Sie von Ihrem Ofen</h2>
+<p>Falls Ihr Ofen oder Ihre Firmware-Version nicht aufgeführt ist oder sich abweichend verhält, erstellen Sie ein <a href="https://github.com/openfirenet/open-firenet/issues">Issue</a> mit Modell, Firmware-Version, Protokoll (Reiter Diagnose) und der Ausgabe von <code>http://open-firenet.local/api/state</code>.</p>

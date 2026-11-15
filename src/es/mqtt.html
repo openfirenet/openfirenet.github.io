@@ -1,0 +1,85 @@
+<!-- source: d6358ed95530 -->
+<!-- title: MQTT - Open Firenet -->
+<!-- description: Publica el estado de una estufa de pellets RIKA en un bróker MQTT y contrólala desde Jeedom, openHAB, Node-RED, Domoticz o cualquier cliente MQTT. -->
+<h1>MQTT</h1>
+<p class="lead">El pincho puede publicar el estado de la estufa en su bróker MQTT y recibir comandos desde él. Es la puerta de entrada para sistemas domóticos distintos de Home Assistant: Jeedom, openHAB, Node-RED, Domoticz y cualquier cliente MQTT.</p>
+
+<div class="note">
+  <p>MQTT es opcional y está desactivado por defecto. Requiere la versión de firmware del pincho 3.3 o superior y un bróker en su red (por ejemplo, Mosquitto). Para Home Assistant, la <a href="home-assistant.html">integración</a> sigue siendo la solución más completa; la <a href="#discovery">detección MQTT</a> es la alternativa que no necesita ninguna instalación.</p>
+</div>
+
+<h2>Configuración</h2>
+<ol>
+  <li>Abra la página web del pincho y acceda a la pestaña <b>Pincho</b> (<code>http://open-firenet.local/#bridge</code>), y después a su pestaña <b>MQTT</b>.</li>
+  <li>Introduzca la dirección y el puerto del bróker (1883 por defecto), así como el usuario y la contraseña si su bróker los requiere.</li>
+  <li>Marque <b>Activar MQTT</b> y guarde los cambios. El estado pasará a "Conectado" en pocos segundos.</li>
+</ol>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-mqtt.png" alt="Pestaña Pincho, ajustes de MQTT" width="760">
+</figure>
+
+<h2>Qué publica el pincho</h2>
+<p>Todos los topics comienzan con un topic base, por defecto <code>openfirenet</code>. Cámbielo en la configuración si dispone de varios pinchos.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenido</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> u <code>offline</code>. El bróker lo cambia automáticamente a <code>offline</code> cuando el pincho se desconecta.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Un mensaje JSON con los objetos <code>device</code>, <code>stove</code>, <code>sensors</code> y <code>controls</code>, con los mismos nombres y unidades que en la <a href="api.html">API REST</a>. Se envía ante cualquier cambio, con un máximo de 5 segundos y al menos una vez por minuto.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Los mismos valores enviados individualmente por topic, para sistemas que prefieren valores simples: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Todo se publica con el flag retain, por lo que cualquier cliente recibe los valores actuales en cuanto se suscribe. <code>openfirenet/device/connected</code> indica si el pincho está enlazado con la estufa; hasta entonces, solo se publican los valores de <code>device</code> y <code>health</code>.</p>
+<p>Desde el firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> refleja el estado del propio pincho: <code>restart_reason</code> (motivo del último reinicio), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> y <code>mqtt_disconnects</code>. Los contadores se reinician a cero en cada arranque. Una alerta en <code>stove_link_losses</code> o un cambio en <code>restart_reason</code> le advertirá si ocurre algún fallo.</p>
+
+<h2>Enviar comandos</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Carga útil</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, o <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> o <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>de 30 a 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>de 14 a 28, en grados enteros</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Varios ajustes a la vez en formato JSON: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>El resto de ajustes de la <a href="api.html">API REST</a> (protección antihielo, ventiladores MultiAir, programación horaria...) se aceptan del mismo modo y bajo los mismos nombres.</p>
+<pre><code># 21 °C con el cliente por línea de comandos de Mosquitto
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# ver todo lo que publica el pincho
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>No publique comandos con el flag retain activado.</b> El bróker los reenviaría tras cada reconexión y podría encender la estufa por sí solo; por ese motivo el pincho los ignora. Los comandos también se ignoran mientras la estufa no esté enlazada.</p>
+</div>
+
+<h2 id="discovery">Detección automática en Home Assistant</h2>
+<p>Desde el firmware 3.4, el pincho también puede anunciar la estufa a la integración MQTT de Home Assistant: marque <b>Detección automática para Home Assistant</b> en la tarjeta MQTT y guarde. La estufa aparecerá entonces automáticamente en Home Assistant como un dispositivo con:</p>
+<ul>
+  <li>un termostato: encendido / apagado, temperatura objetivo y los modos manual / auto / confort como preajustes;</li>
+  <li>la potencia de calefacción, las temperaturas reducida y antihielo, y la calibración de la sonda de ambiente;</li>
+  <li>interruptores para el horario de calefacción, la protección antihielo y el modo eco;</li>
+  <li>los sensores: temperaturas, pellets consumidos, cuenta atrás de mantenimiento, estado y códigos de error y advertencia.</li>
+</ul>
+<p>Home Assistant debe tener su integración MQTT conectada al mismo bróker. Al desmarcar la opción se eliminan las entidades.</p>
+<div class="note">
+  <p><b>Utilice una u otra.</b> Si ya utiliza la <a href="home-assistant.html">integración Open Firenet</a>, deje desactivada la detección MQTT: obtendría la estufa por duplicado. La integración sigue siendo la opción más completa: incluye además los ventiladores MultiAir, la programación semanal (copiada de un horario de Home Assistant) y la sonda de temperatura externa. Por MQTT los tramos pueden configurarse pero no se leen.</p>
+</div>
+
+<h2 id="tls">Conexión cifrada (TLS)</h2>
+<p>Desde el firmware 3.5, el pincho puede comunicarse con un bróker que requiera TLS, habitualmente en el puerto 8883: marque <b>Conexión cifrada (TLS)</b> en la tarjeta MQTT. El pincho verificará el certificado del bróker de una de estas dos formas:</p>
+<ul>
+  <li><b>Sin necesidad de introducir nada más</b> si el certificado está firmado por una autoridad pública para el nombre introducido en la dirección del bróker: un bróker alojado en la nube o un bróker local con certificado Let's Encrypt.</li>
+  <li><b>Pegue el certificado de su propia autoridad</b> en el campo que aparece, en caso de un bróker local con certificado autofirmado. Corresponde al texto que comienza por <code>-----BEGIN CERTIFICATE-----</code>. El nombre en el certificado del bróker no se verificará, ya que este tipo de bróker suele accederse por su dirección IP.</li>
+</ul>
+<div class="note">
+  <p><b>Solo cuando sea necesario.</b> El cifrado resulta exigente para este pequeño chip: consume unos 50 kB de memoria RAM mientras está conectado. Con un bróker dentro de su propia red local, el protocolo MQTT sin cifrar sigue siendo la opción más sencilla. Utilice TLS cuando el bróker lo requiera o se encuentre fuera de su red.</p>
+</div>
+
+<h2>Información útil</h2>
+<ul>
+  <li>Sin TLS la conexión no está cifrada: es adecuado para un bróker en su red local, pero no fuera de ella.</li>
+  <li>Si el bróker no está disponible, el pincho reintenta la conexión por sí solo cada 10 segundos (cada 30 segundos con TLS). La comunicación con la estufa no se ve afectada.</li>
+</ul>
+<p>¿Algo no funciona? Consulte <a href="troubleshooting.html">Solución de problemas</a>.</p>

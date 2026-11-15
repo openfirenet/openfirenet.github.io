@@ -1,0 +1,88 @@
+<!-- source: 54d221d2c2ea -->
+<!-- title: Open Firenet: Controllo locale per stufe a pellet RIKA -->
+<!-- description: Bridge Wi-Fi open source per stufe a pellet RIKA: interfaccia web locale, API REST, MQTT e integrazione Home Assistant, senza cloud. -->
+<section class="hero">
+  <img class="logo" src="assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Controllo locale per stufe a pellet RIKA</h1>
+  <p class="lead">Open Firenet sostituisce la chiavetta RIKA Firenet con una scheda ESP32-S3. La stufa ottiene una pagina web locale, un'API REST, MQTT e un'integrazione per Home Assistant. Senza account cloud, senza bisogno di connessione Internet.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Per iniziare</a>
+    <a class="btn ghost" href="compatibility.html">La mia stufa è compatibile?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-controls.png" alt="La pagina web di Open Firenet: stato della stufa, temperature, potenza e comandi" width="760">
+  <figcaption>La pagina servita dal bridge sulla vostra rete locale, all'indirizzo <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Funzionalità</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Controllo dalla rete locale</h3>
+    <p>Accensione/spegnimento, modalità operativa, potenza termica, temperatura impostata, programmazione settimanale, antigelo e ventilatori MultiAir per le stufe predisposte.</p>
+  </div>
+  <div class="card">
+    <h3>Tutti i dati rilevati dalla stufa</h3>
+    <p>Temperature, consumo di pellet, ore di funzionamento, conto alla rovescia per la manutenzione, codici di errore e avviso: fino a 88 parametri con le denominazioni originali RIKA.</p>
+  </div>
+  <div class="card">
+    <h3>Integrazione domotica universale</h3>
+    <p>Integrazione dedicata per Home Assistant, API REST completa e supporto MQTT per Jeedom, openHAB, Node-RED, Domoticz e altri sistemi.</p>
+  </div>
+  <div class="card">
+    <h3>100% locale</h3>
+    <p>Il bridge comunica con la stufa via USB e con voi tramite la rete Wi-Fi. Nessun dato viene inviato a server esterni.</p>
+  </div>
+  <div class="card">
+    <h3>Schermo sulla chiavetta</h3>
+    <p>Con un modulo LilyGO T-Dongle-S3, lo stato della stufa e la temperatura ambiente vengono visualizzati direttamente sullo schermo integrato. <a href="screen.html">Scopri lo schermo</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Schermo del LilyGO T-Dongle-S3: logo, stato della stufa, temperatura ambiente e potenza" width="560">
+  <figcaption>Il LilyGO T-Dongle-S3 mostra lo stato della stufa a colpo d'occhio sul proprio display (<a href="screen.html">dettagli</a>)</figcaption>
+</figure>
+
+<h2>Tre componenti</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Viene eseguito sull'ESP32-S3 collegato alla stufa. Fornisce l'interfaccia web locale e l'API REST.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet su GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Installer</h3>
+    <p>Applicazione per Windows, macOS e Linux: installa il firmware, configura il Wi-Fi ed effettua gli aggiornamenti over-the-air.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Scarica l'installer</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Termostato completo, ventilatori, interruttore orario, sensori e diagnostica, installabile tramite HACS.</p>
+    <p class="more"><a href="home-assistant.html">Configurazione in Home Assistant</a></p>
+  </div>
+</div>
+
+<h2>Stufe compatibili</h2>
+<p>L'elemento determinante è la versione del firmware della scheda madre della stufa, visualizzata nel menu Info sul display della stufa. Il bridge la rileva automaticamente.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware stufa</th><th>Stato</th><th>Note</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Supportato</span></td><td>Tutti i parametri e le impostazioni, compreso il funzionamento a legna (un riscontro finora)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Supportato</span></td><td>Tutti i parametri e le regolazioni</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Supportato</span></td><td>Tutti i parametri e le regolazioni</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Supportato</span></td><td>Tutti i parametri e le regolazioni</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Parziale</span></td><td>Supporto preliminare: stato, temperature e regolazioni principali, orario con una fascia al giorno. L'accensione della stufa non è ancora stata provata</td></tr>
+  <tr><td><b>Precedente a 2.25</b></td><td><span class="badge unknown">Non testato</span></td><td>I vostri riscontri sono benvenuti</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Dettagli completi sulla compatibilità</a></p>
+
+<h2>Panoramica dell'interfaccia</h2>
+<div class="shots">
+  <img class="shot" src="assets/img/ui-desktop-schedule.png" alt="Programmazione oraria settimanale con due fasce orarie al giorno">
+  <img class="shot" src="assets/img/ui-desktop-bridge.png" alt="Scheda Bridge, Rete: Wi-Fi, risparmio energetico, accesso alla pagina">
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Scheda Diagnostica: collegamento con la stufa, registro comunicazioni e tutti i parametri">
+  <img class="shot" src="assets/img/dashboard-scan.png" alt="L'installer rileva il bridge sulla rete e mostra lo stato della stufa">
+</div>

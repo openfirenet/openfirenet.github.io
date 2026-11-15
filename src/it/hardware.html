@@ -1,0 +1,121 @@
+<!-- source: 483595f22865 -->
+<!-- title: Hardware - Open Firenet -->
+<!-- description: Quali schede ESP32-S3 funzionano come bridge Open Firenet per stufe a pellet RIKA: criteri di scelta e modelli finora testati. -->
+<h1>Hardware</h1>
+<p class="lead">Il bridge è costituito da una scheda ESP32-S3 collegata alla presa USB della stufa. Molti modelli in commercio sono adatti; questa pagina illustra i requisiti necessari ed elenca le schede già collaudate.</p>
+
+<h2>Requisiti della scheda</h2>
+<ul>
+  <li><b>Microcontrollore ESP32-S3.</b> Non un ESP32 classico, né un ESP32-C3 o ESP32-S2: il firmware è sviluppato unicamente per l'architettura S3.</li>
+  <li><b>Porta USB nativa del chip accessibile via connettore.</b> La stufa dialoga con il bridge tramite protocollo USB nativo: la porta USB della scheda deve essere collegata direttamente all'ESP32-S3 e non a un chip convertitore seriale (CH340, CP2102...).</li>
+  <li><b>Almeno 4 MB di memoria flash.</b> Praticamente tutte le schede ESP32-S3 in commercio dispongono di almeno 4 MB di memoria.</li>
+</ul>
+<p>Non necessari: memoria aggiuntiva (PSRAM), display o batteria. Un'antenna esterna è molto utile se la stufa si trova distante dal punto di accesso Wi-Fi.</p>
+
+<div class="note">
+  <p><b>Schede con due porte USB:</b> la stufa deve essere obbligatoriamente collegata alla porta con etichetta „USB“ o „USB OTG“ (l'USB nativo del chip). La porta etichettata „UART“ o „COM“ serve unicamente al flash e alla lettura dei log seriali. Questo è l'errore più comune; l'interfaccia web vi avvisa qualora si verifichi.</p>
+</div>
+
+<h2>Il cavo</h2>
+<p>La stufa dispone di una presa USB-A femmina (dove si inserisce la chiavetta RIKA Firenet originale). Utilizzate un cavo o un adattatore dal connettore della scheda a una spina USB-A maschio, assicurandovi che consenta il passaggio dei dati: molti cavi corti economici forniscono solo alimentazione elettrica.</p>
+
+<h2>Schede</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Scheda</th><th>Stato</th><th>Connettore</th><th>Note</th></tr>
+  <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, modulo N16R8</td>
+    <td><span class="badge ok">Testata</span></td>
+    <td>2 × USB-C</td>
+    <td>La comune scheda di sviluppo con due porte USB-C e 44 pin, distribuita con numerosi marchi. È la scheda di riferimento utilizzata per lo sviluppo di Open Firenet. Collegare la stufa alla porta „USB“, non „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 con custodia</b> e connettore per antenna esterna</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 × USB-C</td>
+    <td>La stessa scheda fornita in kit con custodia grigia chiusa a vite e antenna Wi-Fi esterna (ad es. da Heemol). Nessuna saldatura richiesta; l'antenna aiuta molto in caso di segnale debole. Un utente la utilizza regolarmente sulla propria stufa. Stessa regola: la stufa va collegata alla porta „USB“.</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (modello FNK0099, 16 MB flash, 8 MB PSRAM)</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 porte USB</td>
+    <td>Scheda di sviluppo venduta in confezione da due. Un utente ne ha confermato il corretto funzionamento. Dispone di due porte USB: la stufa va collegata alla porta nativa („USB“ o „USB-OTG“), non alla porta „UART“.</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>2 × USB-C</td>
+    <td>Scheda di sviluppo venduta in confezione doppia. Un utente ha installato Open Firenet tramite l'installer e accede regolarmente alla pagina web. Non ancora provata direttamente su stufa. Stessa regola: collegare a „USB“, non a „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 × USB-C</td>
+    <td>Diffuso clone della DevKitC-1 con due porte USB-C e LED RGB integrato. La stufa va alla porta „USB“. Pienamente compatibile con la custodia magnetica 3D presentata sotto.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM)</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>USB-C</td>
+    <td>Scheda ultra-compatta (formato ESP32-S3-Zero) con solo USB nativo. Funzionamento confermato da un utente.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (con schermo)</td>
+    <td><span class="badge ok">Testata</span></td>
+    <td>Spina USB-A maschio</td>
+    <td>Formato chiavetta monoblocco. <b>Può richiedere una prolunga USB</b> tra la stufa e la chiavetta, vedi dettagli sotto. Lo schermo a colori mostra lo stato della stufa e le temperature a partire da Open Firenet 4.5: consultate <a href="screen.html">lo schermo della chiavetta</a>. Per l'installazione, collegarla direttamente al computer.</td>
+  </tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3</b> (senza schermo)</td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>Spina USB-A maschio</td>
+    <td>Stessa scheda della versione con schermo; non ancora testata su stufa.</td>
+  </tr>
+  <tr>
+    <td><b>M5Stamp S3</b></td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>USB-C</td>
+    <td>Solo USB nativo. Ancora nessun riscontro su stufa reale.</td>
+  </tr>
+  <tr>
+    <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>USB-C</td>
+    <td>Solo USB nativo. Ancora nessun riscontro su stufa reale.</td>
+  </tr>
+</table>
+</div>
+<p><span class="badge ok">Testata</span> dal team di sviluppo su una stufa reale. <span class="badge ok">Segnalata</span> come funzionante da un utente. <span class="badge partial">Prevista</span>: dovrebbe funzionare in base alle caratteristiche tecniche, senza conferme pratiche al momento.</p>
+
+<div class="note">
+  <p><b>LilyGO T-Dongle-S3 con schermo: tenete a portata di mano una prolunga USB.</b> Durante le nostre prove, collegata direttamente alla presa della stufa, la chiavetta richiedeva troppa corrente all'avvio a causa dello schermo, provocando il riavvio della stufa. Interponendo una breve prolunga USB tra stufa e chiavetta, il sistema funzionava regolarmente poiché il cavo attenua il picco di assorbimento. Ciò non si verifica necessariamente con ogni modello di stufa.</p>
+</div>
+
+<h3 id="power">Se la stufa si riavvia quando collegate la scheda</h3>
+<p>La presa USB della stufa fornisce una corrente limitata. Una scheda con un elevato assorbimento iniziale all'avvio (schermo, LED, moduli extra) può provocare il riavvio della stufa. La maggior parte delle schede non manifesta questo comportamento. Qualora si verifichi, inserite una prolunga USB tra la stufa e la scheda.</p>
+
+<h3>Schede dotate unicamente di USB nativo</h3>
+<p>I dongle e le schede compatte come la T-Dongle-S3, la M5Stamp S3 o la XIAO dispongono di una sola porta USB (quella nativa). Serve sia per installare il software dal computer sia per comunicare con la stufa. Se l'installer non individua la scheda, tenete premuto il tasto BOOT mentre la collegate via USB.</p>
+
+<h2>Custodie e stampe 3D</h2>
+<p>Potete lasciare la scheda aperta, ma una custodia la protegge dalla polvere e garantisce un'installazione ordinata e sicura dietro la stufa.</p>
+<img class="shot" src="assets/img/magnetic-case.webp" alt="La custodia magnetica, stampata in nero con il logo Open Firenet, accanto ai suoi quattro magneti al neodimio" width="600">
+<p><small>Custodia magnetica per ESP32-S3. Foto: tatutsa888.</small></p>
+<ul>
+  <li>
+    <b><a href="https://www.printables.com/model/1892285-open-firenet-esp32-s3-magnetic-case-for-pellet-sto" target="_blank" rel="noopener">Custodia magnetica di tatutsa888</a></b> (modello 3D gratuito su Printables):
+    sviluppata appositamente per Open Firenet su scheda YD-ESP32-S3 o DevKitC-1. Si chiude a scatto senza viti, aderisce alla lamiera della stufa mediante magneti al neodimio e protegge connettore e cavo. Si raccomanda la stampa in PETG o ABS per resistere al calore della stufa.
+  </li>
+  <li>
+    <b>Kit Heemol con custodia:</b> per chi non dispone di una stampante 3D, alcune schede ESP32-S3 DevKitC-1 sono vendute complete di custodia industriale a vite e antenna esterna (vedi tabella schede).
+  </li>
+</ul>
+
+<h2>La vostra scheda funziona? Fatecelo sapere</h2>
+<p>Questo elenco si aggiorna continuamente grazie alle segnalazioni della comunità. Che la vostra scheda funzioni o presenti problemi, aprite una <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">segnalazione „It works on my stove“</a> specificando il modello esatto della scheda e della stufa: aiuterà gli altri utenti nella scelta.</p>
+
+<h2>Passaggi successivi</h2>
+<div class="grid">
+  <div class="card"><h3>Per iniziare</h3><p>Installate il firmware sulla scheda e collegatela alla stufa.</p><p class="more"><a href="get-started.html">Guida passo passo</a></p></div>
+  <div class="card"><h3>Compatibilità</h3><p>Verificate stufe e versioni di firmware supportate.</p><p class="more"><a href="compatibility.html">Compatibilità stufe</a></p></div>
+</div>

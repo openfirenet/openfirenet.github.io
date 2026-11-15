@@ -1,0 +1,95 @@
+<!-- source: 15fd601214c5 -->
+<!-- title: Integrazione Home Assistant - Open Firenet -->
+<!-- description: Installazione dell'integrazione Open Firenet in Home Assistant via HACS e controllo della stufa a pellet RIKA come termostato con tutti i sensori. -->
+<h1>Home Assistant</h1>
+<p class="lead">L'integrazione aggiunge la stufa a Home Assistant come termostato completo, corredato di ventilatori, interruttori, sensori e dati diagnostici. Comunica direttamente con il bridge sulla rete locale, senza cloud.</p>
+<p>Utilizzate un altro sistema domotico (Jeedom, openHAB, Node-RED, Domoticz...)? Consultate la sezione <a href="mqtt.html">MQTT</a>. Se preferite non installare integrazioni personalizzate, il bridge può anche pubblicare i dati verso Home Assistant tramite <a href="mqtt.html#discovery">MQTT Discovery</a> (con funzioni ridotte).</p>
+
+<h2>Prima di iniziare</h2>
+<ul>
+  <li>Un bridge con firmware Open Firenet, collegato alla stufa e raggiungibile sulla rete locale (vedi <a href="get-started.html">Per iniziare</a>).</li>
+  <li>Home Assistant versione 2024.1 o successiva.</li>
+  <li>HACS, consigliato per installazione e aggiornamenti rapidi.</li>
+</ul>
+
+<h2>Installazione tramite HACS</h2>
+<ol class="steps">
+  <li><p>In HACS, cercate <b>Open Firenet</b> e fate clic su <b>Scarica</b>.</p></li>
+  <li><p>Riavviate Home Assistant.</p></li>
+</ol>
+<p>Open Firenet è incluso nell'elenco predefinito di HACS. Se la ricerca non restituisce risultati, aggiungetelo manualmente: in HACS, aprite il menu in alto a destra, selezionate <b>Repository personalizzati</b>, inserite <code>https://github.com/openfirenet/open-firenet-ha</code> con categoria <b>Integrazione</b> e cercate nuovamente.</p>
+<p>Installazione manuale (senza HACS): copiate la cartella <code>custom_components/open_firenet/</code> dal <a href="https://github.com/openfirenet/open-firenet-ha">repository</a> nella cartella <code>config/custom_components/</code> della vostra installazione Home Assistant e riavviate.</p>
+
+<h2>Aggiunta della stufa</h2>
+<ol class="steps">
+  <li><p>Andate su <b>Impostazioni &gt; Dispositivi e servizi &gt; Aggiungi integrazione</b>.</p></li>
+  <li><p>Cercate e selezionate <b>Open Firenet</b>.</p></li>
+  <li><p>Inserite l'indirizzo del bridge (<code>open-firenet.local</code> o l'indirizzo IP locale) e l'intervallo di aggiornamento desiderato (30 secondi per impostazione predefinita). Se usate un nome di dominio locale assegnato dal router, ricordate di abilitarlo preventivamente nella pagina del bridge (scheda Bridge &gt; sezione „Accesso alla pagina“).</p></li>
+</ol>
+
+<h2>Entità disponibili</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Tipo</th><th>Entità supportate</th></tr>
+  <tr><td>Termostato</td><td>Accensione/spegnimento, temperatura impostata (da 14 a 28 °C), modalità (manuale, automatica, comfort), potenza (da 30 a 100%)</td></tr>
+  <tr><td>Ventilatori</td><td>MultiAir 1 e 2: accensione/spegnimento, automatico o velocità da 1 a 5, correzione di convezione. Attivi di serie sui <a href="compatibility.html">modelli predisposti di fabbrica</a>; per gli altri, selezionate „La mia stufa ha MultiAir“ nel menu <b>Configura</b> dell'integrazione (a partire dalla versione 2.8)</td></tr>
+  <tr><td>Interruttori</td><td>Programmazione settimanale, antigelo, modalità eco (sulle stufe supportate)</td></tr>
+  <tr><td>Programmazione</td><td>Pulsante per trasferire il piano orario di Home Assistant alla stufa; orari di inizio e fine per ciascuna fascia (disabilitati di default; 14 entità invece di 28 con firmware 2.25)</td></tr>
+  <tr><td>Numeri</td><td>Temperatura ridotta, temperatura antigelo, calibrazione sonda ambiente, temperatura forno (DOMO BACK)</td></tr>
+  <tr><td>Sensori</td><td>Temperatura ambiente, temperatura fiamma e scheda madre, consumo di pellet, ore di funzionamento, conto alla rovescia manutenzione, potenza effettiva, giri ventilatore e coclea, stato stufa, segnale Wi-Fi, posizione serrande aria</td></tr>
+  <tr><td>Diagnostica</td><td>Collegamento con la stufa, combustione attiva, allarme stufa, coperchio serbatoio aperto, modalità eco disponibile, codici di errore e avviso</td></tr>
+</table>
+</div>
+
+<h2 id="card">Scheda plancia (Lovelace)</h2>
+<p><a href="https://github.com/homeassistant-fr-ecosystem/open-firenet-card">Open Firenet Card</a> è una scheda Lovelace sviluppata da Sylvain Guernion (<a href="https://github.com/sguernion">@sguernion</a>). Raggruppa lo stato operativo della stufa, le temperature e i consumi in una visualizzazione unificata con comandi rapidi. Per installarla, aggiungete il suo repository a HACS come repository personalizzato con categoria <b>Dashboard</b>.</p>
+
+<h2 id="schedule">Programmazione settimanale</h2>
+<p>La stufa memorizza un proprio calendario settimanale: fino a due fasce orarie al giorno (una su firmware 2.25) in cui viene mantenuta la temperatura impostata. Dalla versione 2.6 dell'integrazione, potete impostare il calendario visivamente tramite l'aiutante Pianificazione (Schedule) di Home Assistant e trasferirlo alla stufa. La programmazione viene poi eseguita in autonomia dalla stufa, anche in caso di disconnessione di Home Assistant o del Wi-Fi.</p>
+
+<h3>1. Definite la settimana</h3>
+<ol>
+  <li>In Home Assistant, aprite <b>Impostazioni &gt; Dispositivi e servizi &gt; Aiutanti</b> e fate clic su <b>Crea aiutante</b>.</li>
+  <li>Selezionate <b>Pianificazione</b> e assegnate un nome (es. „Stufa“).</li>
+  <li>Tracciate le fasce orarie desiderate sulla griglia settimanale. Fate clic su una fascia per perfezionare gli orari esatti di inizio e fine o per eliminarla.</li>
+  <li>Definite al massimo <b>due fasce orarie al giorno</b> (limite hardware della stufa). I giorni lasciati vuoti indicano che la stufa rimarrà spenta per l'intera giornata.</li>
+</ol>
+
+<h3>2. Assegnate la pianificazione all'integrazione</h3>
+<ol>
+  <li>Aprite <b>Impostazioni &gt; Dispositivi e servizi &gt; Open Firenet</b> e fate clic su <b>Configura</b>.</li>
+  <li>Nel campo „Pianificazione da copiare sulla stufa“, selezionate l'aiutante creato e confermate.</li>
+</ol>
+<p>Questa associazione si esegue una sola volta.</p>
+
+<h3>3. Trasferite i dati alla stufa</h3>
+<ol>
+  <li>Aprite la pagina del dispositivo della stufa (<b>Impostazioni &gt; Dispositivi e servizi &gt; Open Firenet</b> &gt; la vostra stufa).</li>
+  <li>Nel riquadro „Configurazione“, premete <b>Copia pianificazione sulla stufa</b>.</li>
+</ol>
+<p>L'intera settimana viene trasmessa con un unico comando e sostituisce la programmazione memorizzata nella stufa, inclusi i giorni vuoti. Potete controllare il risultato nell'interfaccia web del bridge (scheda Stufa &gt; „Programmazione“).</p>
+
+<h3>4. Attivate la programmazione</h3>
+<p>Il trasferimento popola la memoria della stufa; l'interruttore <b>Programmazione</b> determina se la stufa deve seguire l'orario o funzionare a temperatura fissa. Attivatelo dal cruscotto o tramite un'automazione.</p>
+
+<div class="note">
+  <p><b>Dopo ogni modifica alla pianificazione, premete nuovamente il pulsante:</b> il trasferimento non è automatico; la stufa mantiene l'ultimo programma inviato fino a nuova sincronizzazione.</p>
+</div>
+
+<h3>Note importanti</h3>
+<ul>
+  <li><b>Più di due fasce in un giorno:</b> il trasferimento viene rifiutato con un messaggio che indica il giorno interessato, e nessun dato viene alterato sulla stufa.</li>
+  <li><b>Fascia oraria con termine a mezzanotte:</b> viene convertita automaticamente con fine alle 23:59 per rispettare le specifiche della stufa.</li>
+  <li><b>Cancellare la programmazione della stufa:</b> eliminate tutte le fasce nella griglia di Home Assistant e premete il pulsante di trasferimento.</li>
+  <li><b>L'aiutante Pianificazione non invia comandi diretti:</b> funge unicamente da modello per configurare la memoria della stufa; il suo stato on/off istantaneo viene ignorato.</li>
+  <li><b>Gestione tramite automazioni:</b> ogni fascia oraria espone anche entità distinte per ora di inizio e di fine, corredate dai comandi „Invia fasce orarie alla stufa“ e „Annulla modifiche“. Sono disabilitate per impostazione predefinita; abilitatele all'occorrenza nelle impostazioni del dispositivo.</li>
+</ul>
+
+<h2>Stufa senza sonda ambiente RIKA</h2>
+<p>Se la stufa non dispone di sonda ambiente RIKA, la temperatura ambiente non viene rilevata. Potete visualizzare sul termostato di Home Assistant la misura di qualunque altro sensore della casa: aprite il riquadro <b>Configura</b> dell'integrazione e selezionate l'entità desiderata.</p>
+<div class="note">
+  <p>Questo parametro modifica solo la temperatura visualizzata sul termostato di Home Assistant. La stufa continua a regolare la combustione secondo i propri parametri interni. Per accendere o spegnere la stufa in base a un sensore esterno, utilizzate il termostato generico di Home Assistant o apposite automazioni.</p>
+</div>
+
+<h2>Risoluzione problemi</h2>
+<p>Se le entità risultano non disponibili, verificate innanzitutto che <code>http://open-firenet.local</code> si apra nel browser e mostri la stufa connessa. Consultate quindi la sezione <a href="troubleshooting.html">Risoluzione problemi</a> oppure aprite una issue nel <a href="https://github.com/openfirenet/open-firenet-ha/issues">repository dell'integrazione</a>.</p>

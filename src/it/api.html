@@ -1,0 +1,80 @@
+<!-- source: d8c9b6634705 -->
+<!-- title: API REST - Open Firenet -->
+<!-- description: Panoramica dell'API REST locale del bridge Open Firenet: lettura dello stato della stufa e invio di comandi tramite standard HTTP e JSON. -->
+<h1>API REST</h1>
+<p class="lead">Il bridge espone un'API JSON sulla vostra rete locale con unità di misura naturali: temperature in °C, potenza in percentuale e nomi leggibili delle modalità. Senza chiavi API né account.</p>
+
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Riferimento API completo</a>
+  <a class="btn ghost" href="openapi.yaml">File OpenAPI</a>
+</div>
+
+<h2>Endpoint</h2>
+<p>Fate clic su un endpoint o su un metodo per consultarne i dettagli nel <a href="api-reference.html">riferimento API</a>.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Metodo</th><th>Scopo</th></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Tutti i dati insieme: bridge, stufa, sensori, controlli e diagnostica di collegamento</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Lettura o modifica delle impostazioni (modifiche parziali accettate)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Programmazione settimanale: 14 fasce orarie e temperatura ridotta</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Versione del firmware e data di compilazione</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>Impostazioni MQTT e stato della connessione, vedi <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Intervallo tra i messaggi inviati alla stufa (da 50 a 600 ms, predefinito 150)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Riavvia il bridge</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>Cancella le impostazioni Wi-Fi e torna in modalità configurazione</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Registro in testo semplice del dialogo con la stufa</td></tr>
+</table>
+</div>
+
+<h2>Autorizzazioni di accesso</h2>
+<p>Programmi della vostra rete locale: Home Assistant, script, <code>curl</code>, Node-RED. Oltre all'interfaccia web del bridge stesso. Dal firmware 4.0, le pagine web aperte in un browser da altri domini non possono effettuare chiamate: il bridge risponde 403 a richieste che indicano un'altra pagina come origine e non invia intestazioni cross-origin.</p>
+<p>Il bridge risponde al suo indirizzo IP, a nomi di dominio privi di punto e a <code>open-firenet.local</code>. Qualsiasi altro nome host deve essere preventivamente aggiunto nella scheda Bridge, Rete, sezione "Accesso alla pagina" (o tramite <code>/api/access</code>); in caso contrario il bridge risponde 403 con un payload JSON che indica il proprio indirizzo IP.</p>
+
+<h2>Leggere lo stato</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>La risposta è suddivisa per sezioni tematiche. Le parti più utilizzate:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Significato</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>Stato operativo, modello e versione firmware della stufa</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Codici di errore e avviso correnti, 0 in assenza di anomalie</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Temperatura ambiente, <code>null</code> quando non è collegata alcuna sonda RIKA</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Pellet complessivamente consumato e residuo prima della prossima manutenzione</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>Le impostazioni correnti</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Indica se la stufa ha accettato il bridge e la versione di protocollo con cui ha risposto: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27); <code>?</code> per stufe con firmware 2.25 che utilizzano frame numerici</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Indica se la stufa riconosce il bridge via USB e quanti byte sono stati ricevuti</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Tutti i valori comunicati dalla stufa, con la denominazione RIKA originale</td></tr>
+</table>
+</div>
+
+<h2>Inviare comandi</h2>
+<p>Inviate con metodo POST un oggetto JSON contenente solo i campi che desiderate modificare:</p>
+<pre><code># 21 °C in modalità comfort
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21, "mode": "comfort"}'
+
+# accensione all'80 % di potenza
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Valori ammessi</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>da 30 a 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>da 14 a 28 °C, in gradi interi (il mezzo grado viene arrotondato)</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, da 4 a 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>da -4,0 a +4,0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (e <code>Fan2</code>)</td><td>MultiAir: on/off, 0 = auto o da 1 a 5, regolazione da -30 a +30 %</td></tr>
+</table>
+</div>
+
+<div class="note">
+  <p>A partire dal firmware 4.0, i comandi sono accettati esclusivamente con metodi POST e PUT. Un comando inviato prima che la stufa abbia trasmesso le proprie impostazioni (bridge non ancora collegato o appena avviato) viene rifiutato con codice <code>503</code> ed errore <code>"error": "stove_not_ready"</code>. Nessun comando viene inviato alla stufa: riprovare dopo qualche secondo.</p>
+</div>
+
+<h2>Riferimento completo</h2>
+<p>Ciascun endpoint e ciascun campo, con tipo, unità e intervallo, è documentato nel <a href="api-reference.html">riferimento API</a>. È generato automaticamente dalla <a href="openapi.yaml">descrizione OpenAPI</a> del firmware, che potete importare nei vostri strumenti (visualizzatori di documentazione, generatori di client).</p>
+<p>Il formato della programmazione oraria e le note di protocollo sono disponibili anche nel repository del firmware: <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, API REST</a> e <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>

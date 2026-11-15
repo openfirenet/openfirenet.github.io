@@ -1,0 +1,64 @@
+<!-- source: 6e58a34e6a94 -->
+<!-- title: Mitwirken - Open Firenet -->
+<!-- description: So können Sie Open Firenet unterstützen: Erfahrungsberichte zu Ihrem Ofen, Tests, Übersetzungen, Dokumentation oder Code-Beiträge. -->
+<h1>Mitwirken</h1>
+<p class="lead">Open Firenet ist ein Gemeinschaftsprojekt. Sie müssen nicht programmieren können, um zu helfen: Die nützlichsten Beiträge waren bisher Berichte und Tests von Besitzern von Öfen, zu denen wir selbst keinen Zugang haben.</p>
+
+<h2>Berichten Sie, was an Ihrem Ofen funktioniert</h2>
+<p>Wir können nur an unseren eigenen Öfen testen. Wenn der Stick an Ihrem Ofen funktioniert, fügt ein zweiminütiger Bericht Ihr Modell, Ihre Firmware-Version und Ihre Platine den Listen hinzu und hilft dem nächsten bei seiner Entscheidung.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Bericht „It works on my stove“ erstellen</a></p>
+<p>Besonders gesucht sind Rückmeldungen zu:</p>
+<ul>
+  <li>Öfen mit Firmware <b>2.30</b> (bisher eine Rückmeldung), <b>2.25</b> (bisher ein Ofen; Zündung noch ungetestet) und <b>älteren Versionen</b>, die bisher niemand getestet hat;</li>
+  <li>Modellen, die noch nicht in der <a href="compatibility.html">Kompatibilitätsliste</a> stehen;</li>
+  <li>Platinen, die noch nicht in der <a href="hardware.html">Hardwareliste</a> aufgeführt sind.</li>
+</ul>
+
+<h2 id="heating-cycle">Einen Heizzyklus aufzeichnen</h2>
+<p>Der Stick zeigt an, was der Ofen übermittelt: seinen Zustand, seine Temperaturen, seine Leistung. Wie ein Ofen einen Heizzyklus durchläuft, unterscheidet sich zwischen Modellen und Firmware-Versionen, und wir kennen nur unsere eigenen. Eine Aufzeichnung Ihres Ofens zeigt uns, was tatsächlich passiert, damit die Webseite und Home Assistant alles getreu darstellen können.</p>
+<ol>
+  <li>Öffnen Sie den <a href="https://github.com/openfirenet/open-firenet-installer/releases">Installer</a> (Version 1.10.0 oder neuer) auf einem Rechner in Ihrem Netzwerk, Reiter <b>Aufzeichnen</b>, und klicken Sie vor dem Einschalten des Ofens auf <b>Starten</b>.</li>
+  <li>Notieren Sie während des Betriebs, was das Display des Ofens in den wichtigen Momenten anzeigt („Reinigung“, „Scheitholz einlegen“...).</li>
+  <li>Klicken Sie nach dem Zyklus auf <b>Stoppen</b> und dann auf <b>Datei an uns senden</b>.</li>
+</ol>
+<p>Der Ofen wird nur ausgelesen, es wird nichts an ihn gesendet, und die Datei enthält weder Ihren WLAN-Namen noch Ihre Adressen. Halten Sie den Rechner während der Aufzeichnung aktiv (kein Ruhezustand). Auf einem Rechner, der durchgehend läuft, wie einem Raspberry Pi, bewirkt der Befehl <code>open-firenet-installer record --ip</code> gefolgt von der Adresse des Sticks dasselbe.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Heizzyklus teilen</a></p>
+<p>Besonders gesucht: ein kompletter Zyklus ab Kaltstart, Scheitholzbetrieb bei einem Kombiofen sowie jedes Modell oder jede Firmware-Version außer einem DOMO mit 2.29.</p>
+
+<h2>Ein Problem melden</h2>
+<p>Ein aussagekräftiger Bericht spart mehrere Nachfragen: Ofenmodell und Firmware-Version, Version des Sticks und die Diagnosedatei des Sticks. Das Formular fragt nach jedem dieser Punkte, und die Seite <a href="troubleshooting.html#report">Fehlerbehebung</a> erklärt, wo sie zu finden sind.</p>
+<p>Falls Sie bereit sind, bei der Fehlersuche eine Test-Firmware an Ihrem Ofen auszuprobieren, geben Sie dies im Issue an: Auf diese Weise entstand die Unterstützung für die Firmwares 2.26, 2.27 und 2.28.</p>
+
+<h2>Übersetzen</h2>
+<p>Die Webseite des Sticks, die Home-Assistant-Integration und der Installer sind auf Englisch, Französisch, Deutsch, Italienisch und Spanisch verfügbar. Das Hinzufügen einer Sprache erfordert keine Programmierkenntnisse: Sie kopieren die englischen Texte, übersetzen sie, und eine Prüfung meldet, was noch fehlt.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Übersetzungsleitfaden</a></p>
+<p>Diese Website ist auf Englisch, Französisch, Deutsch, Italienisch und Spanisch verfügbar. Eine Korrekturlesung einer Übersetzung oder eine neue Sprache sind jederzeit willkommen: Jede Seite ist eine HTML-Datei zum Übersetzen, und das <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> erklärt das Vorgehen.</p>
+
+<h2>Dokumentation verbessern</h2>
+<p>Diese Website hat ihr eigenes Repository: <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. Die Seiten sind einfache HTML-Dateien im Verzeichnis <code>src/</code>; ihr README erklärt den Build-Prozess. Eine Korrektur, eine klarere Erklärung oder ein fehlender Schritt sind als Pull Request oder einfach als Issue willkommen.</p>
+
+<h2>Am Code mitarbeiten</h2>
+<p>Das Projekt umfasst drei Repositories:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Repository</th><th>Beschreibung</th><th>Programmiersprache</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>Die Firmware des Sticks, mit Webseite und API</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>Die Home-Assistant-Integration</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>Der Desktop-Installer</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>Wie wir arbeiten:</p>
+<ol>
+  <li><b>Eröffnen Sie zuerst ein Issue</b> oder kommentieren Sie ein bestehendes, um das Vorgehen abzustimmen, bevor Sie Zeit investieren.</li>
+  <li><b>Ein Branch pro Änderung</b>, benannt nach dem Issue: <code>fix/42-short-description</code> oder <code>feat/42-short-description</code>.</li>
+  <li><b>Führen Sie die Tests aus.</b> Im Firmware-Repository führt <code>./test/build_and_test.sh</code> alle Prüfungen auf Ihrem Rechner ohne jegliche Hardware aus: das Protokoll, einen simulierten Ofen, die API-Beschreibung und die Übersetzungen.</li>
+  <li><b>Ergänzen Sie eine Zeile in <code>CHANGELOG.md</code></b> unter „Non publié“, auf Englisch, für Benutzer geschrieben: was sich für sie ändert, nicht wie es programmiert wurde.</li>
+  <li><b>Eröffnen Sie einen Pull Request</b>, dessen Beschreibung mit <code>Fixes #42</code> (oder <code>Refs #42</code> bei Teiländerungen) beginnt. Die automatischen Prüfungen laufen von selbst.</li>
+</ol>
+<p>Commit-Nachrichten beginnen mit <code>feat:</code>, <code>fix:</code>, <code>docs:</code> oder <code>chore:</code>: Das Release-Skript liest diese aus, um die nächste Versionsnummer zu bestimmen.</p>
+<div class="note">
+  <p><b>Hinweis zum Ofenprotokoll:</b> Es wurde per Reverse Engineering analysiert, und eine fehlerhafte Nachricht kann dazu führen, dass ein Ofen den Stick ablehnt. Eine Änderung an der Kommunikation mit dem Ofen muss vor dem Zusammenführen an einem echten Ofen getestet werden, idealerweise auf jeder Firmware-Familie. Geben Sie im Pull Request an, was Sie testen konnten und was nicht.</p>
+</div>
+
+<h2>Fragen</h2>
+<p>Sie wissen nicht, wo Sie anfangen sollen, oder ob eine Idee passt? <a href="https://github.com/openfirenet/open-firenet/issues">Eröffnen Sie ein Issue</a> und fragen Sie nach: Es gibt keine falschen Fragen.</p>

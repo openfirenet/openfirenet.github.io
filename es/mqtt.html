@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es" data-page="mqtt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQTT - Open Firenet</title>
+<meta name="description" content="Publica el estado de una estufa de pellets RIKA en un bróker MQTT y contrólala desde Jeedom, openHAB, Node-RED, Domoticz o cualquier cliente MQTT.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/mqtt.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/mqtt.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/mqtt.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/mqtt.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/mqtt.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/mqtt.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menú</button>
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <a href="../es/get-started.html">Primeros pasos</a>
+      <details class="nav-group">
+        <summary>Estufa y hardware</summary>
+        <div class="nav-menu">
+          <a href="../es/compatibility.html">Compatibilidad de estufas</a>
+          <a href="../es/hardware.html">Hardware</a>
+          <a href="../es/screen.html">Pantalla del pincho</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integraciones</summary>
+        <div class="nav-menu">
+          <a href="../es/home-assistant.html">Home Assistant</a>
+          <a href="../es/mqtt.html" class="active" aria-current="page">MQTT</a>
+          <a href="../es/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../es/troubleshooting.html">Solución de problemas</a>
+      <a href="../es/contribute.html">Contribuir</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Idioma"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</summary>
+        <div class="nav-menu">
+          <a href="../mqtt.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/mqtt.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/mqtt.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/mqtt.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/mqtt.html" hreflang="es" lang="es" data-lang="es" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>MQTT</h1>
+<p class="lead">El pincho puede publicar el estado de la estufa en su bróker MQTT y recibir comandos desde él. Es la puerta de entrada para sistemas domóticos distintos de Home Assistant: Jeedom, openHAB, Node-RED, Domoticz y cualquier cliente MQTT.</p>
+
+<div class="note">
+  <p>MQTT es opcional y está desactivado por defecto. Requiere la versión de firmware del pincho 3.3 o superior y un bróker en su red (por ejemplo, Mosquitto). Para Home Assistant, la <a href="home-assistant.html">integración</a> sigue siendo la solución más completa; la <a href="#discovery">detección MQTT</a> es la alternativa que no necesita ninguna instalación.</p>
+</div>
+
+<h2>Configuración</h2>
+<ol>
+  <li>Abra la página web del pincho y acceda a la pestaña <b>Pincho</b> (<code>http://open-firenet.local/#bridge</code>), y después a su pestaña <b>MQTT</b>.</li>
+  <li>Introduzca la dirección y el puerto del bróker (1883 por defecto), así como el usuario y la contraseña si su bróker los requiere.</li>
+  <li>Marque <b>Activar MQTT</b> y guarde los cambios. El estado pasará a "Conectado" en pocos segundos.</li>
+</ol>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-mqtt.png" alt="Pestaña Pincho, ajustes de MQTT" width="760">
+</figure>
+
+<h2>Qué publica el pincho</h2>
+<p>Todos los topics comienzan con un topic base, por defecto <code>openfirenet</code>. Cámbielo en la configuración si dispone de varios pinchos.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenido</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> u <code>offline</code>. El bróker lo cambia automáticamente a <code>offline</code> cuando el pincho se desconecta.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Un mensaje JSON con los objetos <code>device</code>, <code>stove</code>, <code>sensors</code> y <code>controls</code>, con los mismos nombres y unidades que en la <a href="api.html">API REST</a>. Se envía ante cualquier cambio, con un máximo de 5 segundos y al menos una vez por minuto.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Los mismos valores enviados individualmente por topic, para sistemas que prefieren valores simples: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Todo se publica con el flag retain, por lo que cualquier cliente recibe los valores actuales en cuanto se suscribe. <code>openfirenet/device/connected</code> indica si el pincho está enlazado con la estufa; hasta entonces, solo se publican los valores de <code>device</code> y <code>health</code>.</p>
+<p>Desde el firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> refleja el estado del propio pincho: <code>restart_reason</code> (motivo del último reinicio), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> y <code>mqtt_disconnects</code>. Los contadores se reinician a cero en cada arranque. Una alerta en <code>stove_link_losses</code> o un cambio en <code>restart_reason</code> le advertirá si ocurre algún fallo.</p>
+
+<h2>Enviar comandos</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Carga útil</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, o <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> o <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>de 30 a 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>de 14 a 28, en grados enteros</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Varios ajustes a la vez en formato JSON: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>El resto de ajustes de la <a href="api.html">API REST</a> (protección antihielo, ventiladores MultiAir, programación horaria...) se aceptan del mismo modo y bajo los mismos nombres.</p>
+<pre><code># 21 °C con el cliente por línea de comandos de Mosquitto
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# ver todo lo que publica el pincho
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>No publique comandos con el flag retain activado.</b> El bróker los reenviaría tras cada reconexión y podría encender la estufa por sí solo; por ese motivo el pincho los ignora. Los comandos también se ignoran mientras la estufa no esté enlazada.</p>
+</div>
+
+<h2 id="discovery">Detección automática en Home Assistant</h2>
+<p>Desde el firmware 3.4, el pincho también puede anunciar la estufa a la integración MQTT de Home Assistant: marque <b>Detección automática para Home Assistant</b> en la tarjeta MQTT y guarde. La estufa aparecerá entonces automáticamente en Home Assistant como un dispositivo con:</p>
+<ul>
+  <li>un termostato: encendido / apagado, temperatura objetivo y los modos manual / auto / confort como preajustes;</li>
+  <li>la potencia de calefacción, las temperaturas reducida y antihielo, y la calibración de la sonda de ambiente;</li>
+  <li>interruptores para el horario de calefacción, la protección antihielo y el modo eco;</li>
+  <li>los sensores: temperaturas, pellets consumidos, cuenta atrás de mantenimiento, estado y códigos de error y advertencia.</li>
+</ul>
+<p>Home Assistant debe tener su integración MQTT conectada al mismo bróker. Al desmarcar la opción se eliminan las entidades.</p>
+<div class="note">
+  <p><b>Utilice una u otra.</b> Si ya utiliza la <a href="home-assistant.html">integración Open Firenet</a>, deje desactivada la detección MQTT: obtendría la estufa por duplicado. La integración sigue siendo la opción más completa: incluye además los ventiladores MultiAir, la programación semanal (copiada de un horario de Home Assistant) y la sonda de temperatura externa. Por MQTT los tramos pueden configurarse pero no se leen.</p>
+</div>
+
+<h2 id="tls">Conexión cifrada (TLS)</h2>
+<p>Desde el firmware 3.5, el pincho puede comunicarse con un bróker que requiera TLS, habitualmente en el puerto 8883: marque <b>Conexión cifrada (TLS)</b> en la tarjeta MQTT. El pincho verificará el certificado del bróker de una de estas dos formas:</p>
+<ul>
+  <li><b>Sin necesidad de introducir nada más</b> si el certificado está firmado por una autoridad pública para el nombre introducido en la dirección del bróker: un bróker alojado en la nube o un bróker local con certificado Let's Encrypt.</li>
+  <li><b>Pegue el certificado de su propia autoridad</b> en el campo que aparece, en caso de un bróker local con certificado autofirmado. Corresponde al texto que comienza por <code>-----BEGIN CERTIFICATE-----</code>. El nombre en el certificado del bróker no se verificará, ya que este tipo de bróker suele accederse por su dirección IP.</li>
+</ul>
+<div class="note">
+  <p><b>Solo cuando sea necesario.</b> El cifrado resulta exigente para este pequeño chip: consume unos 50 kB de memoria RAM mientras está conectado. Con un bróker dentro de su propia red local, el protocolo MQTT sin cifrar sigue siendo la opción más sencilla. Utilice TLS cuando el bróker lo requiera o se encuentre fuera de su red.</p>
+</div>
+
+<h2>Información útil</h2>
+<ul>
+  <li>Sin TLS la conexión no está cifrada: es adecuado para un bróker en su red local, pero no fuera de ella.</li>
+  <li>Si el bróker no está disponible, el pincho reintenta la conexión por sí solo cada 10 segundos (cada 30 segundos con TLS). La comunicación con la estufa no se ve afectada.</li>
+</ul>
+<p>¿Algo no funciona? Consulte <a href="troubleshooting.html">Solución de problemas</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuir</a> · Preguntas y soporte: <a href="https://github.com/openfirenet/open-firenet/issues">issues del pincho y del firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de la integración de Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

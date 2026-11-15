@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="it" data-page="screen">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schermo del bridge - Open Firenet</title>
+<meta name="description" content="Il LilyGO T-Dongle-S3 mostra lo stato della stufa, le temperature e l'indirizzo IP sul suo display a colori. Come attivarlo e configurarlo.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/screen.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/screen.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/screen.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/screen.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/screen.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/screen.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group active">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html" class="active" aria-current="page">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../screen.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/screen.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/screen.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/screen.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/screen.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Lo schermo del LilyGO T-Dongle-S3</h1>
+<p class="lead">Il LilyGO T-Dongle-S3 integra un display a colori compatto. A partire da Open Firenet 4.5, mostra lo stato della stufa a colpo d'occhio senza dover aprire la pagina web.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="Schermate del display: logo all'avvio, stato della stufa, temperatura ambiente e potenza" width="760">
+  <figcaption>Schermo del dispositivo, renderizzato direttamente dal motore grafico del firmware</figcaption>
+</figure>
+
+<h2>Informazioni visualizzate</h2>
+<p>Dopo un'animazione iniziale con il logo, i parametri si alternano ciclicamente a schermo: stato della stufa, temperatura ambiente con relativo valore impostato, temperatura di fiamma, potenza di riscaldamento (o temperatura comfort), indirizzo IP del bridge, pellet rimanente prima della manutenzione, ore di funzionamento, potenza del segnale Wi-Fi, stato di connessione MQTT e versione del firmware. Le schermate relative a dati non disponibili sulla stufa vengono automaticamente escluse dal ciclo.</p>
+<p>In caso di anomalia, compare una schermata di avviso permanente: errore della stufa, coperchio del serbatoio aperto, mancata risposta della stufa o perdita del collegamento Wi-Fi.</p>
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-all.png" alt="Tutte le schermate del display: logo, stato, ambiente, fiamma, potenza, indirizzo, manutenzione, ore, Wi-Fi, MQTT, firmware" width="760">
+  <figcaption>Tutte le schermate con valori di esempio</figcaption>
+</figure>
+
+<h2>Attivazione</h2>
+<p>Il display è <b>disattivato per impostazione predefinita</b>: su altre schede ESP32-S3 i pin corrispondenti potrebbero essere utilizzati per altri scopi. Attivatelo unicamente se utilizzate un vero LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Aprite l'interfaccia web del bridge, andate nella scheda <b>Bridge</b> e quindi nella sottoscheda <b>Schermo</b>.</li>
+  <li>Selezionate <b>LilyGO T-Dongle-S3</b> come scheda con display e confermate il messaggio di avviso.</li>
+  <li>Riavviate il bridge quando richiesto dalla pagina. Il display si accenderà mostrando il logo.</li>
+</ol>
+<p>L'interruttore <b>Schermo acceso</b> consente di spegnere completamente lo schermo e la retroilluminazione in qualsiasi momento, preservando le impostazioni.</p>
+
+<h2>Personalizzazione</h2>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-screen.png" alt="Scheda Schermo dell'interfaccia web: hardware, parametri di visualizzazione e viste selezionate" width="760">
+  <figcaption>Bridge &gt; Schermo</figcaption>
+</figure>
+<ul>
+  <li><b>Viste visualizzate</b>: spuntate le schermate desiderate e trascinatele per definirne l'ordine di sequenza.</li>
+  <li><b>Durata per schermata</b>: impostabile da 2 a 30 secondi.</li>
+  <li><b>Luminosità retroilluminazione</b>: regolabile da 5 a 100%.</li>
+  <li><b>Lingua dello schermo</b>: italiano, inglese, francese, tedesco o spagnolo. Alla prima attivazione eredita la lingua della pagina web.</li>
+  <li><b>Ruota lo schermo di 180°</b>: utile nel caso in cui la chiavetta risulti orientata capovolta in base alla presa USB della stufa.</li>
+  <li><b>Attenua dopo inattività</b>: riduce la luminosità a un valore scelto (da 0 a 50%) dopo un intervallo di inattività (da 30 secondi a 1 ora). A 0% lo schermo va in standby completo.</li>
+  <li><b>Pulsante BOOT della chiavetta</b>: risveglia lo schermo se attenuato e passa alla schermata successiva quando è attivo. Anche una notifica di avviso o un cambio di stato della stufa riaccendono automaticamente lo schermo.</li>
+</ul>
+<p>Le modifiche vengono salvate nella memoria permanente del dispositivo dopo aver fatto clic su <b>Applica</b>.</p>
+
+<h2>Note pratiche</h2>
+<ul>
+  <li>Durante le nostre prove, lo schermo assorbiva troppa corrente all'avvio, provocando il riavvio della stufa quando la chiavetta era collegata direttamente. <a href="hardware.html#power">Una prolunga USB</a> ha risolto il problema.</li>
+  <li>Open Firenet non gestisce display collegati ad altre schede ESP32.</li>
+</ul>
+<p>Per domande o problemi relativi allo schermo: aprite una <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">issue</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
