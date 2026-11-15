@@ -1,4 +1,4 @@
-<!-- source: 483595f22865 -->
+<!-- source: 9df7208b4450 -->
 <!-- title: Matériel - Open Firenet -->
 <!-- description: Quelles cartes ESP32-S3 fonctionnent comme clé Open Firenet pour les poêles à granulés RIKA : les points à vérifier, et les cartes essayées jusqu'ici. -->
 <h1>Matériel</h1>
@@ -10,7 +10,7 @@
   <li><b>L'USB natif de la puce sur un connecteur.</b> Le poêle parle à la clé par USB : le port USB de la carte doit donc être relié à l'ESP32-S3 lui-même, pas à un convertisseur USB-série (CH340, CP2102...).</li>
   <li><b>Au moins 4 Mo de mémoire flash.</b> Presque toutes les cartes ESP32-S3 en ont autant ou plus.</li>
 </ul>
-<p>Pas nécessaire : de la mémoire supplémentaire (PSRAM), un écran, une batterie. Une antenne externe aide quand le poêle est loin de votre point d'accès Wi-Fi.</p>
+<p>Un écran ou une batterie ne sont pas nécessaires. De la mémoire supplémentaire (PSRAM) n'est pas obligatoire, mais une PSRAM octale de 8 ou 16 Mo est utilisée par la variante PSRAM et laisse plus de mémoire libre ; la PSRAM quad (2 Mo) n'est pas utilisée. Une antenne externe aide quand le poêle est loin de votre point d'accès Wi-Fi.</p>
 
 <div class="note">
   <p><b>Cartes à deux ports USB :</b> le poêle doit être branché sur le port marqué « USB » ou « USB OTG » (l'USB natif de la puce). Le port marqué « UART » ou « COM » ne sert qu'au flashage et aux journaux. C'est l'erreur la plus fréquente ; la page de la clé vous prévient quand elle se produit.</p>
@@ -54,10 +54,16 @@
     <td>Clone répandu de la DevKitC-1, avec deux ports USB-C et une LED RVB. Le poêle va sur le port « USB ». Compatible avec le boîtier magnétique imprimé en 3D présenté plus bas.</td>
   </tr>
   <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 Mo de flash, 2 Mo de PSRAM)</td>
+    <td><b>diymore ESP32-S3 Mini</b> (4 Mo de flash, 2 Mo de PSRAM quad)</td>
     <td><span class="badge ok">Signalée</span></td>
     <td>USB-C</td>
-    <td>Carte de développement compacte (format ESP32-S3-Zero) vendue par deux, avec USB natif uniquement. Un utilisateur la signale comme fonctionnelle.</td>
+    <td>Carte de développement compacte (format ESP32-S3-Zero) vendue par deux, avec USB natif uniquement. Sa PSRAM de 2 Mo est quad, elle utilise donc la variante standard du firmware. Un utilisateur la signale comme fonctionnelle.</td>
+  </tr>
+  <tr>
+    <td><b>ESP32-S3 Pocket Dongle</b> (16 Mo de flash, 8 Mo de PSRAM octale, écran 0,96")</td>
+    <td><span class="badge ok">Testée</span></td>
+    <td>Prise USB-A</td>
+    <td>Une clé avec sa propre prise USB-A, 16 Mo de flash, 8 Mo de PSRAM octale et un écran couleur ST7735 de 0,96". Testée par le projet. Utilise la variante PSRAM du firmware. Son écran affiche les mêmes écrans que la LilyGO T-Dongle-S3 : voir <a href="screen.html">l'écran de la clé</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (avec écran)</td>

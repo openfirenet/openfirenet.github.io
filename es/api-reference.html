@@ -98,7 +98,7 @@
 </header>
 <main>
 <h1>Referencia de la API</h1>
-<p class="lead">Todos los endpoints del pincho, con sus campos, tipos, unidades y rangos. Generada a partir de la <a href="../openapi.yaml">descripción OpenAPI</a> del firmware 4.9.1.</p>
+<p class="lead">Todos los endpoints del pincho, con sus campos, tipos, unidades y rangos. Generada a partir de la <a href="../openapi.yaml">descripción OpenAPI</a> del firmware 5.0.0.</p>
 <p>API REST local del pincho Open Firenet, el ESP32-S3 que sustituye al pincho RIKA Firenet. Se sirve en su red en la dirección <code>http://open-firenet.local</code> (o en la dirección IP del pincho), sin clave API ni cuenta.</p>
 <p>Las unidades son naturales: temperaturas en °C, potencia en porcentaje, nombres legibles de modos.</p>
 <p><b>Nombres de campos.</b> Solo se describen aquí los nombres recomendados, los que utilizan la integración de Home Assistant y MQTT. Por razones históricas, el pincho también acepta alias antiguos en los comandos (por ejemplo <code>tempRoomTarget</code> para <code>target_temperature</code>, o la forma de texto <code>onOff=1; heatingPower=70;</code>), y <code>GET /api/controls</code> devuelve también los ajustes bajo los nombres y unidades propios de la estufa (<code>onOff</code>, <code>tempRoomTarget</code> en décimas de grado...). El código nuevo no debe basarse en ellos.</p>
@@ -306,7 +306,7 @@
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td></td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 a 30</td><td>Segundos de duración de cada pantalla</td></tr>
   <tr><td><code>brightness</code></td><td>integer, 5 a 100</td><td></td></tr>
   <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
@@ -451,7 +451,7 @@
 <table class="fields">
   <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
   <tr><td><code>available</code></td><td>boolean</td><td>True mientras la pantalla está activa (determinado al arrancar por <code>board</code>); a continuación se pueden configurar las siguientes pantallas</td></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>La placa con pantalla indicada por el usuario: <code>none</code> (por defecto), <code>tdongle</code> (LilyGO T-Dongle-S3, pantalla activa) o <code>tdongle_off</code> (la misma placa, pantalla y retroiluminación apagadas). Guardado; se aplica en el siguiente reinicio</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td>La placa con pantalla indicada por el usuario: <code>none</code> (por defecto), <code>tdongle</code> (LilyGO T-Dongle-S3, pantalla activa), <code>pocket_dongle</code> (ESP32-S3 Pocket Dongle, pantalla activa) o su variante <code>_off</code> (pantalla apagada). Guardado; se aplica en el siguiente reinicio</td></tr>
   <tr><td><code>boards</code></td><td>lista de string</td><td>Placas cuyas pantallas puede controlar este firmware</td></tr>
   <tr><td><code>restart_needed</code></td><td>boolean</td><td>True cuando <code>board</code> difiere de lo que se está ejecutando actualmente</td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 a 30</td><td></td></tr>
@@ -557,6 +557,12 @@
   <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Señal Wi-Fi en dBm</td></tr>
   <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
   <tr><td><code>free_heap</code></td><td>integer</td><td>Memoria libre en bytes</td></tr>
+  <tr><td><code>firmware_variant</code></td><td>string</td><td>Variante del firmware: standard o psram</td></tr>
+  <tr><td><code>hardware_psram</code></td><td>boolean</td><td>True cuando la placa tiene PSRAM física detectada a través de los eFuses del chip</td></tr>
+  <tr><td><code>hardware_psram_size</code></td><td>integer</td><td>Tamaño en bytes de la PSRAM física detectada a través de los eFuses del chip (0 si no hay)</td></tr>
+  <tr><td><code>psram_build_supported</code></td><td>boolean</td><td>True cuando la PSRAM puede ser utilizada por la variante PSRAM del firmware: PSRAM octal, 8 o 16 MB. La PSRAM quad (2 MB) no es compatible y la placa conserva la variante standard</td></tr>
+  <tr><td><code>psram_size</code></td><td>integer</td><td>Tamaño total de la PSRAM en bytes (0 si está ausente o deshabilitada)</td></tr>
+  <tr><td><code>free_psram</code></td><td>integer</td><td>Memoria PSRAM libre en bytes (0 si está ausente o deshabilitada)</td></tr>
   <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Tamaño en bytes de la partición donde se escribe una actualización inalámbrica. Un firmware mayor debe instalarse por USB</td></tr>
   <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Se solicita una contraseña para las actualizaciones inalámbricas. Se configura o elimina por USB con el instalador, nunca por la red</td></tr>
   <tr><td><code>connected</code></td><td>boolean</td><td>Igual que <code>version_ack</code></td></tr>

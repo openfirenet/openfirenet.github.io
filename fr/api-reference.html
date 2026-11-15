@@ -98,7 +98,7 @@
 </header>
 <main>
 <h1>Référence de l'API</h1>
-<p class="lead">Toutes les adresses de la clé, avec leurs champs, types, unités et plages. Générée à partir de la <a href="../openapi.yaml">description OpenAPI</a> du firmware 4.9.1.</p>
+<p class="lead">Toutes les adresses de la clé, avec leurs champs, types, unités et plages. Générée à partir de la <a href="../openapi.yaml">description OpenAPI</a> du firmware 5.0.0.</p>
 <p>API REST locale de la clé Open Firenet, l'ESP32-S3 qui remplace la clé RIKA Firenet. Elle est servie sur votre réseau à l'adresse <code>http://open-firenet.local</code> (ou à l'adresse IP de la clé), sans clé d'API ni compte.</p>
 <p>Les unités sont naturelles : températures en °C, puissance en pourcentage, noms de modes lisibles.</p>
 <p><b>Noms des champs.</b> Seuls les noms recommandés sont décrits ici, ceux qu'utilisent l'intégration Home Assistant et MQTT. Pour des raisons historiques, la clé accepte aussi d'anciens alias dans les commandes (par exemple <code>tempRoomTarget</code> pour <code>target_temperature</code>, ou la forme texte <code>onOff=1; heatingPower=70;</code>), et <code>GET /api/controls</code> renvoie aussi les réglages sous les noms et unités du poêle (<code>onOff</code>, <code>tempRoomTarget</code> en dixièmes de degré...). Un nouveau code ne doit pas s'appuyer dessus.</p>
@@ -306,7 +306,7 @@
 <div class="table-wrap">
 <table class="fields">
   <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td></td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 à 30</td><td>Secondes d'affichage de chaque écran</td></tr>
   <tr><td><code>brightness</code></td><td>integer, 5 à 100</td><td></td></tr>
   <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
@@ -451,7 +451,7 @@
 <table class="fields">
   <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
   <tr><td><code>available</code></td><td>boolean</td><td>Vrai quand l'écran fonctionne (décidé au démarrage par <code>board</code>) ; les écrans ci-dessous peuvent alors être réglés</td></tr>
-  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>La carte que le propriétaire indique comme ayant un écran : <code>none</code> (par défaut), <code>tdongle</code> (LilyGO T-Dongle-S3, écran en marche) ou <code>tdongle_off</code> (la même carte, écran et rétroéclairage éteints). Enregistré ; s'applique au prochain redémarrage</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code> | <code>pocket_dongle</code> | <code>pocket_dongle_off</code></td><td>La carte que le propriétaire indique comme ayant un écran : <code>none</code> (par défaut), <code>tdongle</code> (LilyGO T-Dongle-S3, écran en marche), <code>pocket_dongle</code> (ESP32-S3 Pocket Dongle, écran en marche) ou leur variante <code>_off</code> (écran éteint). Enregistré ; s'applique au prochain redémarrage</td></tr>
   <tr><td><code>boards</code></td><td>liste de string</td><td>Cartes que ce firmware sait piloter</td></tr>
   <tr><td><code>restart_needed</code></td><td>boolean</td><td>Vrai quand <code>board</code> diffère de ce qui fonctionne actuellement</td></tr>
   <tr><td><code>seconds</code></td><td>integer, 2 à 30</td><td></td></tr>
@@ -557,6 +557,12 @@
   <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Signal Wi-Fi en dBm</td></tr>
   <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
   <tr><td><code>free_heap</code></td><td>integer</td><td>Mémoire libre en octets</td></tr>
+  <tr><td><code>firmware_variant</code></td><td>string</td><td>Variante du firmware : standard ou psram</td></tr>
+  <tr><td><code>hardware_psram</code></td><td>boolean</td><td>Vrai quand la carte possède de la PSRAM physique détectée via les eFuses de la puce</td></tr>
+  <tr><td><code>hardware_psram_size</code></td><td>integer</td><td>Taille en octets de la PSRAM physique détectée via les eFuses de la puce (0 en l'absence de PSRAM)</td></tr>
+  <tr><td><code>psram_build_supported</code></td><td>boolean</td><td>Vrai quand la PSRAM peut être utilisée par la variante PSRAM du firmware : PSRAM octale, 8 ou 16 Mo. La PSRAM quad (2 Mo) n'est pas prise en charge et la carte conserve la variante standard</td></tr>
+  <tr><td><code>psram_size</code></td><td>integer</td><td>Taille totale de la PSRAM en octets (0 si absente ou désactivée)</td></tr>
+  <tr><td><code>free_psram</code></td><td>integer</td><td>Mémoire PSRAM libre en octets (0 si absente ou désactivée)</td></tr>
   <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Taille en octets de l'emplacement où s'écrit une mise à jour sans fil. Un firmware plus gros doit être installé par USB</td></tr>
   <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Un mot de passe est demandé pour les mises à jour sans fil. Il se définit ou se retire par USB avec l'installeur, jamais par le réseau</td></tr>
   <tr><td><code>connected</code></td><td>boolean</td><td>Identique à <code>version_ack</code></td></tr>
