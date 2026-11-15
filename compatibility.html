@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stove compatibility - Open Firenet</title>
-<meta name="description" content="Which RIKA pellet stoves and firmware versions work with Open Firenet, and what can be read and controlled on each.">
+<meta name="description" content="Which RIKA and ANIMO pellet stoves and firmware versions work with Open Firenet, and what can be read and controlled on each.">
 <link rel="alternate" hreflang="en" href="https://openfirenet.github.io/compatibility.html">
 <link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/compatibility.html">
 <link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/compatibility.html">
@@ -166,6 +166,26 @@
 </table>
 </div>
 <p>On any other model, the Stove tab shows a link "My stove has MultiAir: show its settings". Use it if your stove is equipped and not in this list, and tell us so that we add it.</p>
+
+<h2>ANIMO stoves (Wi-Fire)</h2>
+<p>ANIMO is the sister brand of RIKA, manufactured by RIKA Innovative Ofentechnik GmbH in Austria. Both brands share the same electronics, the same mainboard firmwares (2.25 to 2.30) and the same serial protocol.</p>
+<p>On ANIMO stoves, the USB socket is marketed under the name <b>Wi-Fire</b> (instead of Firenet). Open Firenet works identically on ANIMO stoves equipped with this port.</p>
+<p>Known ANIMO models:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Model</th><th>Type</th></tr>
+  <tr><td><b>AVITO</b></td><td>Pellet stove</td></tr>
+  <tr><td><b>AVITO SLIM</b></td><td>Pellet stove (flat)</td></tr>
+  <tr><td><b>AVITO RAO</b></td><td>Pellet stove (top flue outlet)</td></tr>
+  <tr><td><b>ADEVO</b></td><td>Pellet stove</td></tr>
+  <tr><td><b>PURE</b></td><td>Pellet stove</td></tr>
+  <tr><td><b>ADUO</b></td><td>Combined pellet and log stove</td></tr>
+  <tr><td><b>AMITO</b></td><td>Pellet stove</td></tr>
+  <tr><td><b>ARONDO</b></td><td>Pellet stove (round)</td></tr>
+  <tr><td><b>ADUO 2</b></td><td>Combined pellet and log stove</td></tr>
+</table>
+</div>
+<p>The stove reports whether it is branded as RIKA or ANIMO in its diagnostic data (sensor <code>fabNumber</code>: 1 for RIKA, 2 for ANIMO).</p>
 
 <h2>The board</h2>
 <p>The firmware is tested on the ESP32-S3. The board must expose the chip's native USB (USB OTG) on a connector: the stove acts as the USB host and the bridge as a USB serial device.</p>

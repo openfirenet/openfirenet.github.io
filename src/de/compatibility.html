@@ -1,6 +1,6 @@
-<!-- source: e55dd64ee274 -->
+<!-- source: f63e51bf8e61 -->
 <!-- title: Ofen-Kompatibilität - Open Firenet -->
-<!-- description: Welche RIKA-Pelletöfen und Firmware-Versionen mit Open Firenet funktionieren, und welche Werte gelesen und gesteuert werden können. -->
+<!-- description: Welche RIKA- und ANIMO-Pelletöfen und Firmware-Versionen mit Open Firenet funktionieren, und welche Werte gelesen und gesteuert werden können. -->
 <h1>Ofen-Kompatibilität</h1>
 <p class="lead">Die Kompatibilität hängt von der Firmware-Version des Ofen-Mainboards ab, nicht vom Modellnamen. Jede Firmware-Generation nutzt eine eigene Protokollvariante; der Stick ermittelt die passende Variante automatisch.</p>
 
@@ -70,6 +70,26 @@
 </table>
 </div>
 <p>Bei allen anderen Modellen zeigt der Reiter Ofen den Link „Mein Ofen hat MultiAir: Einstellungen anzeigen“. Nutzen Sie diesen Link, falls Ihr Ofen mit MultiAir ausgestattet ist, und teilen Sie es uns mit, damit wir das Modell ergänzen.</p>
+
+<h2>ANIMO-Öfen (Wi-Fire)</h2>
+<p>ANIMO ist die Schwestermarke von RIKA und wird von der RIKA Innovative Ofentechnik GmbH in Österreich hergestellt. Beide Marken teilen sich die gleiche Steuerelektronik, dieselben Hauptplatinen-Firmwares (2.25 bis 2.30) und dasselbe serielle Protokoll.</p>
+<p>Bei ANIMO-Öfen wird der USB-Anschluss unter der Bezeichnung <b>Wi-Fire</b> (anstelle von Firenet) vermarktet. Open Firenet funktioniert auf ANIMO-Öfen mit diesem Anschluss genauso wie auf RIKA-Öfen.</p>
+<p>Bekannte ANIMO-Modelle:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modell</th><th>Typ</th></tr>
+  <tr><td><b>AVITO</b></td><td>Pelletofen</td></tr>
+  <tr><td><b>AVITO SLIM</b></td><td>Flacher Pelletofen</td></tr>
+  <tr><td><b>AVITO RAO</b></td><td>Pelletofen (Rauchrohranschluss oben)</td></tr>
+  <tr><td><b>ADEVO</b></td><td>Pelletofen</td></tr>
+  <tr><td><b>PURE</b></td><td>Pelletofen</td></tr>
+  <tr><td><b>ADUO</b></td><td>Kombiofen (Pellets und Scheitholz)</td></tr>
+  <tr><td><b>AMITO</b></td><td>Pelletofen</td></tr>
+  <tr><td><b>ARONDO</b></td><td>Runder Pelletofen</td></tr>
+  <tr><td><b>ADUO 2</b></td><td>Kombiofen (Pellets und Scheitholz)</td></tr>
+</table>
+</div>
+<p>Der Ofen meldet in den Diagnosedaten, ob er auf RIKA oder ANIMO eingestellt ist (Sensor <code>fabNumber</code>: 1 für RIKA, 2 für ANIMO).</p>
 
 <h2>Hardwareanforderungen</h2>
 <p>Die Firmware ist auf dem ESP32-S3 getestet. Das Board muss den nativen USB-Port des Chips (USB OTG) herausführen: Der Ofen fungiert als USB-Host und der Stick als serielles USB-Gerät (CDC-ACM).</p>

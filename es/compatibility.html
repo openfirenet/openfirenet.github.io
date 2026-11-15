@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Compatibilidad de estufas - Open Firenet</title>
-<meta name="description" content="Qué estufas de pellets RIKA y qué versiones de firmware funcionan con Open Firenet, y qué parámetros se pueden leer y controlar.">
+<meta name="description" content="Qué estufas de pellets RIKA y ANIMO y qué versiones de firmware funcionan con Open Firenet, y qué parámetros se pueden leer y controlar.">
 <link rel="alternate" hreflang="en" href="https://openfirenet.github.io/compatibility.html">
 <link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/compatibility.html">
 <link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/compatibility.html">
@@ -166,6 +166,26 @@
 </table>
 </div>
 <p>En cualquier otro modelo, la pestaña Estufa muestra el enlace „Mi estufa tiene MultiAir: mostrar controles“. Utilícelo si su estufa cuenta con esta opción y avísenos para incorporarla al listado.</p>
+
+<h2>Estufas ANIMO (Wi-Fire)</h2>
+<p>ANIMO es la marca hermana de RIKA, fabricada por RIKA Innovative Ofentechnik GmbH en Austria. Ambas marcas comparten la misma electrónica de control, los mismos firmwares de placa base (2.25 a 2.30) y el mismo protocolo serie.</p>
+<p>En las estufas ANIMO, el puerto USB se comercializa con el nombre <b>Wi-Fire</b> (en lugar de Firenet). Open Firenet funciona de forma idéntica en las estufas ANIMO equipadas con este puerto.</p>
+<p>Modelos ANIMO conocidos:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modelo</th><th>Tipo</th></tr>
+  <tr><td><b>AVITO</b></td><td>Estufa de pellets</td></tr>
+  <tr><td><b>AVITO SLIM</b></td><td>Estufa de pellets plana</td></tr>
+  <tr><td><b>AVITO RAO</b></td><td>Estufa de pellets (salida de humos superior)</td></tr>
+  <tr><td><b>ADEVO</b></td><td>Estufa de pellets</td></tr>
+  <tr><td><b>PURE</b></td><td>Estufa de pellets</td></tr>
+  <tr><td><b>ADUO</b></td><td>Estufa mixta de pellets y leña</td></tr>
+  <tr><td><b>AMITO</b></td><td>Estufa de pellets</td></tr>
+  <tr><td><b>ARONDO</b></td><td>Estufa de pellets redonda</td></tr>
+  <tr><td><b>ADUO 2</b></td><td>Estufa mixta de pellets y leña</td></tr>
+</table>
+</div>
+<p>La estufa indica en sus datos de diagnóstico si está configurada como RIKA o ANIMO (sensor <code>fabNumber</code>: 1 para RIKA, 2 para ANIMO).</p>
 
 <h2>Requisitos de hardware del pincho</h2>
 <p>El firmware está validado para el ESP32-S3. La placa debe exponer el USB nativo del microcontrolador (modo USB OTG): la estufa actúa como host USB y el pincho se comporta como un dispositivo serie USB (CDC-ACM).</p>

@@ -1,6 +1,6 @@
-<!-- source: e55dd64ee274 -->
+<!-- source: f63e51bf8e61 -->
 <!-- title: Compatibilità stufe - Open Firenet -->
-<!-- description: Quali stufe a pellet RIKA e quali versioni di firmware funzionano con Open Firenet, e quali parametri possono essere letti e regolati. -->
+<!-- description: Quali stufe a pellet RIKA e ANIMO e quali versioni di firmware funzionano con Open Firenet, e quali parametri possono essere letti e regolati. -->
 <h1>Compatibilità delle stufe</h1>
 <p class="lead">La compatibilità dipende dalla versione del firmware della scheda madre della stufa e non dal nome commerciale del modello. Ogni generazione software adotta una variante specifica del protocollo; il bridge riconosce e seleziona automaticamente quella corretta.</p>
 
@@ -70,6 +70,26 @@
 </table>
 </div>
 <p>Su qualunque altro modello, la scheda Stufa mostra il collegamento „La mia stufa ha MultiAir: mostra i controlli“. Utilizzatelo se la stufa ne è provvista e segnalatecelo in modo da aggiungerla alla lista.</p>
+
+<h2>Stufe ANIMO (Wi-Fire)</h2>
+<p>ANIMO è il marchio gemello di RIKA, prodotto da RIKA Innovative Ofentechnik GmbH in Austria. Entrambi i marchi condividono la stessa elettronica di controllo, gli stessi firmware della scheda madre (da 2.25 a 2.30) e lo stesso protocollo seriale.</p>
+<p>Sulle stufe ANIMO, la presa USB è commercializzata con il nome <b>Wi-Fire</b> (anziché Firenet). Open Firenet funziona in modo identico sulle stufe ANIMO dotate di questa porta.</p>
+<p>Modelli ANIMO noti:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modello</th><th>Tipo</th></tr>
+  <tr><td><b>AVITO</b></td><td>Stufa a pellet</td></tr>
+  <tr><td><b>AVITO SLIM</b></td><td>Stufa a pellet slim</td></tr>
+  <tr><td><b>AVITO RAO</b></td><td>Stufa a pellet (uscita fumi superiore)</td></tr>
+  <tr><td><b>ADEVO</b></td><td>Stufa a pellet</td></tr>
+  <tr><td><b>PURE</b></td><td>Stufa a pellet</td></tr>
+  <tr><td><b>ADUO</b></td><td>Stufa combinata pellet e legna</td></tr>
+  <tr><td><b>AMITO</b></td><td>Stufa a pellet</td></tr>
+  <tr><td><b>ARONDO</b></td><td>Stufa a pellet rotonda</td></tr>
+  <tr><td><b>ADUO 2</b></td><td>Stufa combinata pellet e legna</td></tr>
+</table>
+</div>
+<p>La stufa indica nei dati di diagnostica se è impostata su RIKA o ANIMO (sensore <code>fabNumber</code>: 1 per RIKA, 2 per ANIMO).</p>
 
 <h2>Hardware del bridge</h2>
 <p>Il firmware è testato sull'ESP32-S3. La scheda deve esporre l'USB nativo del chip (USB OTG): la stufa opera come host USB e il bridge si comporta come periferica seriale USB (CDC-ACM).</p>
