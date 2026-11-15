@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es" data-page="index">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Firenet: Control local para estufas de pellets RIKA</title>
+<meta name="description" content="Pincho Wi-Fi de código abierto para estufas de pellets RIKA: interfaz web local, API REST, MQTT e integración con Home Assistant, sin nube.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menú</button>
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <a href="../es/get-started.html">Primeros pasos</a>
+      <details class="nav-group">
+        <summary>Estufa y hardware</summary>
+        <div class="nav-menu">
+          <a href="../es/compatibility.html">Compatibilidad de estufas</a>
+          <a href="../es/hardware.html">Hardware</a>
+          <a href="../es/screen.html">Pantalla del pincho</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integraciones</summary>
+        <div class="nav-menu">
+          <a href="../es/home-assistant.html">Home Assistant</a>
+          <a href="../es/mqtt.html">MQTT</a>
+          <a href="../es/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../es/troubleshooting.html">Solución de problemas</a>
+      <a href="../es/contribute.html">Contribuir</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Idioma"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</summary>
+        <div class="nav-menu">
+          <a href="../index.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/index.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/index.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/index.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/index.html" hreflang="es" lang="es" data-lang="es" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <img class="logo" src="../assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Control local para estufas de pellets RIKA</h1>
+  <p class="lead">Open Firenet sustituye la llave RIKA Firenet por una placa ESP32-S3. Su estufa obtiene una página web local, una API REST, MQTT y una integración nativa para Home Assistant. Sin cuenta en la nube, sin necesidad de conexión a Internet.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Primeros pasos</a>
+    <a class="btn ghost" href="compatibility.html">¿Es compatible mi estufa?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-controls.png" alt="Página web de Open Firenet: estado de la estufa, temperaturas, potencia y controles" width="760">
+  <figcaption>Página servida por el pincho en su red local, en la dirección <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Características</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Control desde su red local</h3>
+    <p>Encendido/apagado, modo de funcionamiento, potencia de calefacción, temperatura de consigna, programación semanal, protección antihielo y ventiladores MultiAir en estufas compatibles.</p>
+  </div>
+  <div class="card">
+    <h3>Todos los datos que reporta la estufa</h3>
+    <p>Temperaturas, consumo de pellets, horas de funcionamiento, cuenta atrás de mantenimiento, códigos de error y aviso: hasta 88 valores con sus nombres originales RIKA.</p>
+  </div>
+  <div class="card">
+    <h3>Integración domótica universal</h3>
+    <p>Una integración dedicada para Home Assistant, una API REST completa y soporte MQTT para Jeedom, openHAB, Node-RED, Domoticz y otros sistemas.</p>
+  </div>
+  <div class="card">
+    <h3>100 % local</h3>
+    <p>El pincho se comunica con la estufa por USB y con usted mediante su red Wi-Fi local. No se envía ningún dato a servidores externos.</p>
+  </div>
+  <div class="card">
+    <h3>Pantalla en el pincho</h3>
+    <p>Con un módulo LilyGO T-Dongle-S3, el estado de la estufa y la temperatura ambiente se muestran directamente en la pantalla del pincho. <a href="screen.html">Ver la pantalla</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="Pantalla de la LilyGO T-Dongle-S3: logotipo, estado de la estufa, temperatura ambiente y potencia" width="560">
+  <figcaption>La LilyGO T-Dongle-S3 muestra el estado de la estufa de un vistazo en su propia pantalla (<a href="screen.html">detalles</a>)</figcaption>
+</figure>
+
+<h2>Tres componentes</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Se ejecuta en el ESP32-S3 conectado a la estufa. Proporciona la interfaz web local y la API REST.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet en GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Instalador</h3>
+    <p>Aplicación de escritorio para Windows, macOS y Linux: graba el firmware, configura el Wi-Fi y aplica actualizaciones inalámbricas.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Descargar el instalador</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Termostato completo, ventiladores, interruptor de horario, sensores y diagnósticos, instalables mediante HACS.</p>
+    <p class="more"><a href="home-assistant.html">Instalación en Home Assistant</a></p>
+  </div>
+</div>
+
+<h2>Estufas compatibles</h2>
+<p>Lo determinante es la versión de firmware de la placa base de la estufa, mostrada en el menú Info de la pantalla de la estufa. El pincho la detecta automáticamente.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware de la estufa</th><th>Estado</th><th>Notas</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes, incluido el funcionamiento con leña (un informe registrado hasta ahora)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Parcial</span></td><td>Soporte preliminar: estado, temperaturas y ajustes principales, programación con una franja diaria. El encendido no se ha probado aún</td></tr>
+  <tr><td><b>Anterior a 2.25</b></td><td><span class="badge unknown">No probado</span></td><td>Sus comentarios son bienvenidos</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Detalles completos de compatibilidad</a></p>
+
+<h2>Vistazo a la interfaz</h2>
+<div class="shots">
+  <img class="shot" src="../assets/img/ui-desktop-schedule.png" alt="Programación semanal con dos franjas horarias por día">
+  <img class="shot" src="../assets/img/ui-desktop-bridge.png" alt="Pestaña Pincho, Red: Wi-Fi, ahorro de energía, acceso a la página">
+  <img class="shot" src="../assets/img/ui-desktop-diagnostics.png" alt="Pestaña Diagnóstico: comunicación con la estufa, registro de intercambios y todos los parámetros">
+  <img class="shot" src="../assets/img/dashboard-scan.png" alt="El instalador detecta el pincho en la red y muestra el estado de la estufa">
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuir</a> · Preguntas y soporte: <a href="https://github.com/openfirenet/open-firenet/issues">issues del pincho y del firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de la integración de Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

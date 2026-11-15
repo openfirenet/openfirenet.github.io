@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de" data-page="get-started">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erste Schritte mit Open Firenet</title>
+<meta name="description" content="Zu kaufende Hardware, Flashen des ESP32-S3 mit dem Installer, WLAN-Einrichtung und Anschließen des Sticks an einen RIKA-Ofen.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/get-started.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/get-started.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/get-started.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/get-started.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/get-started.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/get-started.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html" class="active" aria-current="page">Erste Schritte</a>
+      <details class="nav-group">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../get-started.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/get-started.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/get-started.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/get-started.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/get-started.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Erste Schritte</h1>
+<p class="lead">Vom leeren Board bis zum im Browser gesteuerten Ofen in fünf Schritten.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Prüfen Sie die Firmware-Version Ihres Ofens</h3>
+    <p>Öffnen Sie auf dem Ofen-Display das Menü Info und lesen Sie die Softwareversion des Mainboards ab (z. B. 2.27 oder 2.29). Schlagen Sie diese anschließend auf der <a href="compatibility.html">Kompatibilitätsseite</a> nach.</p>
+  </li>
+  <li>
+    <h3>Besorgen Sie die Hardware</h3>
+    <p>Sie benötigen zwei Dinge:</p>
+    <ul>
+      <li><b>Ein ESP32-S3-Entwicklerboard mit nativem USB.</b> Der Chip muss ein ESP32-S3 sein: Ein normaler ESP32, ESP32-C3 oder ein Board mit reinem USB-UART-Brückenchip (CH340, CP2102) funktioniert nicht.</li>
+      <li><b>Ein USB-Datenkabel</b> vom Board zur USB-A-Buchse des Ofens. Reine Ladekabel funktionieren nicht.</li>
+    </ul>
+    <p>Welches Board Sie wählen sollten und welche Modelle erprobt sind: siehe <a href="hardware.html">Hardware</a>.</p>
+    <div class="note">
+      <p><b>Boards mit zwei USB-Ports:</b> Der Ofen muss an den mit „USB“ oder „USB OTG“ beschrifteten Port angeschlossen werden (nativer USB des Chips). Der mit „UART“ oder „COM“ beschriftete Port dient nur zum Flashen und für Protokolle. Dies ist der häufigste Fehler.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Flashen Sie das Board mit dem Installer</h3>
+    <p>Laden Sie den Installer für Ihr Betriebssystem von der <a href="https://github.com/openfirenet/open-firenet-installer/releases">Releases-Seite</a> herunter und schließen Sie das Board an Ihren Computer an. Der Installer erkennt das Board, liest es aus und wählt im Reiter USB-Flash automatisch <b>Erstinstallation</b> vor. Er lädt die aktuelle offizielle Firmware herunter, prüft die Signatur, schreibt sie auf das Board und führt Sie zur WLAN-Einrichtung.</p>
+    <figure>
+      <img class="shot" src="../assets/img/usb-flasher.png" alt="USB-Flash-Reiter des Installers" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Betriebssystem</th><th>Datei</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> oder das <code>.deb</code>-Paket</td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>Ihr Computer kann beim ersten Start warnen.</b> Der Installer ist nicht mit einem kostenpflichtigen Herausgeberzertifikat signiert, weshalb Windows und macOS ihn noch nicht kennen. Das ist normal.</p>
+      <ul>
+        <li><b>Windows:</b> Blauer Bildschirm „Der Computer wurde durch Windows geschützt“ (Microsoft Defender SmartScreen). Klicken Sie auf <b>Weitere Informationen</b>, dann auf <b>Trotzdem ausführen</b>.</li>
+        <li><b>macOS:</b> Die Datei ist ein normales Programm. Machen Sie sie im Terminal mit <code>chmod +x</code> gefolgt vom Dateinamen ausführbar und starten Sie sie. Falls macOS meldet, dass das Programm nicht geöffnet oder der Entwickler nicht verifiziert werden kann, öffnen Sie <b>Systemeinstellungen &gt; Datenschutz &amp; Sicherheit</b> und klicken Sie auf <b>Dennoch öffnen</b>.</li>
+      </ul>
+      <p>Um die Echtheit der Datei zu prüfen, vergleichen Sie ihren SHA-256-Hash mit der bei jedem Release veröffentlichten Datei <code>SHA256SUMS</code>.</p>
+    </div>
+    <p>Unter Linux muss Ihr Benutzer der Gruppe <code>dialout</code> (oder <code>uucp</code>) angehören, um auf serielle USB-Ports zugreifen zu können. Wenn das Board nicht erkannt wird, halten Sie beim Einstecken die BOOT-Taste gedrückt.</p>
+  </li>
+  <li>
+    <h3>Verbinden Sie den Stick mit Ihrem WLAN</h3>
+    <p>Geben Sie WLAN-Name und -Passwort im Reiter WLAN-Setup des Installers ein, oder erledigen Sie dies über Ihr Smartphone:</p>
+    <ol>
+      <li>Verbinden Sie sich mit dem vom Board erstellten WLAN-Netzwerk <code>Open-Firenet-Setup</code> (kein Passwort).</li>
+      <li>Die Konfigurationsseite öffnet sich automatisch. Falls nicht, rufen Sie <code>http://192.168.4.1</code> auf.</li>
+      <li>Wählen Sie Ihr Heimnetzwerk (2,4 GHz), geben Sie das Passwort ein und speichern Sie. Das Board startet neu und verbindet sich mit Ihrem Netzwerk.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="../assets/img/wifi-setup.png" alt="WLAN-Setup-Reiter des Installers" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Schließen Sie den Stick an den Ofen an</h3>
+    <p>Verbinden Sie den nativen USB-Port des Boards mit der USB-Buchse des Ofens, und schalten Sie den Ofen am Netzschalter aus und wieder ein. Öffnen Sie nach etwa einer Minute <code>http://open-firenet.local</code> (oder die im Reiter Netzwerk-Scan des Installers angezeigte IP-Adresse).</p>
+    <p>Die Seite zeigt das Modell Ihres Ofens und dessen Betriebszustand. Sie umfasst drei Reiter: <b>Ofen</b> (Dashboard und Steuerung), <b>Stick</b> (WLAN, MQTT, Neustart) und <b>Diagnose</b> (Verbindung zum Ofen, Protokoll, alle Messwerte). Falls ein Banner anzeigt, dass der Stick nicht mit dem Ofen verbunden ist, siehe <a href="troubleshooting.html">Fehlerbehebung</a>.</p>
+  </li>
+</ol>
+
+<h2>Spätere Updates</h2>
+<p>Sobald der Stick in Ihrem Netzwerk eingebunden ist, können Sie neue Versionen im Reiter WLAN-Update des Installers ohne Umstecken installieren. Ihr Computer und der Stick müssen sich im selben Netzwerk befinden; bei einem Timeout siehe die <a href="troubleshooting.html#ota">Netzwerkanforderungen</a>.</p>
+<p>Optional seit Firmware 4.0: Schützen Sie drahtlose Updates mit einem Passwort. Schließen Sie den Stick an Ihren Computer an, öffnen Sie den WLAN-Reiter des Installers und vergeben Sie ein „Update-Passwort“. Der Installer fragt dieses bei jedem drahtlosen Update ab.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/ota-update.png" alt="WLAN-Update-Reiter des Installers" width="640">
+</figure>
+
+<h2>Nächste Schritte</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Den Ofen als Thermostat mit allen Sensoren einbinden.</p><p class="more"><a href="home-assistant.html">Integration einrichten</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Für Jeedom, openHAB, Node-RED, Domoticz und andere Systeme.</p><p class="more"><a href="mqtt.html">MQTT einrichten</a></p></div>
+  <div class="card"><h3>REST-API</h3><p>Den Ofen über eigene Skripte auslesen und steuern.</p><p class="more"><a href="api.html">API-Übersicht</a></p></div>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

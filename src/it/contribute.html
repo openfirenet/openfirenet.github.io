@@ -1,0 +1,64 @@
+<!-- source: 1a672d0430c0 -->
+<!-- title: Contribuire - Open Firenet -->
+<!-- description: Come aiutare Open Firenet: condividere il funzionamento sulla propria stufa, eseguire test, tradurre, migliorare la documentazione o il codice. -->
+<h1>Contribuire</h1>
+<p class="lead">Open Firenet è un progetto comunitario. Non occorre saper programmare per essere d'aiuto: finora i contributi più preziosi sono stati i resoconti e le prove di chi possiede una stufa diversa da quelle a nostra disposizione.</p>
+
+<h2>Condividete cosa funziona sulla vostra stufa</h2>
+<p>Possiamo eseguire test solo sulle nostre stufe. Se il bridge funziona sulla vostra, una segnalazione di due minuti aggiunge il modello della stufa, la versione del firmware e la vostra scheda agli elenchi, aiutando altri utenti nella scelta.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Apri una segnalazione « It works on my stove »</a></p>
+<p>Le segnalazioni più attese riguardano:</p>
+<ul>
+  <li>stufe con firmware <b>2.30</b> (finora un solo riscontro), con <b>2.25</b> (finora una sola stufa; l'accensione non è stata provata) e con firmware <b>più datati</b>, finora mai testati da nessuno;</li>
+  <li>modelli non ancora presenti nell'<a href="compatibility.html">elenco di compatibilità</a>;</li>
+  <li>schede non ancora presenti nell'<a href="hardware.html">elenco dell'hardware</a>.</li>
+</ul>
+
+<h2 id="heating-cycle">Registrare un ciclo di riscaldamento</h2>
+<p>Il bridge mostra quanto comunicato dalla stufa: stato, temperature, potenza. L'evoluzione di un ciclo varia a seconda dei modelli e delle versioni del firmware, e noi conosciamo solo i nostri. Una registrazione della vostra stufa ci mostra cosa accade realmente, affinché la pagina web e Home Assistant possano riprodurlo fedelmente.</p>
+<ol>
+  <li>Aprite l'<a href="https://github.com/openfirenet/open-firenet-installer/releases">installer</a> (versione 1.10.0 o successiva) su un computer della vostra rete, scheda <b>Registra</b>, e premete <b>Avvia</b> prima di accendere la stufa.</li>
+  <li>Durante la fase di riscaldamento, annotate cosa mostra il display della stufa nei passaggi chiave ("Pulizia", "Aggiungere legna"...).</li>
+  <li>Al termine del ciclo premete <b>Arresta</b>, quindi <b>Inviaci questo file</b>.</li>
+</ol>
+<p>La stufa viene esclusivamente letta, nessun comando viene trasmesso ad essa e il file non include né il nome della vostra rete Wi-Fi né i vostri indirizzi. Mantenete il computer attivo senza sospensione durante la registrazione. Su dispositivi operativi 24 ore su 24, come un Raspberry Pi, il comando <code>open-firenet-installer record --ip</code> seguito dall'indirizzo del bridge esegue la stessa operazione.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Condividi un ciclo di riscaldamento</a></p>
+<p>Casi particolarmente ricercati: un ciclo completo da accensione a freddo, il funzionamento a legna su stufe combinate e qualsiasi modello o firmware diverso da un DOMO su 2.29.</p>
+
+<h2>Segnalare un problema</h2>
+<p>Una segnalazione dettagliata evita diversi scambi: modello e versione firmware della stufa, versione del bridge e file di diagnostica del bridge. Il modulo di apertura issue richiede ciascuno di questi elementi e la pagina <a href="troubleshooting.html#report">Risoluzione problemi</a> indica dove reperirli.</p>
+<p>Se siete disposti a provare una versione di test sulla vostra stufa durante l'analisi di una soluzione, indicatelo nell'issue: è così che è stato introdotto il supporto per i firmware 2.26, 2.27 e 2.28.</p>
+
+<h2>Tradurre</h2>
+<p>L'interfaccia web del bridge, l'integrazione per Home Assistant e l'installer sono disponibili in inglese, francese, tedesco, italiano e spagnolo. L'aggiunta di una lingua non richiede competenze di programmazione: si copiano i testi in inglese, si traducono e uno strumento di controllo segnala le stringhe mancanti.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Guida alla traduzione</a></p>
+<p>Questo sito web è disponibile in inglese e francese. Una rilettura delle pagine o il contributo per nuove lingue sono sempre graditi: ogni pagina è un singolo file HTML da tradurre e il <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> ne descrive la procedura.</p>
+
+<h2>Migliorare la documentazione</h2>
+<p>Questo sito web risiede in un repository dedicato, <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. Le pagine sono file HTML lineari nella cartella <code>src/</code>; il README ne descrive la compilazione. Correzioni, spiegazioni più chiare o passaggi mancanti possono essere proposti tramite pull request o semplicemente aprendo un'issue descrittiva.</p>
+
+<h2>Contribuire al codice</h2>
+<p>Il progetto include tre repository principali:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Repository</th><th>Descrizione</th><th>Linguaggi</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>Firmware del bridge con server web e API REST</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>Integrazione per Home Assistant</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>Installer desktop</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>Come lavoriamo:</p>
+<ol>
+  <li><b>Aprite prima un'issue</b>, oppure commentatene una esistente, per concordare gli interventi prima di dedicare tempo allo sviluppo.</li>
+  <li><b>Un branch dedicato per ciascuna modifica</b>, denominato in base all'issue: <code>fix/42-short-description</code> o <code>feat/42-short-description</code>.</li>
+  <li><b>Eseguite i test.</b> Nel repository del firmware, lo script <code>./test/build_and_test.sh</code> esegue l'intera suite di verifiche localmente senza alcun hardware: protocollo, simulatore di stufa, schema OpenAPI e traduzioni.</li>
+  <li><b>Aggiungete una voce a <code>CHANGELOG.md</code></b> sotto la sezione « Non publié », redatta in inglese e orientata agli utenti: cosa cambia per loro, non i dettagli tecnici implementativi.</li>
+  <li><b>Aprite una pull request</b> la cui descrizione inizia con <code>Fixes #42</code> (o <code>Refs #42</code> per modifiche parziali). I controlli automatici si avviano da soli.</li>
+</ol>
+<p>I messaggi di commit iniziano con <code>feat:</code>, <code>fix:</code>, <code>docs:</code> o <code>chore:</code>: lo script di rilascio li analizza per determinare l'avanzamento di versione.</p>
+<div class="note">
+  <p><b>Nota sul protocollo della stufa:</b> è stato analizzato tramite reverse engineering e un messaggio errato può indurre la stufa a rifiutare la comunicazione con il bridge. Qualsiasi modifica alla logica di scambio con la stufa richiede una prova su una stufa reale, idealmente per ciascuna famiglia di firmware, prima dell'unione. Descrivete nella pull request ciò che è stato possibile verificare e ciò che non lo è stato.</p>
+</div>
+
+<h2>Domande</h2>
+<p>Non sapete da dove cominciare o se un'idea è adatta? <a href="https://github.com/openfirenet/open-firenet/issues">Aprite un'issue</a> e chiedete: ogni domanda è benvenuta.</p>

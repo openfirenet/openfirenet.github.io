@@ -1,0 +1,88 @@
+<!-- source: 54d221d2c2ea -->
+<!-- title: Open Firenet: Lokale Steuerung für RIKA-Pelletöfen -->
+<!-- description: Open-Source-WLAN-Bridge für RIKA-Pelletöfen: lokale Webseite, REST-API, MQTT und Home-Assistant-Integration, ohne Cloud. -->
+<section class="hero">
+  <img class="logo" src="assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Lokale Steuerung für RIKA-Pelletöfen</h1>
+  <p class="lead">Open Firenet ersetzt den RIKA Firenet Stick durch ein ESP32-S3-Board. Ihr Ofen erhält eine lokale Webseite, eine REST-API, MQTT und eine Home-Assistant-Integration. Kein Cloud-Konto, kein Internet erforderlich.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Erste Schritte</a>
+    <a class="btn ghost" href="compatibility.html">Ist mein Ofen kompatibel?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-controls.png" alt="Die Open-Firenet-Webseite: Ofenstatus, Temperaturen, Leistung, Bedienelemente" width="760">
+  <figcaption>Die vom Stick in Ihrem Netzwerk bereitgestellte Seite unter <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Funktionen</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Steuerung über Ihr Netzwerk</h3>
+    <p>Ein/Aus, Betriebsart, Heizleistung, Solltemperatur, Wochen-Heizplan, Frostschutz und MultiAir-Gebläse bei Öfen, die damit ausgestattet sind.</p>
+  </div>
+  <div class="card">
+    <h3>Alles, was der Ofen meldet</h3>
+    <p>Temperaturen, Pelletverbrauch, Betriebsstunden, Wartungs-Countdown, Fehler- und Warncodes: bis zu 88 Werte unter ihren RIKA-Namen.</p>
+  </div>
+  <div class="card">
+    <h3>Passt zu Ihrer Hausautomation</h3>
+    <p>Eine Home-Assistant-Integration, eine REST-API und MQTT für Jeedom, openHAB, Node-RED, Domoticz und andere Systeme.</p>
+  </div>
+  <div class="card">
+    <h3>100 % lokal</h3>
+    <p>Der Stick kommuniziert über USB mit dem Ofen und über WLAN mit Ihnen. Es wird nichts an einen externen Server gesendet.</p>
+  </div>
+  <div class="card">
+    <h3>Display auf dem Stick</h3>
+    <p>Mit einem LilyGO T-Dongle-S3 werden Ofenstatus und Raumtemperatur direkt auf dem Display des Sticks angezeigt. <a href="screen.html">Display ansehen</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Das Display des LilyGO T-Dongle-S3: Logo, Ofenstatus, Raumtemperatur und Leistung" width="560">
+  <figcaption>Der LilyGO T-Dongle-S3 zeigt den Ofen auf einen Blick auf seinem eigenen Display (<a href="screen.html">Details</a>)</figcaption>
+</figure>
+
+<h2>Drei Komponenten</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Läuft auf dem am Ofen angeschlossenen ESP32-S3. Stellt die Webseite und die API bereit.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet auf GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Installer</h3>
+    <p>Desktop-App für Windows, macOS und Linux: flasht das Board, richtet WLAN ein, führt Over-the-Air-Updates durch.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Installer herunterladen</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Thermostat, Gebläse, Heizplan-Schalter, Sensoren und Diagnose, installiert über HACS.</p>
+    <p class="more"><a href="home-assistant.html">In Home Assistant einrichten</a></p>
+  </div>
+</div>
+
+<h2>Kompatible Öfen</h2>
+<p>Entscheidend ist die Firmware-Version des Ofen-Mainboards, die im Info-Menü auf dem Ofen-Display angezeigt wird. Der Stick erkennt sie automatisch.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Ofen-Firmware</th><th>Status</th><th>Hinweise</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen, einschließlich Holzbetrieb (bisher eine Rückmeldung)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Teilweise</span></td><td>Frühe Unterstützung: Status, Temperaturen und Haupteinstellungen, Heizplan mit einem Zeitfenster pro Tag. Starten des Ofens noch nicht getestet</td></tr>
+  <tr><td><b>Älter als 2.25</b></td><td><span class="badge unknown">Nicht getestet</span></td><td>Rückmeldungen willkommen</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Ausführliche Kompatibilitätsdetails</a></p>
+
+<h2>Einblicke in die Oberfläche</h2>
+<div class="shots">
+  <img class="shot" src="assets/img/ui-desktop-schedule.png" alt="Wöchentlicher Heizplan mit zwei Zeitfenstern pro Tag">
+  <img class="shot" src="assets/img/ui-desktop-bridge.png" alt="Reiter Stick, Netzwerk: WLAN, Energiesparmodus, Seitenzugriff">
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Reiter Diagnose: Verbindung zum Ofen, Übertragungsprotokoll und alle Messwerte">
+  <img class="shot" src="assets/img/dashboard-scan.png" alt="Der Installer findet den Stick im Netzwerk und zeigt den Ofenstatus">
+</div>

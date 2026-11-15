@@ -1,0 +1,199 @@
+<!-- source: 1d30c65e3242 -->
+<!-- title: Solución de problemas - Open Firenet -->
+<!-- description: Qué comprobar cuando el pincho Open Firenet no se conecta a la estufa, no es accesible o falla una actualización, y cómo informar de un problema. -->
+<h1>Solución de problemas</h1>
+<p class="lead">Comience por la propia página del pincho en <code>http://open-firenet.local</code>: desde la versión 3.2 indica claramente el motivo por el que no hay comunicación con la estufa.</p>
+
+<h2>La estufa no está conectada</h2>
+
+<details open>
+  <summary>Aviso: «El pincho no está conectado a la estufa por USB»</summary>
+  <p>La estufa no detecta el pincho en absoluto. Compruebe, en este orden:</p>
+  <ul>
+    <li><b>El puerto USB de la placa.</b> En placas con dos puertos USB, la estufa debe estar conectada al marcado como «USB» o «USB OTG», no al «UART» o «COM».</li>
+    <li><b>El cable.</b> Debe transmitir datos. Muchos cables cortos solo sirven para alimentación.</li>
+    <li><b>La estufa.</b> Debe estar encendida: su toma USB es la que suministra energía a la placa.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Aviso: «La estufa no responde»</summary>
+  <p>La estufa detecta el pincho pero no ha enviado ningún dato. Apague la estufa con el interruptor principal durante un minuto, vuelva a encenderla y espere dos minutos. Si no cambia nada, descargue el registro (pestaña Diagnósticos) e <a href="#report">informe del problema</a>.</p>
+</details>
+
+<details>
+  <summary>La estufa se reinicia al conectar el pincho</summary>
+  <p>La placa probablemente consume demasiada corriente del puerto USB de la estufa durante el arranque. Es poco común; se ha observado con algún pincho con pantalla integrada. Coloque un alargador USB entre la estufa y la placa: consulte <a href="hardware.html#power">Hardware</a>.</p>
+</details>
+
+<details>
+  <summary>La pantalla de la estufa muestra «FIRENET UPDATE» o el código UW29 (u otro código UW)</summary>
+  <p>Ambos mensajes proceden de la comprobación del pincho por parte de la estufa: «FIRENET UPDATE» significa que ha considerado obsoleta la versión del pincho y ofrece actualizarla; UW29 indica que no recibió una identificación válida a tiempo. No confirme la actualización en la estufa. En su lugar, actualice el firmware del pincho: las versiones anteriores a la 3.6.1 podían fallar en esta verificación con estufas en firmware 2.28. Si persiste con la última versión, <a href="#report">informe de ello</a> adjuntando el registro.</p>
+</details>
+
+<details>
+  <summary>La página indica «Esperando a la estufa» y los valores aparecen atenuados</summary>
+  <p>El pincho aún no ha recibido ningún dato de la estufa. Justo tras encenderla es normal durante unos segundos. Si la situación continúa, consulte el aviso superior.</p>
+</details>
+
+<h2>No se puede acceder a la página</h2>
+
+<details>
+  <summary><code>http://open-firenet.local</code> no se abre</summary>
+  <ul>
+    <li>Algunas redes y teléfonos Android no resuelven nombres con sufijo <code>.local</code>. Utilice en su lugar la dirección IP: la pestaña de escaneo de red del instalador la muestra, y su router también.</li>
+    <li>Su dispositivo debe encontrarse en la misma red que el pincho.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>La página indica «El pincho no responde bajo este nombre»</summary>
+  <p>Desde el firmware 4.0 el pincho solo responde en su dirección IP y en <code>open-firenet.local</code>. Si lo abre con otro nombre, por ejemplo el asignado por su router (<code>open-firenet.lan</code>, <code>open-firenet.fritz.box</code>) o un dominio propio, su página muestra este mensaje con un enlace a su dirección IP.</p>
+  <ul>
+    <li>Siga el enlace, abra la pestaña Pincho, Red, sección «Acceso a la página», y añada el nombre que utiliza (uno por línea, máximo 8). A partir de ese momento responderá también bajo ese nombre de inmediato.</li>
+    <li>Cada nombre debe incluir al menos un punto. Añadir <code>example.org</code> cubre también <code>estufa.example.org</code>.</li>
+  </ul>
+  <p>Esta medida impide que páginas web de otros sitios, abiertas en un navegador dentro de su red, puedan leer o enviar órdenes al pincho.</p>
+</details>
+
+<details>
+  <summary>El pincho ya no está en mi red</summary>
+  <p>Cuando no consigue conectarse a su Wi-Fi, el pincho pasa al modo de configuración y crea la red <code>Open-Firenet-Setup</code>. Conéctese a ella e introduzca de nuevo sus credenciales Wi-Fi. Solo se admiten redes de 2,4 GHz.</p>
+  <p>Desde el firmware 4.0 el pincho se reconecta automáticamente a su red: tras una pérdida de conexión sigue reintentándolo continuamente, y si arranca antes que su router (tras un corte eléctrico), abandona el modo de configuración en cuanto la red responde. Con versiones de firmware anteriores permanece sin conexión hasta reiniciarse: desconéctelo de la corriente, vuelva a conectarlo y actualice el firmware.</p>
+  <p>Desde el firmware 4.0, al configurar una contraseña Wi-Fi el pincho solo se conecta a redes cifradas (WPA o superior): ya no se conectará a redes abiertas o protegidas por el antiguo WEP que compartan el mismo nombre.</p>
+</details>
+
+<details>
+  <summary>Pérdidas frecuentes de Wi-Fi o respuestas lentas de la página</summary>
+  <p>Desde el firmware 4.0, la pestaña Pincho cuenta con un interruptor «Ahorro de energía Wi-Fi» (en Red). Está activado por defecto: el pincho se calienta menos y consume menos energía, pudiendo demorarse las respuestas hasta un cuarto de segundo. Desactívelo si el pincho pierde frecuentemente la conexión o desea respuestas más rápidas; el cambio se aplica de inmediato.</p>
+  <p>La sección «Salud del pincho» de la pestaña Diagnósticos cuenta las desconexiones Wi-Fi producidas desde el último arranque, permitiéndole evaluar la efectividad del ajuste.</p>
+</details>
+
+<h2 id="ota">Actualizaciones</h2>
+
+<details>
+  <summary>Windows muestra «Windows protegió su PC» o macOS no permite abrir el instalador</summary>
+  <p>El instalador no está firmado con un certificado comercial de desarrollador de pago, por lo que el sistema no lo reconoce y muestra una advertencia. Es un comportamiento habitual y no indica que el archivo sea dañino.</p>
+  <ul>
+    <li><b>Windows:</b> en la pantalla azul de Microsoft Defender SmartScreen, haga clic en <b>Más información</b> y a continuación en <b>Ejecutar de todas formas</b>.</li>
+    <li><b>macOS:</b> tras el aviso abra <b>Ajustes del Sistema</b>, acceda a <b>Privacidad y seguridad</b>, desplácese a la sección Seguridad y haga clic en <b>Abrir igualmente</b>.</li>
+  </ul>
+  <p>Descárguelo únicamente desde la <a href="https://github.com/openfirenet/open-firenet-installer/releases">página de versiones</a>. Para comprobar la autenticidad del archivo, compare su huella SHA-256 con el archivo <code>SHA256SUMS</code> publicado allí.</p>
+</details>
+
+<details>
+  <summary>La actualización inalámbrica agota el tiempo de espera (timeout)</summary>
+  <p>Una actualización inalámbrica requiere que el ordenador y el pincho puedan comunicarse mutuamente en ambos sentidos: el instalador envía una invitación al pincho (puerto UDP 3232), y a continuación el pincho se reconecta al ordenador para descargar el firmware. En redes con segmentos separados (VLAN, Wi-Fi de invitados) o con un cortafuegos en el ordenador, esta conexión queda bloqueada.</p>
+  <ul>
+    <li>Conecte el ordenador a la misma red que el pincho, o</li>
+    <li>permita las conexiones entrantes desde la red local en el cortafuegos del ordenador, o</li>
+    <li>realice la actualización por USB.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>El firmware es demasiado grande para la actualización inalámbrica</summary>
+  <p>Un pincho flasheado originalmente desde el IDE de Arduino con el esquema de particiones por defecto dispone de particiones de actualización de 1.310.720 bytes. Las versiones de firmware 3.5.0 y posteriores superan ese tamaño: el pincho rechaza la actualización sin aviso y el instalador entra en timeout. El instalador 1.6.0 advierte de este problema y rechaza la operación si el pincho ejecuta firmware 3.6.0 o posterior.</p>
+  <ul>
+    <li>Flashee el pincho por USB con el instalador en modo <b>Primera instalación</b>. Es el único modo que reescribe la tabla de particiones; el modo habitual <b>Actualización</b> mantiene el esquema anterior. Deberá configurar de nuevo su Wi-Fi y las actualizaciones inalámbricas funcionarán en adelante.</li>
+    <li>Si compila el código fuente en el IDE de Arduino, seleccione Herramientas &gt; Partition Scheme &gt; «Minimal SPIFFS (1.9MB APP with OTA)».</li>
+  </ul>
+  <p>Los pinchos instalados directamente con el instalador no se ven afectados por esta limitación.</p>
+</details>
+
+<details>
+  <summary>Tras actualizar al firmware 4.0, algo dejó de funcionar</summary>
+  <p>El firmware 4.0 restringe el acceso desde páginas de otros sitios web. Se producen tres cambios principales:</p>
+  <ul>
+    <li><b>Home Assistant muestra la estufa como no disponible, o la página no carga:</b> el pincho se configuró o abrió con un nombre de host asignado por el router. Utilice su dirección IP o <code>open-firenet.local</code>, o añada dicho nombre en la página del pincho (consulte más arriba «El pincho no responde bajo este nombre»). Actualice la integración de Home Assistant a la versión 2.6.0 o superior: indica claramente esta situación.</li>
+    <li><b>Un panel personalizado en otra dirección ya no puede consultar el pincho desde el navegador:</b> el pincho ya no permite peticiones cross-origin desde otras páginas. Realice las llamadas desde un programa (script, Home Assistant, Node-RED) o utilice MQTT.</li>
+    <li><b>Un script reiniciaba el pincho con una petición GET:</b> <code>/api/restart</code> requiere ahora obligatoriamente el método POST.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Tras actualizar al firmware 4.1, una automatización sobre el estado de la estufa ya no se activa</summary>
+  <p>Desde el firmware 4.1, una estufa apagada se notifica como «Apagado» (estado <code>off</code>). «En espera» (<code>standby</code>) se reserva para estufas encendidas que esperan demanda de calor. Las versiones anteriores notificaban ambos estados como «En espera»: cualquier automatización o script que comprobaba <code>standby</code> para saber si la estufa estaba apagada debe ahora comprobar <code>off</code>.</p>
+</details>
+
+<details>
+  <summary>El instalador pide contraseña de actualización, o la he olvidado</summary>
+  <p>Desde el firmware 4.0 es posible proteger las actualizaciones inalámbricas con contraseña. Se configura o elimina mediante el instalador con el pincho conectado por USB a su ordenador (pestaña Wi-Fi, «Contraseña de actualización»), nunca a través de la red. El instalador la solicitará en cada actualización inalámbrica sin guardarla.</p>
+  <p>Si la olvidó: flashee el pincho por USB en modo «Primera instalación». Eso borrará la contraseña y podrá introducir de nuevo sus credenciales Wi-Fi.</p>
+</details>
+
+<details>
+  <summary>La versión no cambió tras realizar la actualización</summary>
+  <p>Compruebe la versión indicada junto al título en la página del pincho. Con una señal Wi-Fi débil una actualización puede fallar silenciosamente; actualice en tal caso por USB mediante el instalador.</p>
+</details>
+
+<h2>Valores</h2>
+
+<details>
+  <summary>La temperatura ambiente muestra «--»</summary>
+  <p>Su estufa no dispone de sonda de ambiente RIKA. En Home Assistant puede mostrar otro sensor en el termostato: consulte <a href="home-assistant.html">Home Assistant</a>.</p>
+</details>
+
+<details>
+  <summary>El valor de las compuertas de aire parece diez veces menor que en la pantalla de la estufa</summary>
+  <p>La pantalla de la estufa muestra la posición de las compuertas en por mil (‰), mientras que el pincho la expresa en porcentaje: 50 ‰ en la pantalla equivalen al 5 % en la página.</p>
+</details>
+
+<details>
+  <summary>He cambiado un ajuste de MultiAir y la pantalla de la estufa sigue mostrando el valor antiguo</summary>
+  <p>El ajuste se aplica de inmediato. Sin embargo, hemos comprobado en varias versiones de firmware que la pantalla de la estufa no actualiza su menú MultiAir mientras permanece abierto: salga del menú y vuelva a entrar para ver el nuevo valor. Otros ajustes, como la potencia de calefacción, se actualizan al instante en la pantalla.</p>
+</details>
+
+<h2 id="diagnostics">La pestaña Diagnósticos</h2>
+<p>La pestaña Diagnósticos de la página del pincho (<code>http://open-firenet.local/#diagnostics</code>) recopila toda la información necesaria para comprender un problema: el estado del propio pincho (motivo del último reinicio, memoria, Wi-Fi, veces que se ha establecido y perdido el enlace con la estufa), el estado del enlace, el registro de comunicaciones y todos los valores que reporta la estufa. El botón «Archivo de diagnóstico» reúne todo en un único archivo para adjuntarlo a una incidencia.</p>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Pestaña Diagnósticos: salud del pincho, enlace con la estufa, registro de comunicación" width="760">
+</figure>
+
+<h2>MQTT</h2>
+
+<details>
+  <summary>El estado de MQTT indica «Rechazado: usuario o contraseña incorrectos»</summary>
+  <p>El bróker rechazó la conexión del pincho. Vuelva a introducir la contraseña en la pestaña Pincho y guarde: por seguridad el campo permanece vacío y muestra «Sin cambios» una vez guardada.</p>
+</details>
+
+<details>
+  <summary>El estado de MQTT indica «Bróker no disponible»</summary>
+  <p>Compruebe la dirección y el puerto del bróker (1883 por defecto) y que el bróker admita conexiones desde su red. El pincho reintenta la conexión cada 10 segundos; la comunicación con la estufa no se ve afectada.</p>
+</details>
+
+<details>
+  <summary>El estado de MQTT indica «Certificado no reconocido»</summary>
+  <p>TLS está activado y el pincho rechaza el certificado del bróker. Si su bróker dispone de un certificado autofirmado, pegue el certificado de la autoridad firmante en la tarjeta MQTT: consulte <a href="mqtt.html#tls">MQTT, conexión cifrada</a>. Sin él, solo se aceptan certificados emitidos por una autoridad pública para el nombre configurado como dirección del bróker.</p>
+</details>
+
+<details>
+  <summary>El estado de MQTT indica «Error de conexión segura»</summary>
+  <p>La negociación TLS (handshake) con el bróker falló antes de verificar el certificado. La causa más habitual es haber marcado TLS sobre el puerto sin cifrar del bróker: TLS opera normalmente en el puerto 8883, y MQTT sin cifrar en el 1883.</p>
+</details>
+
+<details>
+  <summary>La estufa aparece dos veces en Home Assistant</summary>
+  <p>La integración Open Firenet y la detección MQTT están activas a la vez. Conserve únicamente una: desmarque «Detección automática para Home Assistant» en la pestaña MQTT del pincho (sus entidades se eliminarán) o desinstale la integración.</p>
+</details>
+
+<details>
+  <summary>He marcado «Detección automática para Home Assistant» y no aparece nada</summary>
+  <p>Compruebe que «Activar MQTT» esté también marcado, que el estado indique «Conectado» y que la integración MQTT de Home Assistant esté configurada en el mismo bróker.</p>
+</details>
+
+<details>
+  <summary>Un comando enviado por MQTT es ignorado</summary>
+  <p>Los comandos se ignoran mientras la estufa no esté conectada, durante los primeros segundos tras iniciarse el enlace en los que el pincho aún desconoce los ajustes de la estufa, y cuando se publican con el flag retain activado. Consulte <a href="mqtt.html">MQTT</a>.</p>
+</details>
+
+<h2 id="report">Informar de un problema</h2>
+<p>Abra una <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> indicando:</p>
+<ul>
+  <li>el modelo de la estufa y su versión de firmware (menú Info de la estufa);</li>
+  <li>la versión de firmware del pincho (junto al título en su página);</li>
+  <li>el archivo de diagnóstico: pestaña Diagnósticos, «Archivo de diagnóstico», descargado uno o dos minutos tras encender la estufa o justo después de aparecer el problema;</li>
+  <li>lo que muestra la pantalla de la estufa, junto con cualquier código de error.</li>
+</ul>
+<p>El archivo de diagnóstico contiene la salud del pincho, el enlace, todos los valores y el registro de comunicación. El nombre de su Wi-Fi y la dirección MAC del pincho se ocultan en él, y la contraseña Wi-Fi nunca se incluye.</p>
+<p>En pinchos con firmware 3.6.1 o anterior este botón no existe: envíe en su lugar la salida de <code>http://open-firenet.local/api/state</code> y el registro (pestaña Diagnósticos, botón «Descargar» en el registro de intercambios).</p>

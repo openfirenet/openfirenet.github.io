@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="it" data-page="mqtt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQTT - Open Firenet</title>
+<meta name="description" content="Pubblica lo stato di una stufa a pellet RIKA su un broker MQTT e controllala da Jeedom, openHAB, Node-RED, Domoticz o qualsiasi client MQTT.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/mqtt.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/mqtt.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/mqtt.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/mqtt.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/mqtt.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/mqtt.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html" class="active" aria-current="page">MQTT</a>
+          <a href="../it/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../mqtt.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/mqtt.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/mqtt.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/mqtt.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/mqtt.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>MQTT</h1>
+<p class="lead">Il bridge può pubblicare lo stato della stufa sul vostro broker MQTT e accettare comandi da esso. È la soluzione ideale per i sistemi domotici diversi da Home Assistant: Jeedom, openHAB, Node-RED, Domoticz e qualsiasi client MQTT.</p>
+
+<div class="note">
+  <p>MQTT è facoltativo e disattivato per impostazione predefinita. Richiede il firmware del bridge 3.3 o successivo e un broker sulla vostra rete (come Mosquitto). Per Home Assistant, l'<a href="home-assistant.html">integrazione</a> resta la soluzione più completa; <a href="#discovery">Home Assistant Discovery</a> è l'alternativa che non richiede alcuna installazione.</p>
+</div>
+
+<h2>Configurazione</h2>
+<ol>
+  <li>Aprite la pagina del bridge e andate nella scheda <b>Bridge</b> (<code>http://open-firenet.local/#bridge</code>), quindi nella sezione <b>MQTT</b>.</li>
+  <li>Inserite l'indirizzo del broker e la porta (1883 per impostazione predefinita), insieme a nome utente e password se il broker lo richiede.</li>
+  <li>Selezionate <b>Abilita MQTT</b> e salvate. Il badge passerà a "Connesso" in pochi secondi.</li>
+</ol>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-mqtt.png" alt="Scheda Bridge, impostazioni MQTT" width="760">
+</figure>
+
+<h2>Cosa pubblica il bridge</h2>
+<p>Tutti i topic iniziano con un topic di base, per impostazione predefinita <code>openfirenet</code>. Modificatelo nelle impostazioni se utilizzate più bridge.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Contenuto</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> o <code>offline</code>. Il broker imposta automaticamente <code>offline</code> quando il bridge non è più raggiungibile.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Un unico messaggio JSON contenente gli oggetti <code>device</code>, <code>stove</code>, <code>sensors</code> e <code>controls</code>, con gli stessi nomi e unità dell'<a href="api.html">API REST</a>. Inviato a ogni variazione, al massimo ogni 5 secondi e almeno ogni minuto.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Gli stessi valori inviati singolarmente per topic, per i sistemi che preferiscono valori semplici: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Ogni messaggio viene pubblicato con il flag retain attivo, in modo che i client ricevano i valori correnti subito dopo la sottoscrizione. <code>openfirenet/device/connected</code> indica se il bridge è collegato alla stufa; finché non lo è, vengono pubblicati solo i valori <code>device</code> e <code>health</code>.</p>
+<p>A partire dal firmware 3.7, <code>openfirenet/health/&lt;name&gt;</code> riporta lo stato operativo del bridge stesso: <code>restart_reason</code> (causa dell'ultimo riavvio), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> e <code>mqtt_disconnects</code>. I contatori si azzerano a ogni avvio. Un allarme su <code>stove_link_losses</code> o su una modifica di <code>restart_reason</code> vi avvisa tempestivamente in caso di anomalie.</p>
+
+<h2>Inviare comandi</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Payload</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, o <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> o <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>da 30 a 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>da 14 a 28, in gradi interi</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Diverse impostazioni contemporaneamente in formato JSON: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>Le altre impostazioni dell'<a href="api.html">API REST</a> (antigelo, ventilatori MultiAir, programmazione...) vengono accettate nello stesso modo, con gli stessi nomi di campo.</p>
+<pre><code># 21 °C con il client da riga di comando Mosquitto
+mosquitto_pub -h 192.168.1.10 -u myuser -P mypassword \
+  -t openfirenet/set/target_temperature -m 21
+
+# monitora tutti i messaggi pubblicati dal bridge
+mosquitto_sub -h 192.168.1.10 -u myuser -P mypassword -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Non pubblicate comandi con il flag retain attivo.</b> Il broker li ritrasmetterebbe a ogni riconnessione, rischiando di accendere la stufa autonomamente; per questo motivo il bridge li ignora. I comandi vengono ignorati anche finché la stufa non è collegata.</p>
+</div>
+
+<h2 id="discovery">Home Assistant Discovery</h2>
+<p>A partire dal firmware 3.4, il bridge può notificare la stufa all'integrazione MQTT di Home Assistant: selezionate <b>Home Assistant Discovery</b> nella scheda MQTT e salvate. La stufa comparirà automaticamente in Home Assistant come un unico dispositivo con:</p>
+<ul>
+  <li>un termostato: accensione / spegnimento, temperatura obiettivo e le modalità manuale / auto / comfort come preset;</li>
+  <li>la potenza di riscaldamento, le temperature di attenuazione e antigelo, la calibrazione della sonda ambiente;</li>
+  <li>interruttori per la programmazione oraria, l'antigelo e la modalità eco;</li>
+  <li>i sensori: temperature, pellet consumato, conto alla rovescia per la manutenzione, stato operativo e codici di errore e avviso.</li>
+</ul>
+<p>Home Assistant richiede che la propria integrazione MQTT sia connessa allo stesso broker. Deselezionando l'opzione le entità vengono rimosse.</p>
+<div class="note">
+  <p><b>Utilizzate una sola modalità.</b> Se utilizzate già l'<a href="home-assistant.html">integrazione Open Firenet</a>, lasciate disattivata la discovery MQTT: eviterete duplicati della stufa. L'integrazione resta la scelta più completa: include anche i ventilatori MultiAir, la programmazione settimanale (copiata da un programma di Home Assistant) e il sensore di temperatura esterna. Tramite MQTT le fasce orarie possono essere impostate ma non vengono pubblicate.</p>
+</div>
+
+<h2 id="tls">Connessione cifrata (TLS)</h2>
+<p>A partire dal firmware 3.5, il bridge può connettersi a un broker che supporta TLS, tipicamente sulla porta 8883: selezionate <b>Connessione cifrata (TLS)</b> nella scheda MQTT. Il bridge verifica il certificato del broker in uno dei due modi seguenti:</p>
+<ul>
+  <li><b>Nessun dato aggiuntivo richiesto</b> se il certificato è firmato da un'autorità di certificazione pubblica, per il nome specificato come indirizzo del broker: un broker gestito o un broker locale con certificato Let's Encrypt.</li>
+  <li><b>Incollate il certificato della vostra autorità CA</b> nel campo apposito, per un broker locale con certificato autofirmato. Si tratta del testo che inizia con <code>-----BEGIN CERTIFICATE-----</code>. Il nome host nel certificato del broker non viene verificato, poiché tali broker vengono solitamente contattati tramite indirizzo IP.</li>
+</ul>
+<div class="note">
+  <p><b>Solo se realmente necessario.</b> La crittografia richiede molte risorse per questo piccolo chip: occupa circa 50 kB di memoria RAM durante la connessione. Con un broker sulla propria rete locale, il protocollo MQTT non cifrato resta la scelta più semplice. Usate TLS solo quando il broker lo richiede o si trova all'esterno della vostra rete.</p>
+</div>
+
+<h2>Buono a sapersi</h2>
+<ul>
+  <li>Senza TLS la connessione non è cifrata: una soluzione accettabile per un broker sulla rete locale, ma non al di fuori di essa.</li>
+  <li>Se il broker non è raggiungibile, il bridge ritenta autonomamente ogni 10 secondi (ogni 30 secondi con TLS). La comunicazione con la stufa non ne risente.</li>
+</ul>
+<p>Qualcosa non funziona? Consulta la sezione <a href="troubleshooting.html">Risoluzione problemi</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

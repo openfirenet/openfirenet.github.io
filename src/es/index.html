@@ -1,0 +1,88 @@
+<!-- source: 54d221d2c2ea -->
+<!-- title: Open Firenet: Control local para estufas de pellets RIKA -->
+<!-- description: Pincho Wi-Fi de código abierto para estufas de pellets RIKA: interfaz web local, API REST, MQTT e integración con Home Assistant, sin nube. -->
+<section class="hero">
+  <img class="logo" src="assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Control local para estufas de pellets RIKA</h1>
+  <p class="lead">Open Firenet sustituye la llave RIKA Firenet por una placa ESP32-S3. Su estufa obtiene una página web local, una API REST, MQTT y una integración nativa para Home Assistant. Sin cuenta en la nube, sin necesidad de conexión a Internet.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Primeros pasos</a>
+    <a class="btn ghost" href="compatibility.html">¿Es compatible mi estufa?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-controls.png" alt="Página web de Open Firenet: estado de la estufa, temperaturas, potencia y controles" width="760">
+  <figcaption>Página servida por el pincho en su red local, en la dirección <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Características</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Control desde su red local</h3>
+    <p>Encendido/apagado, modo de funcionamiento, potencia de calefacción, temperatura de consigna, programación semanal, protección antihielo y ventiladores MultiAir en estufas compatibles.</p>
+  </div>
+  <div class="card">
+    <h3>Todos los datos que reporta la estufa</h3>
+    <p>Temperaturas, consumo de pellets, horas de funcionamiento, cuenta atrás de mantenimiento, códigos de error y aviso: hasta 88 valores con sus nombres originales RIKA.</p>
+  </div>
+  <div class="card">
+    <h3>Integración domótica universal</h3>
+    <p>Una integración dedicada para Home Assistant, una API REST completa y soporte MQTT para Jeedom, openHAB, Node-RED, Domoticz y otros sistemas.</p>
+  </div>
+  <div class="card">
+    <h3>100 % local</h3>
+    <p>El pincho se comunica con la estufa por USB y con usted mediante su red Wi-Fi local. No se envía ningún dato a servidores externos.</p>
+  </div>
+  <div class="card">
+    <h3>Pantalla en el pincho</h3>
+    <p>Con un módulo LilyGO T-Dongle-S3, el estado de la estufa y la temperatura ambiente se muestran directamente en la pantalla del pincho. <a href="screen.html">Ver la pantalla</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Pantalla de la LilyGO T-Dongle-S3: logotipo, estado de la estufa, temperatura ambiente y potencia" width="560">
+  <figcaption>La LilyGO T-Dongle-S3 muestra el estado de la estufa de un vistazo en su propia pantalla (<a href="screen.html">detalles</a>)</figcaption>
+</figure>
+
+<h2>Tres componentes</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Se ejecuta en el ESP32-S3 conectado a la estufa. Proporciona la interfaz web local y la API REST.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet en GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Instalador</h3>
+    <p>Aplicación de escritorio para Windows, macOS y Linux: graba el firmware, configura el Wi-Fi y aplica actualizaciones inalámbricas.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Descargar el instalador</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Termostato completo, ventiladores, interruptor de horario, sensores y diagnósticos, instalables mediante HACS.</p>
+    <p class="more"><a href="home-assistant.html">Instalación en Home Assistant</a></p>
+  </div>
+</div>
+
+<h2>Estufas compatibles</h2>
+<p>Lo determinante es la versión de firmware de la placa base de la estufa, mostrada en el menú Info de la pantalla de la estufa. El pincho la detecta automáticamente.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware de la estufa</th><th>Estado</th><th>Notas</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes, incluido el funcionamiento con leña (un informe registrado hasta ahora)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Compatible</span></td><td>Todos los valores y ajustes</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Parcial</span></td><td>Soporte preliminar: estado, temperaturas y ajustes principales, programación con una franja diaria. El encendido no se ha probado aún</td></tr>
+  <tr><td><b>Anterior a 2.25</b></td><td><span class="badge unknown">No probado</span></td><td>Sus comentarios son bienvenidos</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Detalles completos de compatibilidad</a></p>
+
+<h2>Vistazo a la interfaz</h2>
+<div class="shots">
+  <img class="shot" src="assets/img/ui-desktop-schedule.png" alt="Programación semanal con dos franjas horarias por día">
+  <img class="shot" src="assets/img/ui-desktop-bridge.png" alt="Pestaña Pincho, Red: Wi-Fi, ahorro de energía, acceso a la página">
+  <img class="shot" src="assets/img/ui-desktop-diagnostics.png" alt="Pestaña Diagnóstico: comunicación con la estufa, registro de intercambios y todos los parámetros">
+  <img class="shot" src="assets/img/dashboard-scan.png" alt="El instalador detecta el pincho en la red y muestra el estado de la estufa">
+</div>

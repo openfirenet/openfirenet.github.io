@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="de" data-page="index">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Firenet: Lokale Steuerung für RIKA-Pelletöfen</title>
+<meta name="description" content="Open-Source-WLAN-Bridge für RIKA-Pelletöfen: lokale Webseite, REST-API, MQTT und Home-Assistant-Integration, ohne Cloud.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../index.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/index.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/index.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/index.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/index.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <img class="logo" src="../assets/img/brand-logo@2x.png" alt="Open Firenet">
+  <h1>Lokale Steuerung für RIKA-Pelletöfen</h1>
+  <p class="lead">Open Firenet ersetzt den RIKA Firenet Stick durch ein ESP32-S3-Board. Ihr Ofen erhält eine lokale Webseite, eine REST-API, MQTT und eine Home-Assistant-Integration. Kein Cloud-Konto, kein Internet erforderlich.</p>
+  <div class="actions">
+    <a class="btn" href="get-started.html">Erste Schritte</a>
+    <a class="btn ghost" href="compatibility.html">Ist mein Ofen kompatibel?</a>
+  </div>
+</section>
+
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-controls.png" alt="Die Open-Firenet-Webseite: Ofenstatus, Temperaturen, Leistung, Bedienelemente" width="760">
+  <figcaption>Die vom Stick in Ihrem Netzwerk bereitgestellte Seite unter <code>http://open-firenet.local</code></figcaption>
+</figure>
+
+<h2>Funktionen</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Steuerung über Ihr Netzwerk</h3>
+    <p>Ein/Aus, Betriebsart, Heizleistung, Solltemperatur, Wochen-Heizplan, Frostschutz und MultiAir-Gebläse bei Öfen, die damit ausgestattet sind.</p>
+  </div>
+  <div class="card">
+    <h3>Alles, was der Ofen meldet</h3>
+    <p>Temperaturen, Pelletverbrauch, Betriebsstunden, Wartungs-Countdown, Fehler- und Warncodes: bis zu 88 Werte unter ihren RIKA-Namen.</p>
+  </div>
+  <div class="card">
+    <h3>Passt zu Ihrer Hausautomation</h3>
+    <p>Eine Home-Assistant-Integration, eine REST-API und MQTT für Jeedom, openHAB, Node-RED, Domoticz und andere Systeme.</p>
+  </div>
+  <div class="card">
+    <h3>100 % lokal</h3>
+    <p>Der Stick kommuniziert über USB mit dem Ofen und über WLAN mit Ihnen. Es wird nichts an einen externen Server gesendet.</p>
+  </div>
+  <div class="card">
+    <h3>Display auf dem Stick</h3>
+    <p>Mit einem LilyGO T-Dongle-S3 werden Ofenstatus und Raumtemperatur direkt auf dem Display des Sticks angezeigt. <a href="screen.html">Display ansehen</a>.</p>
+  </div>
+</div>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="Das Display des LilyGO T-Dongle-S3: Logo, Ofenstatus, Raumtemperatur und Leistung" width="560">
+  <figcaption>Der LilyGO T-Dongle-S3 zeigt den Ofen auf einen Blick auf seinem eigenen Display (<a href="screen.html">Details</a>)</figcaption>
+</figure>
+
+<h2>Drei Komponenten</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Firmware</h3>
+    <p>Läuft auf dem am Ofen angeschlossenen ESP32-S3. Stellt die Webseite und die API bereit.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet">open-firenet auf GitHub</a></p>
+  </div>
+  <div class="card">
+    <h3>Installer</h3>
+    <p>Desktop-App für Windows, macOS und Linux: flasht das Board, richtet WLAN ein, führt Over-the-Air-Updates durch.</p>
+    <p class="more"><a href="https://github.com/openfirenet/open-firenet-installer/releases">Installer herunterladen</a></p>
+  </div>
+  <div class="card">
+    <h3>Home Assistant</h3>
+    <p>Thermostat, Gebläse, Heizplan-Schalter, Sensoren und Diagnose, installiert über HACS.</p>
+    <p class="more"><a href="home-assistant.html">In Home Assistant einrichten</a></p>
+  </div>
+</div>
+
+<h2>Kompatible Öfen</h2>
+<p>Entscheidend ist die Firmware-Version des Ofen-Mainboards, die im Info-Menü auf dem Ofen-Display angezeigt wird. Der Stick erkennt sie automatisch.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Ofen-Firmware</th><th>Status</th><th>Hinweise</th></tr>
+  <tr><td><b>2.30</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen, einschließlich Holzbetrieb (bisher eine Rückmeldung)</td></tr>
+  <tr><td><b>2.29</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.28</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.26 / 2.27</b></td><td><span class="badge ok">Unterstützt</span></td><td>Alle Werte und Einstellungen</td></tr>
+  <tr><td><b>2.25</b></td><td><span class="badge partial">Teilweise</span></td><td>Frühe Unterstützung: Status, Temperaturen und Haupteinstellungen, Heizplan mit einem Zeitfenster pro Tag. Starten des Ofens noch nicht getestet</td></tr>
+  <tr><td><b>Älter als 2.25</b></td><td><span class="badge unknown">Nicht getestet</span></td><td>Rückmeldungen willkommen</td></tr>
+</table>
+</div>
+<p><a href="compatibility.html">Ausführliche Kompatibilitätsdetails</a></p>
+
+<h2>Einblicke in die Oberfläche</h2>
+<div class="shots">
+  <img class="shot" src="../assets/img/ui-desktop-schedule.png" alt="Wöchentlicher Heizplan mit zwei Zeitfenstern pro Tag">
+  <img class="shot" src="../assets/img/ui-desktop-bridge.png" alt="Reiter Stick, Netzwerk: WLAN, Energiesparmodus, Seitenzugriff">
+  <img class="shot" src="../assets/img/ui-desktop-diagnostics.png" alt="Reiter Diagnose: Verbindung zum Ofen, Übertragungsprotokoll und alle Messwerte">
+  <img class="shot" src="../assets/img/dashboard-scan.png" alt="Der Installer findet den Stick im Netzwerk und zeigt den Ofenstatus">
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

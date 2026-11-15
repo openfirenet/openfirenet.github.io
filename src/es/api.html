@@ -1,0 +1,80 @@
+<!-- source: d8c9b6634705 -->
+<!-- title: API REST - Open Firenet -->
+<!-- description: Descripción general de la API REST local del pincho Open Firenet: lectura del estado de la estufa y envío de comandos mediante HTTP y JSON sencillos. -->
+<h1>API REST</h1>
+<p class="lead">El pincho ofrece una API JSON en su red local, con unidades naturales: temperaturas en °C, potencia en porcentaje, nombres legibles de modos. Sin claves API ni cuentas.</p>
+
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Referencia completa de la API</a>
+  <a class="btn ghost" href="openapi.yaml">Archivo OpenAPI</a>
+</div>
+
+<h2>Endpoints</h2>
+<p>Haga clic en un endpoint o en un método para ver sus detalles en la <a href="api-reference.html">referencia de la API</a>.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Método</th><th>Propósito</th></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Todo a la vez: pincho, estufa, sensores, controles, diagnósticos del enlace</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Leer o modificar los ajustes (se aceptan modificaciones parciales)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Horario semanal de calefacción: 14 tramos horarios y temperatura reducida</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Versión de firmware y fecha de compilación</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>Ajustes de MQTT y estado de la conexión, consulte <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Intervalo entre mensajes enviados a la estufa (50 a 600 ms, por defecto 150)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Reiniciar el pincho</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>Borrar los ajustes Wi-Fi y volver al modo de configuración</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Registro en texto sin formato de la comunicación con la estufa</td></tr>
+</table>
+</div>
+
+<h2>Quién puede llamarla</h2>
+<p>Los programas de su red: Home Assistant, scripts, <code>curl</code>, Node-RED. Y la propia página web del pincho. Desde el firmware 4.0, las páginas de otros sitios web abiertas en un navegador no pueden acceder: el pincho responde 403 a solicitudes que indiquen otra página como origen y no envía permisos de origen cruzado (cross-origin).</p>
+<p>El pincho responde en su dirección IP, en nombres sin punto y en <code>open-firenet.local</code>. Cualquier otro nombre debe añadirse previamente en la pestaña Pincho, Red, sección "Acceso a la página" (o mediante <code>/api/access</code>); hasta entonces, el pincho responde 403 con un cuerpo JSON que indica su dirección IP.</p>
+
+<h2>Leer el estado</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>La respuesta está organizada por temas. Las secciones que más utilizará:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Significado</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>Estado operativo, modelo y versión de firmware de la estufa</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Error y advertencia actuales, 0 si no hay ninguno</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Temperatura ambiente, <code>null</code> cuando no hay ninguna sonda de ambiente RIKA conectada</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Total de pellets consumidos y cantidad restante antes del próximo mantenimiento</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>Los ajustes actuales</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Indica si la estufa aceptó el pincho y qué variante de protocolo respondió: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27); <code>?</code> para una estufa con firmware 2.25, que utiliza tramas numéricas</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Indica si la estufa detecta el pincho por USB y cuántos bytes ha enviado</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Cada valor comunicado por la estufa, bajo su nombre RIKA original</td></tr>
+</table>
+</div>
+
+<h2>Enviar comandos</h2>
+<p>Envíe por POST un objeto JSON que contenga únicamente los campos que desea modificar:</p>
+<pre><code># 21 °C en modo confort
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21, "mode": "comfort"}'
+
+# encender al 80 % de potencia
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Campo</th><th>Valores</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>30 a 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>14 a 28 °C, en grados enteros (los medios grados se redondean)</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, 4 a 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>-4,0 a +4,0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (y <code>Fan2</code>)</td><td>MultiAir: encendido/apagado, 0 = auto o 1 a 5, ajuste de -30 a +30 %</td></tr>
+</table>
+</div>
+
+<div class="note">
+  <p>Desde el firmware 4.0, los comandos solo se aceptan por POST y PUT, y un comando enviado antes de que la estufa haya comunicado sus ajustes (el pincho no está enlazado o acaba de iniciarse) se rechaza con <code>503</code> y <code>"error": "stove_not_ready"</code>. No se envió nada a la estufa: inténtelo de nuevo unos segundos después.</p>
+</div>
+
+<h2>Referencia completa</h2>
+<p>Cada endpoint y cada campo, con su tipo, unidad y rango, se describe en la <a href="api-reference.html">referencia de la API</a>. Se genera a partir de la <a href="openapi.yaml">descripción OpenAPI</a> del firmware, que puede cargar en sus propias herramientas (visores de documentación, generadores de clientes).</p>
+<p>El formato del horario y las notas sobre el protocolo se encuentran también en el repositorio del firmware: <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, API REST</a> y <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>

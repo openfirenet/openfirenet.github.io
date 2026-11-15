@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="it" data-page="api-reference">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riferimento API - Open Firenet</title>
+<meta name="description" content="Tutti gli endpoint del bridge Open Firenet, con relativi campi, tipi, unità e intervalli.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/api-reference.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/api-reference.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/api-reference.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/api-reference.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/api-reference.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/api-reference.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html">Per iniziare</a>
+      <details class="nav-group">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group active">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html" class="active" aria-current="page">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../api-reference.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/api-reference.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/api-reference.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/api-reference.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/api-reference.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Riferimento API</h1>
+<p class="lead">Tutti gli endpoint del bridge, con relativi campi, tipi, unità e intervalli. Generato dalla <a href="../openapi.yaml">descrizione OpenAPI</a> del firmware 4.9.1.</p>
+<p>API REST locale del bridge Open Firenet, l'ESP32-S3 che sostituisce la chiavetta RIKA Firenet. È resa disponibile sulla vostra rete all'indirizzo <code>http://open-firenet.local</code> (o all'indirizzo IP del bridge), senza chiavi API né account.</p>
+<p>Le unità sono naturali: temperature in °C, potenza in percentuale, nomi delle modalità leggibili.</p>
+<p><b>Nomi dei campi.</b> Vengono descritti qui solo i nomi raccomandati, quelli impiegati dall'integrazione Home Assistant e da MQTT. Per ragioni storiche il bridge accetta anche vecchi alias nei comandi (ad esempio <code>tempRoomTarget</code> per <code>target_temperature</code>, o la forma testo <code>onOff=1; heatingPower=70;</code>), e <code>GET /api/controls</code> restituisce le impostazioni anche con le denominazioni e unità originali della stufa (<code>onOff</code>, <code>tempRoomTarget</code> in decimi di grado...). I nuovi sviluppi non dovrebbero farvi affidamento.</p>
+<p><b>Autorizzazioni di accesso.</b> Programmi della rete locale (Home Assistant, script, <code>curl</code>) e la stessa interfaccia web del bridge. Le pagine web aperte in un browser da altri domini non possono effettuare chiamate: il bridge non invia permessi cross-origin e risponde 403 a richieste che indicano un'altra pagina come origine, o indirizzate a nomi diversi dal suo IP, privi di punto, con suffisso <code>.local</code> o domini aggiunti nella scheda Bridge, sezione Accesso alla pagina (<code>/api/access</code>). La risposta 403 è in JSON: <code>refused</code> indica quale controllo è fallito (<code>host</code> o <code>origin</code>) e <code>ip</code> fornisce l'indirizzo funzionante.</p>
+<p><b>Prima del collegamento con la stufa.</b> Finché la stufa non risponde, <code>version_ack</code> vale <code>false</code>, il modello e la versione del firmware della stufa sono <code>null</code>, e gli altri valori sono predefiniti e non rilevazioni reali.</p>
+<h2>Endpoint</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpoint</th><th>Scopo</th></tr>
+  <tr><td><a href="#get-api-state"><span class="method get">GET</span> <code>/api/state</code></a></td><td>Tutti i dati insieme</td></tr>
+  <tr><td><a href="#get-api-controls"><span class="method get">GET</span> <code>/api/controls</code></a></td><td>Impostazioni attuali</td></tr>
+  <tr><td><a href="#post-api-controls"><span class="method post">POST</span> <code>/api/controls</code></a></td><td>Modifica impostazioni</td></tr>
+  <tr><td><a href="#get-api-schedule"><span class="method get">GET</span> <code>/api/schedule</code></a></td><td>Programmazione settimanale</td></tr>
+  <tr><td><a href="#post-api-schedule"><span class="method post">POST</span> <code>/api/schedule</code></a></td><td>Modifica della programmazione settimanale</td></tr>
+  <tr><td><a href="#get-api-mqtt"><span class="method get">GET</span> <code>/api/mqtt</code></a></td><td>Impostazioni MQTT e stato della connessione</td></tr>
+  <tr><td><a href="#post-api-mqtt"><span class="method post">POST</span> <code>/api/mqtt</code></a></td><td>Modifica delle impostazioni MQTT</td></tr>
+  <tr><td><a href="#get-api-version"><span class="method get">GET</span> <code>/api/version</code></a></td><td>Versione del firmware del bridge</td></tr>
+  <tr><td><a href="#get-api-scan"><span class="method get">GET</span> <code>/api/scan</code></a></td><td>Reti Wi-Fi rilevate dal bridge</td></tr>
+  <tr><td><a href="#post-api-wifi"><span class="method post">POST</span> <code>/api/wifi</code></a></td><td>Imposta la rete Wi-Fi, quindi riavvia</td></tr>
+  <tr><td><a href="#post-api-forget"><span class="method post">POST</span> <code>/api/forget</code></a></td><td>Cancella le impostazioni salvate e riavvia in modalità configurazione</td></tr>
+  <tr><td><a href="#get-api-access"><span class="method get">GET</span> <code>/api/access</code></a></td><td>Domini con cui il bridge accetta di rispondere</td></tr>
+  <tr><td><a href="#post-api-access"><span class="method post">POST</span> <code>/api/access</code></a></td><td>Imposta i domini aggiuntivi</td></tr>
+  <tr><td><a href="#get-api-display"><span class="method get">GET</span> <code>/api/display</code></a></td><td>Schermate del piccolo display del bridge</td></tr>
+  <tr><td><a href="#post-api-display"><span class="method post">POST</span> <code>/api/display</code></a></td><td>Seleziona la scheda con display e ordina le schermate</td></tr>
+  <tr><td><a href="#get-api-wifi-power-saving"><span class="method get">GET</span> <code>/api/wifi_power_saving</code></a></td><td>Indica se il risparmio energetico Wi-Fi è abilitato</td></tr>
+  <tr><td><a href="#post-api-wifi-power-saving"><span class="method post">POST</span> <code>/api/wifi_power_saving</code></a></td><td>Attiva o disattiva il risparmio energetico Wi-Fi</td></tr>
+  <tr><td><a href="#get-api-log-size"><span class="method get">GET</span> <code>/api/log_size</code></a></td><td>Dimensione della cronologia di comunicazione con la stufa</td></tr>
+  <tr><td><a href="#post-api-log-size"><span class="method post">POST</span> <code>/api/log_size</code></a></td><td>Scegli la dimensione della cronologia</td></tr>
+  <tr><td><a href="#post-api-restart"><span class="method post">POST</span> <code>/api/restart</code></a></td><td>Riavvia il bridge</td></tr>
+  <tr><td><a href="#get-api-update"><span class="method get">GET</span> <code>/api/update</code></a></td><td>Stato dell'aggiornamento firmware</td></tr>
+  <tr><td><a href="#post-api-update"><span class="method post">POST</span> <code>/api/update</code></a></td><td>Avvia una verifica di aggiornamento, l'installazione o modifica le impostazioni di controllo automatico</td></tr>
+  <tr><td><a href="#get-api-txgap"><span class="method get">GET</span> <code>/api/txgap</code></a></td><td>Intervallo tra le trame inviate alla stufa</td></tr>
+  <tr><td><a href="#post-api-txgap"><span class="method post">POST</span> <code>/api/txgap</code></a></td><td>Modifica dell'intervallo tra le trame inviate alla stufa</td></tr>
+  <tr><td><a href="#get-log"><span class="method get">GET</span> <code>/log</code></a></td><td>Registro della comunicazione con la stufa</td></tr>
+</table>
+</div>
+<h2 id="stove">Stufa</h2>
+<p>Lettura della stufa e modifica delle impostazioni</p>
+<div class="endpoint" id="get-api-state">
+<h3><span class="method get">GET</span> <code>/api/state</code></h3>
+<p><b>Tutti i dati insieme</b></p>
+<p>Bridge, stufa, sensori, impostazioni e diagnostica di collegamento. È ciò che viene interrogato dalla pagina web e da Home Assistant.</p>
+<h4>Risposta 200 <small>Stato attuale</small></h4>
+<p>Campi: vedi <a href="#schema-state">State</a>.</p>
+</div>
+<div class="endpoint" id="get-api-controls">
+<h3><span class="method get">GET</span> <code>/api/controls</code></h3>
+<p><b>Impostazioni attuali</b></p>
+<h4>Risposta 200 <small>Le impostazioni, con i nomi raccomandati (vengono restituiti anche i nomi e le unità originali della stufa)</small></h4>
+<p>Campi: vedi <a href="#schema-controls">Controls</a>.</p>
+</div>
+<div class="endpoint" id="post-api-controls">
+<h3><span class="method post">POST</span> <code>/api/controls</code></h3>
+<p><b>Modifica impostazioni</b></p>
+<p>Inviare solo i campi da modificare; gli altri mantengono il loro valore. Ignorato finché la stufa non è collegata. Su firmware stufa 2.28 vengono applicati solo <code>on</code>, <code>mode</code>, <code>power_percent</code> e <code>target_temperature</code>.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<p>Campi: vedi <a href="#schema-controlscommand">ControlsCommand</a>.</p>
+<p>21 °C in modalità comfort:</p>
+<pre><code>{"target_temperature": 21, "mode": "comfort"}</code></pre>
+<p>Accensione all'80 % di potenza:</p>
+<pre><code>{"on": true, "power_percent": 80}</code></pre>
+<h4>Risposta 200 <small>Le impostazioni di base inviate alla stufa</small></h4>
+<p>Campi: vedi <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Risposta 503 <small>La stufa non è collegata, o non ha ancora trasmesso le impostazioni (primi secondi dopo l'avvio). Nessun comando inviato; riprovare.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-schedule">
+<h3><span class="method get">GET</span> <code>/api/schedule</code></h3>
+<p><b>Programmazione settimanale</b></p>
+<h4>Risposta 200 <small>Le 14 fasce orarie e la temperatura ridotta</small></h4>
+<p>Campi: vedi <a href="#schema-schedule">Schedule</a>.</p>
+</div>
+<div class="endpoint" id="post-api-schedule">
+<h3><span class="method post">POST</span> <code>/api/schedule</code></h3>
+<p><b>Modifica della programmazione settimanale</b></p>
+<p>Stessa logica di <code>POST /api/controls</code>; inviare le fasce orarie da modificare con i rispettivi nomi.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<p>Campi: vedi <a href="#schema-schedulecommand">ScheduleCommand</a>.</p>
+<p>Esempio:</p>
+<pre><code>{"heating_times_active": true, "setback_temperature": 16, "heatTimeMon1": 6000800, "heatTimeMon2": 17002200}</code></pre>
+<h4>Risposta 200 <small>Le impostazioni di base inviate alla stufa</small></h4>
+<p>Campi: vedi <a href="#schema-controlsresult">ControlsResult</a>.</p>
+<h4>Risposta 503 <small>La stufa non è collegata, o non ha ancora trasmesso le impostazioni (primi secondi dopo l'avvio). Nessun comando inviato; riprovare.</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td><code>stove_not_ready</code></td><td></td></tr>
+  <tr><td><code>message</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="bridge">Bridge</h2>
+<p>Impostazioni e manutenzione del bridge</p>
+<div class="endpoint" id="get-api-mqtt">
+<h3><span class="method get">GET</span> <code>/api/mqtt</code></h3>
+<p><b>Impostazioni MQTT e stato della connessione</b></p>
+<h4>Risposta 200 <small>Le impostazioni (la password non viene mai restituita) e lo stato</small></h4>
+<p>Campi: vedi <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="post-api-mqtt">
+<h3><span class="method post">POST</span> <code>/api/mqtt</code></h3>
+<p><b>Modifica delle impostazioni MQTT</b></p>
+<p>Un campo omesso mantiene il valore attuale. Il client si riavvia con i nuovi parametri; lo stato si aggiorna al successivo GET.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<p>Campi: vedi <a href="#schema-mqttcommand">MqttCommand</a>.</p>
+<h4>Risposta 200 <small>Le impostazioni salvate</small></h4>
+<p>Campi: vedi <a href="#schema-mqtt">Mqtt</a>.</p>
+</div>
+<div class="endpoint" id="get-api-version">
+<h3><span class="method get">GET</span> <code>/api/version</code></h3>
+<p><b>Versione del firmware del bridge</b></p>
+<h4>Risposta 200 <small>Versione e data di compilazione</small></h4>
+<p>Campi: vedi <a href="#schema-version">Version</a>.</p>
+</div>
+<div class="endpoint" id="get-api-scan">
+<h3><span class="method get">GET</span> <code>/api/scan</code></h3>
+<p><b>Reti Wi-Fi rilevate dal bridge</b></p>
+<p>La prima chiamata avvia la scansione e risponde 202; richiamare dopo qualche secondo per ottenere l'elenco.</p>
+<h4>Risposta 200 <small>Reti trovate (2,4 GHz), ciascun SSID una sola volta</small></h4>
+<p>Un elenco di:</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obbligatorio</span></td><td>string</td><td></td></tr>
+  <tr><td><code>rssi</code> <span class="req">obbligatorio</span></td><td>integer</td><td>Potenza del segnale in dBm</td></tr>
+</table>
+</div>
+<h4>Risposta 202 <small>Scansione in corso</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>status</code></td><td><code>scanning</code></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="post-api-wifi">
+<h3><span class="method post">POST</span> <code>/api/wifi</code></h3>
+<p><b>Imposta la rete Wi-Fi, quindi riavvia</b></p>
+<p>Inviato dal modulo di configurazione. Restituisce una pagina HTML di conferma (compatibile con captive portal), poi il bridge si riavvia nella nuova rete.</p>
+<h4>Corpo della richiesta <small>application/x-www-form-urlencoded</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ssid</code> <span class="req">obbligatorio</span></td><td>string</td><td></td></tr>
+  <tr><td><code>pass</code></td><td>string</td><td>Vuoto per una rete aperta senza password</td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>Salvato; il bridge si riavvia</small></h4>
+<p><code>text/html</code></p>
+<h4>Risposta 400 <small>Nome della rete mancante</small></h4>
+<p><code>text/html</code></p>
+</div>
+<div class="endpoint" id="post-api-forget">
+<h3><span class="method post">POST</span> <code>/api/forget</code></h3>
+<p><b>Cancella le impostazioni salvate e riavvia in modalità configurazione</b></p>
+<p>Cancella la rete Wi-Fi, le impostazioni MQTT e l'intervallo trame. Il bridge crea poi la rete <code>Open-Firenet-Setup</code>.</p>
+<h4>Risposta 200 <small>Cancellato; il bridge si riavvia</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-access">
+<h3><span class="method get">GET</span> <code>/api/access</code></h3>
+<p><b>Domini con cui il bridge accetta di rispondere</b></p>
+<p>Oltre al suo indirizzo IP e a <code>open-firenet.local</code>, vedi „Autorizzazioni di accesso“ sopra.</p>
+<h4>Risposta 200 <small>I domini aggiunti</small></h4>
+<p>Campi: vedi <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="post-api-access">
+<h3><span class="method post">POST</span> <code>/api/access</code></h3>
+<p><b>Imposta i domini aggiuntivi</b></p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>extra_hosts</code></td><td>string</td><td>Un dominio per riga (virgole e spazi fungono anche da separatori); un testo vuoto rimuove tutte le voci. Ogni voce deve contenere almeno un punto (<code>example.org</code>, non <code>org</code>) e copre anche i relativi sottodomini. Massimo 8 voci da 63 caratteri; le voci non conformi vengono scartate.</td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>I domini memorizzati</small></h4>
+<p>Campi: vedi <a href="#schema-access">Access</a>.</p>
+</div>
+<div class="endpoint" id="get-api-display">
+<h3><span class="method get">GET</span> <code>/api/display</code></h3>
+<p><b>Schermate del piccolo display del bridge</b></p>
+<p>Il display delle schede dotate di schermo: quale scheda è configurata (<code>board</code>, predefinito <code>none</code>) e, durante il funzionamento, quali schermate visualizzare, in che ordine e con quale durata.</p>
+<h4>Risposta 200 <small>L'impostazione</small></h4>
+<p>Campi: vedi <a href="#schema-display">Display</a>.</p>
+</div>
+<div class="endpoint" id="post-api-display">
+<h3><span class="method post">POST</span> <code>/api/display</code></h3>
+<p><b>Seleziona la scheda con display e ordina le schermate</b></p>
+<p>Salvato e mantenuto al riavvio. <code>screens</code> e <code>seconds</code> si applicano subito: le schermate elencate compaiono per prime nell'ordine specificato; le altre seguono nell'ordine precedente. <code>board</code> diventa effettivo al riavvio successivo. Ogni campo può essere omesso.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td></td></tr>
+  <tr><td><code>seconds</code></td><td>integer, da 2 a 30</td><td>Secondi di permanenza di ciascuna schermata</td></tr>
+  <tr><td><code>brightness</code></td><td>integer, da 5 a 100</td><td></td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, da 30 a 3600</td><td></td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, da 0 a 50</td><td></td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Ruota lo schermo di 180 gradi</td></tr>
+  <tr><td><code>language</code></td><td><code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Lingua dei testi visualizzati sullo schermo</td></tr>
+  <tr><td><code>screens</code></td><td>elenco di oggetto</td><td></td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>L'impostazione memorizzata</small></h4>
+<p>Campi: vedi <a href="#schema-display">Display</a>.</p>
+<h4>Risposta 400 <small>Scheda sconosciuta, ID schermata non valido o ripetuto, oppure durata in secondi non valida</small></h4>
+</div>
+<div class="endpoint" id="get-api-wifi-power-saving">
+<h3><span class="method get">GET</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Indica se il risparmio energetico Wi-Fi è abilitato</b></p>
+<p>Attivo di default: il bridge scalda meno e consuma meno corrente, con una latenza di risposta fino a un quarto di secondo. Disattivato: risponde istantaneamente; consigliato su reti Wi-Fi soggette a disconnessioni.</p>
+<h4>Risposta 200 <small>L'impostazione</small></h4>
+<p>Campi: vedi <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="post-api-wifi-power-saving">
+<h3><span class="method post">POST</span> <code>/api/wifi_power_saving</code></h3>
+<p><b>Attiva o disattiva il risparmio energetico Wi-Fi</b></p>
+<p>Salvato e applicato immediatamente senza riavvio.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>L'impostazione memorizzata</small></h4>
+<p>Campi: vedi <a href="#schema-wifipowersaving">WifiPowerSaving</a>.</p>
+</div>
+<div class="endpoint" id="get-api-log-size">
+<h3><span class="method get">GET</span> <code>/api/log_size</code></h3>
+<p><b>Dimensione della cronologia di comunicazione con la stufa</b></p>
+<p>Il bridge memorizza gli ultimi messaggi scambiati con la stufa (<code>/api/log</code>, file di diagnostica). 16 kB per impostazione predefinita; 32 kB raddoppia la cronologia e occupa 16 kB di RAM in più.</p>
+<h4>Risposta 200 <small>L'impostazione</small></h4>
+<p>Campi: vedi <a href="#schema-logsize">LogSize</a>.</p>
+</div>
+<div class="endpoint" id="post-api-log-size">
+<h3><span class="method post">POST</span> <code>/api/log_size</code></h3>
+<p><b>Scegli la dimensione della cronologia</b></p>
+<p>Salvato; applicato al riavvio successivo (indicato da <code>restart_needed</code>).</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>kb</code></td><td><code>16</code> | <code>32</code></td><td></td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>L'impostazione memorizzata</small></h4>
+<p>Campi: vedi <a href="#schema-logsize">LogSize</a>.</p>
+<h4>Risposta 400 <small><code>kb</code> non è né 16 né 32</small></h4>
+</div>
+<div class="endpoint" id="post-api-restart">
+<h3><span class="method post">POST</span> <code>/api/restart</code></h3>
+<p><b>Riavvia il bridge</b></p>
+<p>La stufa continua a funzionare; il collegamento si ripristina in circa un minuto.</p>
+<h4>Risposta 200 <small>Il bridge si riavvia</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>reboot</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="endpoint" id="get-api-update">
+<h3><span class="method get">GET</span> <code>/api/update</code></h3>
+<p><b>Stato dell'aggiornamento firmware</b></p>
+<p>Restituisce lo stato dell'aggiornamento automatico, le versioni installate e disponibili, l'avanzamento e le impostazioni.</p>
+<h4>Risposta 200 <small>Stato aggiornamento</small></h4>
+<p>Campi: vedi <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+</div>
+<div class="endpoint" id="post-api-update">
+<h3><span class="method post">POST</span> <code>/api/update</code></h3>
+<p><b>Avvia una verifica di aggiornamento, l'installazione o modifica le impostazioni di controllo automatico</b></p>
+<p>Inviare <code>{"action": "check"}</code> per verificare i rilasci GitHub, <code>{"action": "install"}</code> per scaricare e flashare il rilascio disponibile (consentito solo a stufa rigorosamente spenta), o <code>{"auto_check": true, "check_hours": 24}</code> per configurare i controlli periodici.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<p>Campi: vedi <a href="#schema-updatecommand">UpdateCommand</a>.</p>
+<h4>Risposta 200 <small>Impostazioni aggiornate (quando auto_check è stato inviato)</small></h4>
+<p>Campi: vedi <a href="#schema-updatestatus">UpdateStatus</a>.</p>
+<h4>Risposta 202 <small>Azione accettata ed eseguita in background</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h4>Risposta 400 <small>Payload della richiesta non valido</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h4>Risposta 409 <small>Occupato, nessun aggiornamento da installare o la stufa non è spenta</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+</div>
+<h2 id="diagnostics">Diagnostica</h2>
+<div class="endpoint" id="get-api-txgap">
+<h3><span class="method get">GET</span> <code>/api/txgap</code></h3>
+<p><b>Intervallo tra le trame inviate alla stufa</b></p>
+<h4>Risposta 200 <small>Intervallo corrente e relativi limiti</small></h4>
+<p>Campi: vedi <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="post-api-txgap">
+<h3><span class="method post">POST</span> <code>/api/txgap</code></h3>
+<p><b>Modifica dell'intervallo tra le trame inviate alla stufa</b></p>
+<p>Impostazione diagnostica, mantenuta dopo il riavvio. Se troppo basso, la stufa potrebbe elaborare solo un comando su due.</p>
+<h4>Corpo della richiesta <small>application/json</small></h4>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ms</code> <span class="req">obbligatorio</span></td><td>integer, da 50 a 600</td><td>Intervallo in millisecondi</td></tr>
+</table>
+</div>
+<h4>Risposta 200 <small>L'intervallo attualmente in uso</small></h4>
+<p>Campi: vedi <a href="#schema-txgap">TxGap</a>.</p>
+</div>
+<div class="endpoint" id="get-log">
+<h3><span class="method get">GET</span> <code>/log</code></h3>
+<p><b>Registro della comunicazione con la stufa</b></p>
+<p>Testo semplice, una riga per trama: <code>[uptime in ms][rx|tx] contenuto</code>. Le righe consecutive identiche vengono raggruppate (<code>xN</code>). La password Wi-Fi è mascherata. Mantenuto solo in memoria RAM (ultimi 32 kB circa).</p>
+<h4>Risposta 200 <small>Il registro</small></h4>
+<p><code>text/plain</code></p>
+</div>
+<h2 id="schemas">Oggetti</h2>
+<p>Gli oggetti scambiati con il bridge, a cui si fa riferimento sopra.</p>
+<h3 id="schema-display">Display</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>available</code></td><td>boolean</td><td>True quando il display è attivo (stabilito all'avvio da <code>board</code>); le schermate sottostanti possono quindi essere configurate</td></tr>
+  <tr><td><code>board</code></td><td><code>none</code> | <code>tdongle</code> | <code>tdongle_off</code></td><td>La scheda con display configurata: <code>none</code> (default), <code>tdongle</code> (LilyGO T-Dongle-S3 con schermo attivo) o <code>tdongle_off</code> (stessa scheda con schermo e retroilluminazione disattivati). Memorizzato; applicato al riavvio successivo</td></tr>
+  <tr><td><code>boards</code></td><td>elenco di string</td><td>Schede il cui display è supportato da questo firmware</td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>True quando <code>board</code> è diverso dalla configurazione attualmente attiva</td></tr>
+  <tr><td><code>seconds</code></td><td>integer, da 2 a 30</td><td></td></tr>
+  <tr><td><code>brightness</code></td><td>integer, da 5 a 100</td><td>Luminosità retroilluminazione, in percentuale</td></tr>
+  <tr><td><code>dim</code></td><td>boolean</td><td>Attenua la luminosità dopo un periodo senza pressione di BOOT o allarmi</td></tr>
+  <tr><td><code>dim_after</code></td><td>integer, da 30 a 3600</td><td>Secondi di inattività prima dell'attenuazione</td></tr>
+  <tr><td><code>dim_level</code></td><td>integer, da 0 a 50</td><td>Luminosità in modalità attenuata, percentuale (0 = spento)</td></tr>
+  <tr><td><code>rotate</code></td><td>boolean</td><td>Lo schermo è ruotato di 180 gradi</td></tr>
+  <tr><td><code>language</code></td><td><code></code> | <code>en</code> | <code>fr</code> | <code>it</code> | <code>de</code> | <code>es</code></td><td>Lingua dei testi a schermo; vuoto fino alla scelta (nel frattempo viene mostrato l'inglese)</td></tr>
+  <tr><td><code>screens</code></td><td>elenco di oggetto</td><td>Tutte le schermate una volta, nell'ordine di visualizzazione</td></tr>
+</table>
+</div>
+<h3 id="schema-wifipowersaving">WifiPowerSaving</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-logsize">LogSize</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>kb</code></td><td>integer</td><td>L'impostazione memorizzata, in kB</td></tr>
+  <tr><td><code>running_kb</code></td><td>integer</td><td>La dimensione attiva dall'ultimo riavvio, in kB</td></tr>
+  <tr><td><code>options</code></td><td>elenco di integer</td><td></td></tr>
+  <tr><td><code>restart_needed</code></td><td>boolean</td><td>La scelta memorizzata differisce da quella attualmente attiva</td></tr>
+</table>
+</div>
+<h3 id="schema-access">Access</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>extra_hosts</code></td><td>elenco di string</td><td>Domini aggiunti dall'utente</td></tr>
+  <tr><td><code>max_extra_hosts</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Nome a cui era indirizzata la richiesta</td></tr>
+</table>
+</div>
+<h3 id="schema-health">Health</h3>
+<p>Stato operativo del bridge. I contatori risiedono nella RAM e si azzerano a ogni avvio. Vengono pubblicati anche via MQTT sotto <code>&lt;base&gt;/health/&lt;name&gt;</code>, eccetto <code>stove_last_frame_seconds</code>.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>restart_reason</code></td><td><code>power_on</code> | <code>brownout</code> | <code>crash</code> | <code>watchdog</code> | <code>reset_button</code> | <code>usb</code> | <code>user</code> | <code>wifi_change</code> | <code>update</code> | <code>stove_silent</code> | <code>stove_lost</code> | <code>software</code> | <code>unknown</code></td><td>Causa dell'ultimo riavvio: <code>power_on</code> (accensione dalla stufa), <code>brownout</code> (tensione insufficiente), <code>crash</code>, <code>watchdog</code> (blocco del programma), <code>reset_button</code>, <code>usb</code> (reset via USB), <code>user</code> (riavvio da interfaccia o API), <code>wifi_change</code>, <code>update</code> (aggiornamento wireless), <code>stove_silent</code> (nessun dato ricevuto dalla stufa per 60 secondi), <code>stove_lost</code> (collegamento prima accettato e poi rifiutato per 5 minuti), <code>software</code> (altro riavvio del firmware)</td></tr>
+  <tr><td><code>min_free_heap</code></td><td>integer</td><td>Minima memoria libera registrata dall'avvio, in byte</td></tr>
+  <tr><td><code>elf_sha256</code></td><td>string</td><td>Primi caratteri dell'hash SHA-256 del firmware in esecuzione (non pubblicato via MQTT)</td></tr>
+  <tr><td><code>crash</code></td><td>oggetto</td><td>L'ultimo report di crash memorizzato nella flash (non pubblicato via MQTT). Permane finché un nuovo crash non lo sostituisce, pertanto può riferirsi a un avvio precedente; <code>elf_sha256</code> identifica la versione interessata. Gli indirizzi possono essere analizzati con il file ELF corrispondente.</td></tr>
+  <tr><td><code>chip_temperature</code></td><td>number o <code>null</code></td><td>Temperatura interna del chip in °C</td></tr>
+  <tr><td><code>wifi_disconnects</code></td><td>integer</td><td>Disconnessioni Wi-Fi registrate dall'avvio</td></tr>
+  <tr><td><code>stove_last_frame_seconds</code></td><td>integer o <code>null</code></td><td>Secondi trascorsi dall'ultimo byte ricevuto dalla stufa; null se nessun byte è mai pervenuto</td></tr>
+  <tr><td><code>stove_detections</code></td><td>integer</td><td>Numero di volte in cui la stufa ha accettato il bridge dall'avvio (1 con collegamento stabile)</td></tr>
+  <tr><td><code>stove_link_losses</code></td><td>integer</td><td>Numero di interruzioni di un collegamento stabilito dall'avvio</td></tr>
+  <tr><td><code>stove_rx_dropped_bytes</code></td><td>integer</td><td>Byte inviati dalla stufa per i quali il bridge non disponeva di buffer dall'avvio (0 in condizioni normali)</td></tr>
+  <tr><td><code>mqtt_disconnects</code></td><td>integer</td><td>Connessioni al broker MQTT perse dall'avvio</td></tr>
+</table>
+</div>
+<h3 id="schema-state">State</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>device</code> <span class="req">obbligatorio</span></td><td><a href="#schema-device">Device</a></td><td></td></tr>
+  <tr><td><code>stove</code> <span class="req">obbligatorio</span></td><td><a href="#schema-stove">Stove</a></td><td></td></tr>
+  <tr><td><code>sensors</code> <span class="req">obbligatorio</span></td><td><a href="#schema-sensors">Sensors</a></td><td></td></tr>
+  <tr><td><code>controls</code> <span class="req">obbligatorio</span></td><td><a href="#schema-controlsstate">ControlsState</a></td><td></td></tr>
+  <tr><td><code>wifi_mode</code></td><td><code>STA</code> | <code>AP</code></td><td><code>AP</code> mentre il bridge si trova in modalità di configurazione</td></tr>
+  <tr><td><code>wifi_power_saving</code></td><td>boolean</td><td>Indica se il risparmio energetico Wi-Fi è abilitato, vedi <code>/api/wifi_power_saving</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>write_enabled</code></td><td>boolean</td><td>Sempre true</td></tr>
+  <tr><td><code>version_ack</code> <span class="req">obbligatorio</span></td><td>boolean</td><td>Indica se la stufa ha accettato il bridge (collegamento attivo)</td></tr>
+  <tr><td><code>version_frame</code></td><td><code>V3</code> | <code>V28</code> | <code>V1</code> | <code>?</code></td><td>Variante del protocollo con cui la stufa ha risposto: <code>V3</code> (firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27)</td></tr>
+  <tr><td><code>generation</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>schedule_slots_per_day</code></td><td>integer</td><td>Numero di fasce orarie giornaliere supportate dalla stufa: 2, o 1 con firmware 2.25</td></tr>
+  <tr><td><code>usb</code> <span class="req">obbligatorio</span></td><td>oggetto</td><td>Diagnostica del collegamento USB</td></tr>
+  <tr><td><code>mqtt</code></td><td>oggetto</td><td></td></tr>
+  <tr><td><code>health</code></td><td><a href="#schema-health">Health</a></td><td></td></tr>
+  <tr><td><code>frames_in</code></td><td>integer</td><td>Trame ricevute dalla stufa dall'avvio</td></tr>
+  <tr><td><code>frames_out</code></td><td>integer</td><td>Trame inviate alla stufa dall'avvio</td></tr>
+  <tr><td><code>revision</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>raw_sensors</code> <span class="req">obbligatorio</span></td><td>oggetto, qualsiasi nome → integer</td><td>Tutti i valori comunicati dalla stufa, con denominazione RIKA, nelle unità originali (temperature spesso in decimi di grado). Vuoto finché la stufa non è collegata.</td></tr>
+  <tr><td><code>status</code></td><td>oggetto, qualsiasi nome → string</td><td>Record di stato scambiato con la stufa (la password Wi-Fi è oscurata)</td></tr>
+  <tr><td><code>sensors_pos</code></td><td>elenco di integer</td><td>I record dei sensori per posizione (diagnostica)</td></tr>
+  <tr><td><code>controls_pos</code></td><td>elenco di integer</td><td>I record dei controlli per posizione (diagnostica)</td></tr>
+</table>
+</div>
+<h3 id="schema-device">Device</h3>
+<p>Il bridge</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>name</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td>Versione del firmware del bridge</td></tr>
+  <tr><td><code>app_version</code></td><td>string</td><td>Uguale a <code>version</code></td></tr>
+  <tr><td><code>firmware_version</code></td><td>string</td><td>Uguale a <code>version</code></td></tr>
+  <tr><td><code>ip</code></td><td>string</td><td></td></tr>
+  <tr><td><code>mac</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_ssid</code></td><td>string</td><td></td></tr>
+  <tr><td><code>wifi_rssi</code></td><td>integer</td><td>Segnale Wi-Fi in dBm</td></tr>
+  <tr><td><code>uptime_seconds</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>free_heap</code></td><td>integer</td><td>Memoria libera in byte</td></tr>
+  <tr><td><code>ota_slot_bytes</code></td><td>integer</td><td>Dimensione in byte della partizione di destinazione dell'aggiornamento OTA. Un firmware più grande deve essere installato via USB</td></tr>
+  <tr><td><code>ota_password_set</code></td><td>boolean</td><td>Una password viene richiesta per gli aggiornamenti OTA. Si imposta o rimuove via USB tramite l'installer, mai via rete</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td>Uguale a <code>version_ack</code></td></tr>
+</table>
+</div>
+<h3 id="schema-stove">Stove</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>state</code></td><td><code>off</code> | <code>standby</code> | <code>ignition</code> | <code>flame_start</code> | <code>heating</code> | <code>cleaning</code> | <code>burn_off</code> | <code>splitlog</code> | <code>splitlog_check</code> | <code>splitlog_refuel</code> | <code>splitlog_no_refuel</code> | <code>unknown</code></td><td></td></tr>
+  <tr><td><code>state_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>state_label</code></td><td>string</td><td></td></tr>
+  <tr><td><code>sub_state</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>is_burning</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>has_error</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>error_code</code></td><td>integer</td><td>0 se non è presente alcun errore</td></tr>
+  <tr><td><code>error_sub</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>warning_code</code></td><td>integer</td><td>0 se non è presente alcun avviso</td></tr>
+  <tr><td><code>model</code></td><td>integer o <code>null</code></td><td>Codice modello RIKA, null finché la stufa non lo comunica</td></tr>
+  <tr><td><code>model_name</code></td><td>string o <code>null</code></td><td>Ad esempio <code>DOMO</code>; null finché la stufa non comunica il nome</td></tr>
+  <tr><td><code>brand</code></td><td><code>RIKA</code> | <code>ANIMO</code> o <code>null</code></td><td>Marchio impostato sulla stufa (sensore <code>fabNumber</code>: 1 = RIKA, 2 = ANIMO); null finché la stufa non invia il modello</td></tr>
+  <tr><td><code>mainboard_version</code></td><td>string o <code>null</code></td><td>Firmware della stufa, ad esempio <code>2.29</code>; null finché la stufa non lo comunica</td></tr>
+  <tr><td><code>firmware_build</code></td><td>string o <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-sensors">Sensors</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>room_temperature</code></td><td>number o <code>null</code></td><td>°C; null quando non è collegata alcuna sonda ambiente RIKA</td></tr>
+  <tr><td><code>room_sensor_connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>combustion_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>board_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>pellets_total_kg</code></td><td>integer o <code>null</code></td><td>null finché la stufa non trasmette il dato (dopo un riavvio del bridge)</td></tr>
+  <tr><td><code>pellet_hours</code></td><td>integer o <code>null</code></td><td>Ore di funzionamento a pellet; null finché la stufa non le comunica</td></tr>
+  <tr><td><code>log_runtime</code></td><td>integer o <code>null</code></td><td>Tempo di funzionamento a legna di una stufa combinata, in minuti (0 su stufe a solo pellet; null finché la stufa non lo comunica)</td></tr>
+  <tr><td><code>log_runtime_hours</code></td><td>integer o <code>null</code></td><td>log_runtime in ore intere</td></tr>
+  <tr><td><code>service_countdown_kg</code></td><td>integer o <code>null</code></td><td>Pellet residuo prima della prossima manutenzione; null finché la stufa non trasmette il dato</td></tr>
+  <tr><td><code>fan_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>auger_speed_rpm</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>power_actual_percent</code></td><td>integer</td><td>Potenza termica effettiva della stufa. In modalità comfort la stufa la regola autonomamente, ignorando <code>power_percent</code>. 0 quando non è in riscaldamento.</td></tr>
+  <tr><td><code>air_flaps_percent</code></td><td>number o <code>null</code></td><td></td></tr>
+  <tr><td><code>air_flaps_target_percent</code></td><td>number o <code>null</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsstate">ControlsState</h3>
+<p>Le impostazioni correnti</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potenza fissa. <code>auto</code>: segue la programmazione settimanale. <code>comfort</code>: segue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td>0 = manuale, 1 = auto, 2 = comfort</td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td>Programmazione settimanale attiva / disattivata</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C al di fuori delle fasce orarie programmate</td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer</td><td>0 = automatico, da 1 a 5</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer</td><td>Regolazione in percentuale, da -30 a +30</td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td>°C (solo DOMO BACK)</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td>Calibrazione della sonda ambiente in °C</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>eco_mode_possible</code></td><td>boolean</td><td>Indica se la stufa consente la modalità eco in questo momento</td></tr>
+</table>
+</div>
+<h3 id="schema-controls">Controls</h3>
+<p>Le impostazioni correnti. Vengono restituiti anche i nomi originali della stufa (<code>onOff</code>, <code>tempRoomTarget</code>...), non descritti qui.</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potenza fissa. <code>auto</code>: segue la programmazione settimanale. <code>comfort</code>: segue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number</td><td></td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><i>altri campi</i></td><td></td><td>Non descritti qui.</td></tr>
+</table>
+</div>
+<h3 id="schema-controlscommand">ControlsCommand</h3>
+<p>Qualsiasi sottoinsieme di questi campi</p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potenza fissa. <code>auto</code>: segue la programmazione settimanale. <code>comfort</code>: segue la temperatura ambiente.</td></tr>
+  <tr><td><code>power_percent</code></td><td>integer, da 30 a 100</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number, da 14 a 28</td><td>°C, in gradi interi: il mezzo grado viene arrotondato</td></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C</td></tr>
+  <tr><td><code>frost_protection_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>frost_protection_temperature</code></td><td>number, da 4 a 10</td><td>°C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>number, da -4 a 4</td><td>°C</td></tr>
+  <tr><td><code>bake_target_temperature</code></td><td>integer, da 130 a 340</td><td>°C (solo DOMO BACK)</td></tr>
+  <tr><td><code>eco_mode</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan1_level</code></td><td>integer, da 0 a 5</td><td>0 = automatico</td></tr>
+  <tr><td><code>convection_fan1_area</code></td><td>integer, da -30 a 30</td><td></td></tr>
+  <tr><td><code>convection_fan2_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>convection_fan2_level</code></td><td>integer, da 0 a 5</td><td></td></tr>
+  <tr><td><code>convection_fan2_area</code></td><td>integer, da -30 a 30</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-controlsresult">ControlsResult</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>on</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>mode</code></td><td><code>manual</code> | <code>auto</code> | <code>comfort</code></td><td><code>manual</code>: potenza fissa. <code>auto</code>: segue la programmazione settimanale. <code>comfort</code>: segue la temperatura ambiente.</td></tr>
+  <tr><td><code>mode_code</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>target_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><code>power_percent</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-schedule">Schedule</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ok</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>active</code></td><td>boolean</td><td>Programmazione settimanale attiva / disattivata</td></tr>
+  <tr><td><code>heatingTimesActive</code></td><td>integer</td><td>Uguale ad <code>active</code>, come 0 / 1</td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td>°C al di fuori delle fasce orarie programmate</td></tr>
+  <tr><td><code>setBackTemp</code></td><td>integer</td><td>Uguale, in decimi di grado</td></tr>
+  <tr><td><code>slots</code></td><td>oggetto, qualsiasi nome → integer</td><td>Due fasce al giorno, <code>heatTime&lt;Giorno&gt;&lt;1|2&gt;</code> con Giorno in Mon, Tue, Wed, Thu, Fri, Sat, Sun. Su stufe con firmware 2.25 viene utilizzata solo la prima fascia giornaliera; la seconda vale sempre 0.</td></tr>
+  <tr><td><code>slots_per_day</code></td><td>integer</td><td>Numero di fasce giornaliere accettate dalla stufa: 2, o 1 con firmware 2.25</td></tr>
+  <tr><td><code>day_ranges</code></td><td>oggetto, qualsiasi nome → oggetto</td><td>Solo su stufe con firmware 2.25: intervallo giornaliero per ciascun giorno della settimana (Sun, Mon, ... Sat), con <code>start</code> ed <code>end</code> in minuti dalla mezzanotte, come memorizzati nella stufa (stesse fasce del primo slot giornaliero in <code>slots</code>).</td></tr>
+</table>
+</div>
+<h3 id="schema-schedulecommand">ScheduleCommand</h3>
+<p><code>heating_times_active</code>, <code>setback_temperature</code> e qualunque delle 14 fasce <code>heatTime&lt;Giorno&gt;&lt;1|2&gt;</code></p>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>heating_times_active</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>setback_temperature</code></td><td>number</td><td></td></tr>
+  <tr><td><i>qualsiasi altro nome</i></td><td>integer</td><td>Una fascia oraria come valore numerico: inizio <code>HHMM</code> moltiplicato per 10000, più fine <code>HHMM</code>. <code>6000800</code> corrisponde a 06:00-08:00, <code>17002200</code> a 17:00-22:00, <code>0</code> indica una fascia non utilizzata.</td></tr>
+</table>
+</div>
+<h3 id="schema-mqtt">Mqtt</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td></td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password_set</code></td><td>boolean</td><td>Indica se è presente una password memorizzata (non viene mai restituita)</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td></td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Indica se i messaggi per Home Assistant Discovery vengono pubblicati</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Indica se la connessione al broker è cifrata (MQTT su TLS)</td></tr>
+  <tr><td><code>ca_set</code></td><td>boolean</td><td>Indica se è memorizzato un certificato CA (non viene restituito)</td></tr>
+  <tr><td><code>tls_error</code></td><td>integer</td><td>Ultimo codice di errore del livello TLS, 0 in assenza di errori (diagnostica)</td></tr>
+  <tr><td><code>connected</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>status</code></td><td><code>disabled</code> | <code>connected</code> | <code>connecting</code> | <code>waiting for Wi-Fi</code> | <code>broker unreachable</code> | <code>connection lost</code> | <code>certificate not trusted</code> | <code>secure connection failed</code> | <code>refused: wrong user or password</code> | <code>refused by the broker</code></td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-mqttcommand">MqttCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>enabled</code></td><td>boolean</td><td></td></tr>
+  <tr><td><code>host</code></td><td>string</td><td>Indirizzo del broker</td></tr>
+  <tr><td><code>port</code></td><td>integer</td><td>Predefinito: <code>1883</code>.</td></tr>
+  <tr><td><code>user</code></td><td>string</td><td></td></tr>
+  <tr><td><code>password</code></td><td>string</td><td>Vuoto per cancellare il valore memorizzato</td></tr>
+  <tr><td><code>base_topic</code></td><td>string</td><td>Predefinito: <code>openfirenet</code>.</td></tr>
+  <tr><td><code>discovery</code></td><td>boolean</td><td>Home Assistant MQTT Discovery: la stufa compare automaticamente in Home Assistant. Lasciare disattivato se si usa l'integrazione dedicata Predefinito: <code>False</code>.</td></tr>
+  <tr><td><code>tls</code></td><td>boolean</td><td>Connessione cifrata (MQTT su TLS, solitamente porta 8883). Il certificato del broker deve essere firmato da una CA pubblica o da quella specificata in ca_certificate Predefinito: <code>False</code>.</td></tr>
+  <tr><td><code>ca_certificate</code></td><td>string</td><td>Certificato (PEM) della propria CA per broker non firmati da un'autorità pubblica; il nome host del certificato non verrà verificato. Vuoto per cancellare. Rifiutato con codice 400 se non è in formato PEM valido</td></tr>
+</table>
+</div>
+<h3 id="schema-txgap">TxGap</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>ms</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>default</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>min</code></td><td>integer</td><td></td></tr>
+  <tr><td><code>max</code></td><td>integer</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-version">Version</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>app</code></td><td>string</td><td></td></tr>
+  <tr><td><code>version</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_date</code></td><td>string</td><td></td></tr>
+  <tr><td><code>build_time</code></td><td>string</td><td></td></tr>
+  <tr><td><code>target</code></td><td>string</td><td></td></tr>
+</table>
+</div>
+<h3 id="schema-updatestatus">UpdateStatus</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>state</code> <span class="req">obbligatorio</span></td><td><code>idle</code> | <code>checking</code> | <code>available</code> | <code>downloading</code> | <code>verifying</code> | <code>installing</code> | <code>error</code> | <code>restarting</code></td><td>Stato operativo del task di aggiornamento</td></tr>
+  <tr><td><code>current</code> <span class="req">obbligatorio</span></td><td>string</td><td>Versione attualmente installata sul bridge (es. 4.3.1)</td></tr>
+  <tr><td><code>latest</code> <span class="req">obbligatorio</span></td><td>string</td><td>Ultima versione rilevata nei rilasci GitHub, se presente</td></tr>
+  <tr><td><code>percent</code> <span class="req">obbligatorio</span></td><td>integer</td><td>Percentuale di avanzamento (da 0 a 100) durante download o scrittura flash</td></tr>
+  <tr><td><code>error</code> <span class="req">obbligatorio</span></td><td>string</td><td>Descrizione dell'ultimo errore, se lo stato è error</td></tr>
+  <tr><td><code>stove_blocks</code> <span class="req">obbligatorio</span></td><td>boolean</td><td>True se lo stato della stufa impedisce l'installazione (la stufa deve essere tassativamente spenta)</td></tr>
+  <tr><td><code>auto_check</code> <span class="req">obbligatorio</span></td><td>boolean</td><td>Indica se i controlli periodici in background sono attivi</td></tr>
+  <tr><td><code>check_hours</code> <span class="req">obbligatorio</span></td><td>integer</td><td>Intervallo tra i controlli in ore (12, 24 o 168)</td></tr>
+  <tr><td><code>last_check</code> <span class="req">obbligatorio</span></td><td>integer</td><td>Secondi trascorsi dall'ultima verifica completata con successo verso GitHub (-1 se mai eseguita)</td></tr>
+</table>
+</div>
+<h3 id="schema-updatecommand">UpdateCommand</h3>
+<div class="table-wrap">
+<table class="fields">
+  <tr><th>Campo</th><th>Tipo</th><th>Descrizione</th></tr>
+  <tr><td><code>action</code></td><td><code>check</code> | <code>install</code></td><td>Azione da eseguire in background</td></tr>
+  <tr><td><code>auto_check</code></td><td>boolean</td><td>Abilita o disabilita i controlli periodici</td></tr>
+  <tr><td><code>check_hours</code></td><td><code>12</code> | <code>24</code> | <code>168</code></td><td>Intervallo di controllo in ore</td></tr>
+</table>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

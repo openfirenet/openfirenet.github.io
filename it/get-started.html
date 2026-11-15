@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="it" data-page="get-started">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Per iniziare con Open Firenet</title>
+<meta name="description" content="Hardware necessario, installazione su ESP32-S3 con l'installer, configurazione Wi-Fi e collegamento alla stufa RIKA.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/get-started.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/get-started.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/get-started.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/get-started.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/get-started.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/get-started.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigazione principale">
+      <a href="../it/get-started.html" class="active" aria-current="page">Per iniziare</a>
+      <details class="nav-group">
+        <summary>Stufa e hardware</summary>
+        <div class="nav-menu">
+          <a href="../it/compatibility.html">Compatibilità stufe</a>
+          <a href="../it/hardware.html">Hardware</a>
+          <a href="../it/screen.html">Schermo del bridge</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrazioni</summary>
+        <div class="nav-menu">
+          <a href="../it/home-assistant.html">Home Assistant</a>
+          <a href="../it/mqtt.html">MQTT</a>
+          <a href="../it/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../it/troubleshooting.html">Risoluzione problemi</a>
+      <a href="../it/contribute.html">Contribuire</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Lingua"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</summary>
+        <div class="nav-menu">
+          <a href="../get-started.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/get-started.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/get-started.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/get-started.html" hreflang="it" lang="it" data-lang="it" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/get-started.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Per iniziare</h1>
+<p class="lead">Da una scheda vergine al controllo completo della stufa dal browser in cinque passaggi.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Verificate la versione del firmware della stufa</h3>
+    <p>Sul display della stufa, aprite il menu Info e leggete la versione software della scheda madre (ad esempio 2.27 o 2.29). Verificatela poi nella <a href="compatibility.html">pagina di compatibilità</a>.</p>
+  </li>
+  <li>
+    <h3>Procuratevi l'hardware</h3>
+    <p>Sono necessari due componenti:</p>
+    <ul>
+      <li><b>Una scheda di sviluppo ESP32-S3 con USB nativo.</b> Il chip deve essere obbligatoriamente un ESP32-S3: un ESP32 classico, un ESP32-C3 o una scheda dotata solo di un convertitore USB-UART (CH340, CP2102) non funzionerà.</li>
+      <li><b>Un cavo dati USB</b> per collegare la scheda alla presa USB-A della stufa. I cavi di sola ricarica privi di linee dati non funzionano.</li>
+    </ul>
+    <p>Per la scelta della scheda e i modelli sicuramente compatibili: consultate la pagina <a href="hardware.html">Hardware</a>.</p>
+    <div class="note">
+      <p><b>Schede con due porte USB:</b> la stufa deve essere obbligatoriamente collegata alla porta contrassegnata con „USB“ o „USB OTG“ (connessa ai pin USB nativi del chip). La porta contrassegnata con „UART“ o „COM“ serve unicamente per il flash iniziale e i log. Si tratta dell'errore più comune.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Installate il firmware con l'installer</h3>
+    <p>Scaricate l'installer per il vostro computer dalla <a href="https://github.com/openfirenet/open-firenet-installer/releases">pagina dei rilasci</a> e collegate la scheda al computer. L'installer rileva la scheda, la legge e preimposta <b>Prima installazione</b> nella scheda Flash USB. Scarica l'ultimo firmware ufficiale, ne verifica la firma digitale, lo scrive sulla scheda e vi guida alla configurazione Wi-Fi.</p>
+    <figure>
+      <img class="shot" src="../assets/img/usb-flasher.png" alt="Scheda Flash USB dell'installer" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Sistema</th><th>File</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> o pacchetto <code>.deb</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>Il computer potrebbe mostrare un avviso al primo avvio.</b> L'installer non è firmato con un certificato per sviluppatori commerciale a pagamento, pertanto Windows e macOS non lo riconoscono a priori. È del tutto normale.</p>
+      <ul>
+        <li><b>Windows:</b> schermata blu „PC protetto da Windows“ (Microsoft Defender SmartScreen). Fate clic su <b>Ulteriori informazioni</b>, quindi su <b>Esegui comunque</b>.</li>
+        <li><b>macOS:</b> il file è un normale programma eseguibile. Nel Terminale, rendetelo eseguibile con <code>chmod +x</code> seguito dal nome del file e avviatelo. Se macOS impedisce l'apertura, andate in <b>Impostazioni di Sistema &gt; Privacy e sicurezza</b> e selezionate <b>Apri comunque</b>.</li>
+      </ul>
+      <p>Per verificare l'integrità del file scaricato, confrontate il relativo hash SHA-256 con il file <code>SHA256SUMS</code> fornito a ogni rilascio.</p>
+    </div>
+    <p>Su Linux, il vostro utente deve appartenere al gruppo <code>dialout</code> (o <code>uucp</code>) per poter accedere alle porte seriali USB. Se la scheda non viene rilevata, tenete premuto il tasto BOOT mentre la collegate via USB.</p>
+  </li>
+  <li>
+    <h3>Collegate il bridge alla rete Wi-Fi</h3>
+    <p>Inserite nome della rete (SSID) e password nella scheda Configurazione Wi-Fi dell'installer, oppure procedete direttamente dallo smartphone:</p>
+    <ol>
+      <li>Connettetevi alla rete Wi-Fi temporanea <code>Open-Firenet-Setup</code> generata dalla scheda (senza password).</li>
+      <li>La schermata di configurazione si aprirà automaticamente. In caso contrario, aprite il browser all'indirizzo <code>http://192.168.4.1</code>.</li>
+      <li>Selezionate la rete Wi-Fi di casa (frequenza 2,4 GHz), inserite la password e salvate. La scheda si riavvierà collegandosi alla vostra rete.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="../assets/img/wifi-setup.png" alt="Scheda Configurazione Wi-Fi dell'installer" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Collegate la scheda alla stufa</h3>
+    <p>Collegate la porta USB nativa della scheda alla presa USB della stufa, quindi spegnete e riaccendete la stufa tramite l'interruttore generale di alimentazione. Dopo circa un minuto, aprite nel browser <code>http://open-firenet.local</code> (oppure l'indirizzo IP rilevato nella scheda Scansione di rete dell'installer).</p>
+    <p>La pagina mostrerà il modello della stufa e il suo stato operativo. La navigazione è suddivisa in tre schede: <b>Stufa</b> (cruscotto e controlli diretti), <b>Bridge</b> (Wi-Fi, MQTT, riavvio) e <b>Diagnostica</b> (comunicazione con la stufa, registro eventi, tutti i valori). Se compare un avviso indicante che il bridge non è collegato alla stufa, consultate la guida di <a href="troubleshooting.html">Risoluzione problemi</a>.</p>
+  </li>
+</ol>
+
+<h2>Aggiornamenti successivi</h2>
+<p>Una volta integrato il bridge nella rete locale, la scheda Aggiornamento Wi-Fi dell'installer consente di installare le nuove versioni del firmware senza dover scollegare alcun cavo. Il computer e il bridge devono trovarsi sulla stessa rete locale; in caso di timeout, verificate i <a href="troubleshooting.html#ota">requisiti di rete</a>.</p>
+<p>Opzionale a partire dal firmware 4.0: potete proteggere gli aggiornamenti wireless con una password. Collegate il bridge al computer, aprite la scheda Wi-Fi dell'installer e impostate una „Password di aggiornamento“. L'installer la richiederà a ogni aggiornamento over-the-air.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/ota-update.png" alt="Scheda Aggiornamento Wi-Fi dell'installer" width="640">
+</figure>
+
+<h2>Passaggi successivi</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Aggiungete la stufa come termostato completo con tutti i suoi sensori.</p><p class="more"><a href="home-assistant.html">Configura l'integrazione</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Per Jeedom, openHAB, Node-RED, Domoticz e altri sistemi domotici.</p><p class="more"><a href="mqtt.html">Configura MQTT</a></p></div>
+  <div class="card"><h3>API REST</h3><p>Leggete e controllate la stufa mediante script personalizzati.</p><p class="more"><a href="api.html">Panoramica dell'API</a></p></div>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet è un progetto open source indipendente, non affiliato né approvato da RIKA Innovative Ofentechnik GmbH. Il protocollo è stato retroingegnerizzato al solo scopo di interoperabilità. Uso a proprio rischio, nessuna garanzia.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuire</a> · Domande e supporto: <a href="https://github.com/openfirenet/open-firenet/issues">issue per il bridge e il firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issue per l'integrazione Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

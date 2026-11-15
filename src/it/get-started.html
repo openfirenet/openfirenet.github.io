@@ -1,0 +1,81 @@
+<!-- source: 77f08a09ac55 -->
+<!-- title: Per iniziare con Open Firenet -->
+<!-- description: Hardware necessario, installazione su ESP32-S3 con l'installer, configurazione Wi-Fi e collegamento alla stufa RIKA. -->
+<h1>Per iniziare</h1>
+<p class="lead">Da una scheda vergine al controllo completo della stufa dal browser in cinque passaggi.</p>
+
+<ol class="steps">
+  <li>
+    <h3>Verificate la versione del firmware della stufa</h3>
+    <p>Sul display della stufa, aprite il menu Info e leggete la versione software della scheda madre (ad esempio 2.27 o 2.29). Verificatela poi nella <a href="compatibility.html">pagina di compatibilità</a>.</p>
+  </li>
+  <li>
+    <h3>Procuratevi l'hardware</h3>
+    <p>Sono necessari due componenti:</p>
+    <ul>
+      <li><b>Una scheda di sviluppo ESP32-S3 con USB nativo.</b> Il chip deve essere obbligatoriamente un ESP32-S3: un ESP32 classico, un ESP32-C3 o una scheda dotata solo di un convertitore USB-UART (CH340, CP2102) non funzionerà.</li>
+      <li><b>Un cavo dati USB</b> per collegare la scheda alla presa USB-A della stufa. I cavi di sola ricarica privi di linee dati non funzionano.</li>
+    </ul>
+    <p>Per la scelta della scheda e i modelli sicuramente compatibili: consultate la pagina <a href="hardware.html">Hardware</a>.</p>
+    <div class="note">
+      <p><b>Schede con due porte USB:</b> la stufa deve essere obbligatoriamente collegata alla porta contrassegnata con „USB“ o „USB OTG“ (connessa ai pin USB nativi del chip). La porta contrassegnata con „UART“ o „COM“ serve unicamente per il flash iniziale e i log. Si tratta dell'errore più comune.</p>
+    </div>
+  </li>
+  <li>
+    <h3>Installate il firmware con l'installer</h3>
+    <p>Scaricate l'installer per il vostro computer dalla <a href="https://github.com/openfirenet/open-firenet-installer/releases">pagina dei rilasci</a> e collegate la scheda al computer. L'installer rileva la scheda, la legge e preimposta <b>Prima installazione</b> nella scheda Flash USB. Scarica l'ultimo firmware ufficiale, ne verifica la firma digitale, lo scrive sulla scheda e vi guida alla configurazione Wi-Fi.</p>
+    <figure>
+      <img class="shot" src="assets/img/usb-flasher.png" alt="Scheda Flash USB dell'installer" width="640">
+    </figure>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Sistema</th><th>File</th></tr>
+      <tr><td>Windows</td><td><code>open-firenet-installer-windows-x86_64.exe</code></td></tr>
+      <tr><td>macOS (Apple Silicon)</td><td><code>open-firenet-installer-macos-arm64</code></td></tr>
+      <tr><td>macOS (Intel)</td><td><code>open-firenet-installer-macos-x86_64</code></td></tr>
+      <tr><td>Linux</td><td><code>open-firenet-installer-linux-x86_64.AppImage</code> o pacchetto <code>.deb</code></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <p><b>Il computer potrebbe mostrare un avviso al primo avvio.</b> L'installer non è firmato con un certificato per sviluppatori commerciale a pagamento, pertanto Windows e macOS non lo riconoscono a priori. È del tutto normale.</p>
+      <ul>
+        <li><b>Windows:</b> schermata blu „PC protetto da Windows“ (Microsoft Defender SmartScreen). Fate clic su <b>Ulteriori informazioni</b>, quindi su <b>Esegui comunque</b>.</li>
+        <li><b>macOS:</b> il file è un normale programma eseguibile. Nel Terminale, rendetelo eseguibile con <code>chmod +x</code> seguito dal nome del file e avviatelo. Se macOS impedisce l'apertura, andate in <b>Impostazioni di Sistema &gt; Privacy e sicurezza</b> e selezionate <b>Apri comunque</b>.</li>
+      </ul>
+      <p>Per verificare l'integrità del file scaricato, confrontate il relativo hash SHA-256 con il file <code>SHA256SUMS</code> fornito a ogni rilascio.</p>
+    </div>
+    <p>Su Linux, il vostro utente deve appartenere al gruppo <code>dialout</code> (o <code>uucp</code>) per poter accedere alle porte seriali USB. Se la scheda non viene rilevata, tenete premuto il tasto BOOT mentre la collegate via USB.</p>
+  </li>
+  <li>
+    <h3>Collegate il bridge alla rete Wi-Fi</h3>
+    <p>Inserite nome della rete (SSID) e password nella scheda Configurazione Wi-Fi dell'installer, oppure procedete direttamente dallo smartphone:</p>
+    <ol>
+      <li>Connettetevi alla rete Wi-Fi temporanea <code>Open-Firenet-Setup</code> generata dalla scheda (senza password).</li>
+      <li>La schermata di configurazione si aprirà automaticamente. In caso contrario, aprite il browser all'indirizzo <code>http://192.168.4.1</code>.</li>
+      <li>Selezionate la rete Wi-Fi di casa (frequenza 2,4 GHz), inserite la password e salvate. La scheda si riavvierà collegandosi alla vostra rete.</li>
+    </ol>
+    <figure>
+      <img class="shot" src="assets/img/wifi-setup.png" alt="Scheda Configurazione Wi-Fi dell'installer" width="640">
+    </figure>
+  </li>
+  <li>
+    <h3>Collegate la scheda alla stufa</h3>
+    <p>Collegate la porta USB nativa della scheda alla presa USB della stufa, quindi spegnete e riaccendete la stufa tramite l'interruttore generale di alimentazione. Dopo circa un minuto, aprite nel browser <code>http://open-firenet.local</code> (oppure l'indirizzo IP rilevato nella scheda Scansione di rete dell'installer).</p>
+    <p>La pagina mostrerà il modello della stufa e il suo stato operativo. La navigazione è suddivisa in tre schede: <b>Stufa</b> (cruscotto e controlli diretti), <b>Bridge</b> (Wi-Fi, MQTT, riavvio) e <b>Diagnostica</b> (comunicazione con la stufa, registro eventi, tutti i valori). Se compare un avviso indicante che il bridge non è collegato alla stufa, consultate la guida di <a href="troubleshooting.html">Risoluzione problemi</a>.</p>
+  </li>
+</ol>
+
+<h2>Aggiornamenti successivi</h2>
+<p>Una volta integrato il bridge nella rete locale, la scheda Aggiornamento Wi-Fi dell'installer consente di installare le nuove versioni del firmware senza dover scollegare alcun cavo. Il computer e il bridge devono trovarsi sulla stessa rete locale; in caso di timeout, verificate i <a href="troubleshooting.html#ota">requisiti di rete</a>.</p>
+<p>Opzionale a partire dal firmware 4.0: potete proteggere gli aggiornamenti wireless con una password. Collegate il bridge al computer, aprite la scheda Wi-Fi dell'installer e impostate una „Password di aggiornamento“. L'installer la richiederà a ogni aggiornamento over-the-air.</p>
+
+<figure>
+  <img class="shot" src="assets/img/ota-update.png" alt="Scheda Aggiornamento Wi-Fi dell'installer" width="640">
+</figure>
+
+<h2>Passaggi successivi</h2>
+<div class="grid">
+  <div class="card"><h3>Home Assistant</h3><p>Aggiungete la stufa come termostato completo con tutti i suoi sensori.</p><p class="more"><a href="home-assistant.html">Configura l'integrazione</a></p></div>
+  <div class="card"><h3>MQTT</h3><p>Per Jeedom, openHAB, Node-RED, Domoticz e altri sistemi domotici.</p><p class="more"><a href="mqtt.html">Configura MQTT</a></p></div>
+  <div class="card"><h3>API REST</h3><p>Leggete e controllate la stufa mediante script personalizzati.</p><p class="more"><a href="api.html">Panoramica dell'API</a></p></div>
+</div>

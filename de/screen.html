@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="de" data-page="screen">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Display des Sticks - Open Firenet</title>
+<meta name="description" content="Der LilyGO T-Dongle-S3 zeigt Ofenstatus, Temperaturen und Netzwerkadresse auf seinem Farbdisplay. Aktivierung und Einstellungen.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/screen.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/screen.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/screen.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/screen.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/screen.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/screen.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menü</button>
+    <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+      <a href="../de/get-started.html">Erste Schritte</a>
+      <details class="nav-group active">
+        <summary>Ofen und Hardware</summary>
+        <div class="nav-menu">
+          <a href="../de/compatibility.html">Ofen-Kompatibilität</a>
+          <a href="../de/hardware.html">Hardware</a>
+          <a href="../de/screen.html" class="active" aria-current="page">Display des Sticks</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrationen</summary>
+        <div class="nav-menu">
+          <a href="../de/home-assistant.html">Home Assistant</a>
+          <a href="../de/mqtt.html">MQTT</a>
+          <a href="../de/api.html">REST-API</a>
+        </div>
+      </details>
+      <a href="../de/troubleshooting.html">Fehlerbehebung</a>
+      <a href="../de/contribute.html">Mitwirken</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Sprache"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</summary>
+        <div class="nav-menu">
+          <a href="../screen.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/screen.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/screen.html" hreflang="de" lang="de" data-lang="de" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/screen.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/screen.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Das Display des LilyGO T-Dongle-S3</h1>
+<p class="lead">Der LilyGO T-Dongle-S3 besitzt ein kompaktes Farbdisplay. Ab Open Firenet 4.5 zeigt es den aktuellen Ofenstatus auf einen Blick, ohne die Webseite öffnen zu müssen.</p>
+
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-strip.png" alt="Displayansichten des Sticks: Startlogo, Ofenstatus, Raumtemperatur und Leistung" width="760">
+  <figcaption>Displayanzeige des Sticks, direkt vom Display-Treiber der Firmware gerendert</figcaption>
+</figure>
+
+<h2>Angezeigte Daten</h2>
+<p>Nach einem animierten Startlogo werden die Werte nacheinander durchgewechselt: Ofenstatus, Raumtemperatur mit Sollwert, Flammentemperatur, Heizleistung (oder Komfort-Sollwert), IP-Adresse des Sticks, verbleibende Pellets bis zur Wartung, Betriebsstunden, WLAN-Signalstärke, MQTT-Status und Firmware-Version. Nicht verfügbare Werte (z. B. Betriebsstunden bei Öfen, die diese nicht erfassen) werden automatisch übersprungen.</p>
+<p>Bei Störungen wird vorübergehend ein Warnbildschirm angezeigt: Ofenfehler, geöffneter Behälterdeckel, Verbindungsverlust zum Ofen oder getrennte WLAN-Verbindung.</p>
+<figure>
+  <img class="shot" src="../assets/img/lilygo-screen-all.png" alt="Alle Display-Ansichten: Logo, Status, Raum, Flamme, Leistung, Adresse, Wartung, Stunden, WLAN, MQTT, Firmware" width="760">
+  <figcaption>Alle Ansichten mit Beispielwerten</figcaption>
+</figure>
+
+<h2>Aktivierung</h2>
+<p>Das Display ist <b>standardmäßig deaktiviert</b>: Auf anderen Boards könnten die genutzten Pins anderweitig beschaltet sein. Aktivieren Sie die Option nur auf einem echten LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Öffnen Sie die Webseite des Sticks, wählen Sie den Reiter <b>Stick</b> und dort den Unterreiter <b>Display</b>.</li>
+  <li>Wählen Sie <b>LilyGO T-Dongle-S3</b> als Board mit Display aus und bestätigen Sie die Sicherheitsabfrage.</li>
+  <li>Starten Sie den Stick neu, sobald die Seite dazu auffordert. Das Display startet mit dem Logo.</li>
+</ol>
+<p>Über den Schalter <b>Display eingeschaltet</b> können Sie Bildschirm und Hintergrundbeleuchtung jederzeit komplett abschalten, ohne Ihre Einstellungen zu verlieren.</p>
+
+<h2>Einstellungen</h2>
+<figure>
+  <img class="shot" src="../assets/img/ui-desktop-bridge-screen.png" alt="Reiter Display auf der Stick-Webseite: Hardware, Anzeigeeinstellungen und aktive Ansichten" width="760">
+  <figcaption>Stick &gt; Display</figcaption>
+</figure>
+<ul>
+  <li><b>Angezeigte Ansichten</b>: Wählen Sie gewünschte Ansichten aus und sortieren Sie diese per Drag &amp; Drop oder Pfeiltasten.</li>
+  <li><b>Anzeigedauer pro Seite</b>: Einstellbar von 2 bis 30 Sekunden.</li>
+  <li><b>Helligkeit</b>: Regelbar von 5 bis 100 %.</li>
+  <li><b>Displaysprache</b>: Deutsch, Englisch, Französisch, Italienisch oder Spanisch. Übernimmt initial die Sprache der Webseite.</li>
+  <li><b>Display um 180° drehen</b>: Nützlich, wenn der Stick je nach USB-Ausrichtung kopfüber eingesteckt ist.</li>
+  <li><b>Abdunkeln nach Inaktivität</b>: Reduziert die Helligkeit nach einer Zeitspanne (30 Sekunden bis 1 Stunde) auf einen festgelegten Wert (0 bis 50 %). Bei 0 % schaltet das Display ganz ab.</li>
+  <li><b>BOOT-Taste am Stick</b>: Weckt das abgedunkelte Display auf bzw. schaltet zur nächsten Ansicht weiter. Auch Störungen oder Statusänderungen des Ofens wecken das Display automatisch auf.</li>
+</ul>
+<p>Änderungen werden nach Klick auf <b>Übernehmen</b> dauerhaft im Flash-Speicher des Sticks gespeichert und überstehen Neustarts.</p>
+
+<h2>Praxishinweise</h2>
+<ul>
+  <li>Bei unseren Tests zog der Stick beim direkten Einstecken am Ofen beim Einschalten zu viel Strom, sodass der Ofen neu startete. <a href="hardware.html#power">Ein USB-Verlängerungskabel</a> hat das Problem behoben.</li>
+  <li>Open Firenet unterstützt keine Displays auf anderen ESP32-Boards.</li>
+</ul>
+<p>Bei Fragen oder Problemen mit dem Display: Erstellen Sie ein <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">Issue</a>.</p>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet ist ein unabhängiges Open-Source-Projekt, nicht mit RIKA Innovative Ofentechnik GmbH verbunden und nicht von ihr unterstützt. Das Protokoll wurde ausschließlich zu Zwecken der Interoperabilität per Reverse Engineering analysiert. Nutzung auf eigene Gefahr, ohne Gewährleistung.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Mitwirken</a> · Fragen und Support: <a href="https://github.com/openfirenet/open-firenet/issues">Issues zu Stick und Firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Issues zur Home-Assistant-Integration</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

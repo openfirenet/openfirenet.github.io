@@ -1,0 +1,50 @@
+<!-- source: 64a7f60d421e -->
+<!-- title: Display des Sticks - Open Firenet -->
+<!-- description: Der LilyGO T-Dongle-S3 zeigt Ofenstatus, Temperaturen und Netzwerkadresse auf seinem Farbdisplay. Aktivierung und Einstellungen. -->
+<h1>Das Display des LilyGO T-Dongle-S3</h1>
+<p class="lead">Der LilyGO T-Dongle-S3 besitzt ein kompaktes Farbdisplay. Ab Open Firenet 4.5 zeigt es den aktuellen Ofenstatus auf einen Blick, ohne die Webseite öffnen zu müssen.</p>
+
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-strip.png" alt="Displayansichten des Sticks: Startlogo, Ofenstatus, Raumtemperatur und Leistung" width="760">
+  <figcaption>Displayanzeige des Sticks, direkt vom Display-Treiber der Firmware gerendert</figcaption>
+</figure>
+
+<h2>Angezeigte Daten</h2>
+<p>Nach einem animierten Startlogo werden die Werte nacheinander durchgewechselt: Ofenstatus, Raumtemperatur mit Sollwert, Flammentemperatur, Heizleistung (oder Komfort-Sollwert), IP-Adresse des Sticks, verbleibende Pellets bis zur Wartung, Betriebsstunden, WLAN-Signalstärke, MQTT-Status und Firmware-Version. Nicht verfügbare Werte (z. B. Betriebsstunden bei Öfen, die diese nicht erfassen) werden automatisch übersprungen.</p>
+<p>Bei Störungen wird vorübergehend ein Warnbildschirm angezeigt: Ofenfehler, geöffneter Behälterdeckel, Verbindungsverlust zum Ofen oder getrennte WLAN-Verbindung.</p>
+<figure>
+  <img class="shot" src="assets/img/lilygo-screen-all.png" alt="Alle Display-Ansichten: Logo, Status, Raum, Flamme, Leistung, Adresse, Wartung, Stunden, WLAN, MQTT, Firmware" width="760">
+  <figcaption>Alle Ansichten mit Beispielwerten</figcaption>
+</figure>
+
+<h2>Aktivierung</h2>
+<p>Das Display ist <b>standardmäßig deaktiviert</b>: Auf anderen Boards könnten die genutzten Pins anderweitig beschaltet sein. Aktivieren Sie die Option nur auf einem echten LilyGO T-Dongle-S3.</p>
+<ol>
+  <li>Öffnen Sie die Webseite des Sticks, wählen Sie den Reiter <b>Stick</b> und dort den Unterreiter <b>Display</b>.</li>
+  <li>Wählen Sie <b>LilyGO T-Dongle-S3</b> als Board mit Display aus und bestätigen Sie die Sicherheitsabfrage.</li>
+  <li>Starten Sie den Stick neu, sobald die Seite dazu auffordert. Das Display startet mit dem Logo.</li>
+</ol>
+<p>Über den Schalter <b>Display eingeschaltet</b> können Sie Bildschirm und Hintergrundbeleuchtung jederzeit komplett abschalten, ohne Ihre Einstellungen zu verlieren.</p>
+
+<h2>Einstellungen</h2>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-screen.png" alt="Reiter Display auf der Stick-Webseite: Hardware, Anzeigeeinstellungen und aktive Ansichten" width="760">
+  <figcaption>Stick &gt; Display</figcaption>
+</figure>
+<ul>
+  <li><b>Angezeigte Ansichten</b>: Wählen Sie gewünschte Ansichten aus und sortieren Sie diese per Drag &amp; Drop oder Pfeiltasten.</li>
+  <li><b>Anzeigedauer pro Seite</b>: Einstellbar von 2 bis 30 Sekunden.</li>
+  <li><b>Helligkeit</b>: Regelbar von 5 bis 100 %.</li>
+  <li><b>Displaysprache</b>: Deutsch, Englisch, Französisch, Italienisch oder Spanisch. Übernimmt initial die Sprache der Webseite.</li>
+  <li><b>Display um 180° drehen</b>: Nützlich, wenn der Stick je nach USB-Ausrichtung kopfüber eingesteckt ist.</li>
+  <li><b>Abdunkeln nach Inaktivität</b>: Reduziert die Helligkeit nach einer Zeitspanne (30 Sekunden bis 1 Stunde) auf einen festgelegten Wert (0 bis 50 %). Bei 0 % schaltet das Display ganz ab.</li>
+  <li><b>BOOT-Taste am Stick</b>: Weckt das abgedunkelte Display auf bzw. schaltet zur nächsten Ansicht weiter. Auch Störungen oder Statusänderungen des Ofens wecken das Display automatisch auf.</li>
+</ul>
+<p>Änderungen werden nach Klick auf <b>Übernehmen</b> dauerhaft im Flash-Speicher des Sticks gespeichert und überstehen Neustarts.</p>
+
+<h2>Praxishinweise</h2>
+<ul>
+  <li>Bei unseren Tests zog der Stick beim direkten Einstecken am Ofen beim Einschalten zu viel Strom, sodass der Ofen neu startete. <a href="hardware.html#power">Ein USB-Verlängerungskabel</a> hat das Problem behoben.</li>
+  <li>Open Firenet unterstützt keine Displays auf anderen ESP32-Boards.</li>
+</ul>
+<p>Bei Fragen oder Problemen mit dem Display: Erstellen Sie ein <a href="https://github.com/openfirenet/open-firenet/issues/new/choose">Issue</a>.</p>

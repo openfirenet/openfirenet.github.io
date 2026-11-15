@@ -1,0 +1,83 @@
+<!-- source: e55dd64ee274 -->
+<!-- title: Compatibilidad de estufas - Open Firenet -->
+<!-- description: Qué estufas de pellets RIKA y qué versiones de firmware funcionan con Open Firenet, y qué parámetros se pueden leer y controlar. -->
+<h1>Compatibilidad de estufas</h1>
+<p class="lead">La compatibilidad depende exclusivamente de la versión de firmware de la placa base de la estufa y no del nombre comercial del modelo. Cada generación de software utiliza su propia variante de protocolo; el pincho detecta automáticamente la variante adecuada.</p>
+
+<h2>Por versión de firmware</h2>
+<p>La versión se muestra en el menú Info en la pantalla de la estufa.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware estufa</th><th>Estado</th><th>Lectura</th><th>Control</th></tr>
+  <tr>
+    <td><b>2.30</b><br>ej. INDUO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Todos los valores y ajustes</td>
+    <td>Encendido/apagado, modo, potencia, temperatura, programación, antihielo, calibración de sonda ambiente. El ciclo con leña se monitoriza paso a paso (con firmware de pincho 4.1 o posterior). Registrado hasta ahora en una estufa mixta INDUO tanto con pellets como con leña.</td>
+  </tr>
+  <tr>
+    <td><b>2.29</b><br>ej. DOMO, DOMO BACK, PRIMO MULTIAIR, SUMO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Todos los valores y ajustes</td>
+    <td>Completo: encendido/apagado, modo, potencia, temperatura, programación, antihielo, calibración de sonda, ventiladores MultiAir, horno (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>ej. LIVO, INDUO II, SONO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Todos los valores y ajustes</td>
+    <td>Encendido/apagado, modo, potencia, temperatura, programación, antihielo, calibración de sonda, ventiladores MultiAir</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>ej. INDUO</td>
+    <td><span class="badge ok">Compatible</span></td>
+    <td>Todos los valores y ajustes</td>
+    <td>Encendido/apagado, modo, potencia, temperatura, programación, antihielo, calibración de sonda</td>
+  </tr>
+  <tr>
+    <td><b>2.25</b><br>ej. SUMO</td>
+    <td><span class="badge partial">Parcial</span></td>
+    <td>Estado, temperaturas, entradas y ajustes. Temperatura ambiente en grados enteros</td>
+    <td>Modo, potencia manual, consigna de temperatura, apagado y horario con <b>una franja por día</b> (comprobados en estufa real). <b>Pendiente de prueba en estufa:</b> encendido inicial, temperatura reducida, antihielo, nivel de potencia confort. Requiere firmware del pincho 4.9 o posterior. El archivo de diagnóstico es bienvenido si realiza pruebas.</td>
+  </tr>
+  <tr>
+    <td><b>Anterior a 2.25</b></td>
+    <td><span class="badge unknown">No probado</span></td>
+    <td colspan="2">Sin informes de usuarios por el momento. Las pruebas de la comunidad son bienvenidas.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>El firmware 2.28</b> requiere la versión 4.0 o más reciente del firmware del pincho para todas las funciones: con versiones previas a la 3.6.1 la estufa podía mostrar el aviso „FIRENET UPDATE“ o el código UW29 en lugar de comunicarse, y antes de la 4.0 el pincho solo permitía encendido/apagado, modo, potencia y temperatura.</p>
+</div>
+
+<h2>Primer arranque</h2>
+<p>Al conectarse por primera vez a una estufa, el pincho prueba sucesivamente las tres variantes del protocolo y memoriza a cuál de ellas responde la estufa. Este proceso toma unos seis segundos; posteriormente arranca de manera inmediata con la variante correcta sin requerir ajustes manuales.</p>
+
+<h2>Ventiladores MultiAir</h2>
+<p>Los controles para los ventiladores MultiAir se habilitan automáticamente en la interfaz cuando la estufa se identifica como uno de estos modelos:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modelo detectado</th><th>Canales MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>DOMO</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>PARO</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>SONO</td><td>Ventiladores 1 et 2</td></tr>
+  <tr><td>CONNECT</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Ventiladores 1 y 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Ventiladores 1 y 2</td></tr>
+</table>
+</div>
+<p>En cualquier otro modelo, la pestaña Estufa muestra el enlace „Mi estufa tiene MultiAir: mostrar controles“. Utilícelo si su estufa cuenta con esta opción y avísenos para incorporarla al listado.</p>
+
+<h2>Requisitos de hardware del pincho</h2>
+<p>El firmware está validado para el ESP32-S3. La placa debe exponer el USB nativo del microcontrolador (modo USB OTG): la estufa actúa como host USB y el pincho se comporta como un dispositivo serie USB (CDC-ACM).</p>
+<ul>
+  <li>ESP32-S3 con USB nativo: funciona correctamente.</li>
+  <li>ESP32-S2: cuenta con USB nativo y podría funcionar; no probado.</li>
+  <li>ESP32 convencional, ESP32-C3 y placas con convertidor serie estándar: incompatibles por diseño.</li>
+</ul>
+
+<h2>Comparta los datos de su estufa</h2>
+<p>Si su modelo o versión de firmware no aparece en el listado o muestra comportamientos anómalos, abra una <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> indicando modelo, versión de firmware, registro de Diagnóstico y la respuesta obtenida en <code>http://open-firenet.local/api/state</code>.</p>

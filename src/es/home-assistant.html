@@ -1,0 +1,95 @@
+<!-- source: 15fd601214c5 -->
+<!-- title: Integración Home Assistant - Open Firenet -->
+<!-- description: Instalación de la integración Open Firenet en Home Assistant mediante HACS y control de estufas de pellets RIKA como termostato con sensores. -->
+<h1>Home Assistant</h1>
+<p class="lead">La integración incorpora la estufa a Home Assistant como termostato completo, con sus ventiladores, interruptores de control, sensores y diagnósticos. Se comunica directamente con el pincho en su red local: sin nube.</p>
+<p>¿Utiliza otra plataforma domótica (Jeedom, openHAB, Node-RED, Domoticz...)? Consulte <a href="mqtt.html">MQTT</a>. Si prefiere no instalar componentes personalizados, el pincho también puede anunciar la estufa a Home Assistant mediante <a href="mqtt.html#discovery">descubrimiento MQTT</a> (con funciones más reducidas).</p>
+
+<h2>Requisitos previos</h2>
+<ul>
+  <li>Un pincho con firmware Open Firenet, conectado a la estufa y accesible en su red local (ver <a href="get-started.html">Primeros pasos</a>).</li>
+  <li>Home Assistant 2024.1 o superior.</li>
+  <li>HACS (muy recomendable para gestionar instalación y actualizaciones).</li>
+</ul>
+
+<h2>Instalación mediante HACS</h2>
+<ol class="steps">
+  <li><p>En HACS, busque <b>Open Firenet</b> y pulse <b>Descargar</b>.</p></li>
+  <li><p>Reinicie Home Assistant.</p></li>
+</ol>
+<p>Open Firenet forma parte del catálogo oficial de HACS. Si la búsqueda no lo encuentra, añádalo de forma manual: en HACS, abra el menú superior derecho, elija <b>Repositorios personalizados</b>, agregue <code>https://github.com/openfirenet/open-firenet-ha</code> con categoría <b>Integración</b> y busque de nuevo.</p>
+<p>Instalación manual (sin HACS): copie la carpeta <code>custom_components/open_firenet/</code> del <a href="https://github.com/openfirenet/open-firenet-ha">repositorio</a> dentro de la carpeta <code>config/custom_components/</code> de Home Assistant y reinicie.</p>
+
+<h2>Añadir su estufa</h2>
+<ol class="steps">
+  <li><p>Acceda a <b>Ajustes &gt; Dispositivos y servicios &gt; Añadir integración</b>.</p></li>
+  <li><p>Busque y seleccione <b>Open Firenet</b>.</p></li>
+  <li><p>Indique la dirección del pincho (<code>open-firenet.local</code> o su dirección IP fija) y el intervalo de refresco (30 segundos por defecto). Si emplea un nombre de dominio local asignado por su router, debe habilitarlo antes en la interfaz web del pincho (pestaña Pincho &gt; sección „Acceso a la página“).</p></li>
+</ol>
+
+<h2>Entidades disponibles</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Tipo</th><th>Entidades incluidas</th></tr>
+  <tr><td>Termostato</td><td>Encendido/apagado, temperatura de consigna (14 a 28 °C), modo (manual, automático, confort), potencia de calefacción (30 a 100 %)</td></tr>
+  <tr><td>Ventiladores</td><td>MultiAir 1 y 2: encendido/apagado, automático o velocidades 1 a 5, corrección de convección. Habilitados por defecto en <a href="compatibility.html">modelos equipados de serie</a>; en otros modelos con la opción instalada, marque „Mi estufa tiene MultiAir“ en <b>Configurar</b> de la integración (desde la versión 2.8)</td></tr>
+  <tr><td>Interruptores</td><td>Programación horaria semanal, protección antihielo, modo eco (en estufas compatibles)</td></tr>
+  <tr><td>Horario</td><td>Botón para transferir la planificación de Home Assistant a la estufa; horas de inicio y fin para cada franja (desactivadas por defecto; 14 entidades en lugar de 28 en firmware 2.25)</td></tr>
+  <tr><td>Valores numéricos</td><td>Temperatura reducida, temperatura antihielo, calibración de sonda ambiente, temperatura del horno (DOMO BACK)</td></tr>
+  <tr><td>Sensores</td><td>Temperatura ambiente, llama y placa base, consumo de pellets, horas de servicio, cuenta atrás de mantenimiento, potencia real, velocidad de ventilador y sinfín, estado de la estufa, señal Wi-Fi, compuertas de aire</td></tr>
+  <tr><td>Diagnóstico</td><td>Enlace con la estufa, combustión en marcha, avería de estufa, tapa del depósito abierta, modo eco disponible, códigos de error y aviso</td></tr>
+</table>
+</div>
+
+<h2 id="card">Tarjeta para panel (Lovelace)</h2>
+<p><a href="https://github.com/homeassistant-fr-ecosystem/open-firenet-card">Open Firenet Card</a> es una tarjeta Lovelace desarrollada por Sylvain Guernion (<a href="https://github.com/sguernion">@sguernion</a>). Reúne el estado de la estufa, temperaturas y consumo en una vista unificada con mandos directos. Para instalarla, agregue su repositorio a HACS como repositorio personalizado con categoría <b>Panel de control</b>.</p>
+
+<h2 id="schedule">Programación semanal de calefacción</h2>
+<p>La estufa almacena su propio calendario interno: hasta dos franjas horarias diarias (una en firmware 2.25) durante las cuales mantiene la calefacción. A partir de la versión 2.6 de la integración, puede configurar este calendario cómodamente en Home Assistant mediante la entrada Horario (Schedule) y transferirlo a la estufa. El programa continúa ejecutándose de manera autónoma en la estufa, incluso ante caídas de Home Assistant o del Wi-Fi.</p>
+
+<h3>1. Defina la semana</h3>
+<ol>
+  <li>En Home Assistant, abra <b>Ajustes &gt; Dispositivos y servicios &gt; Ayudantes</b> y pulse <b>Crear ayudante</b>.</li>
+  <li>Seleccione <b>Horario</b> y defina un nombre (ej. „Estufa“).</li>
+  <li>Dibuje las franjas horarias arrastrando el ratón sobre la vista semanal. Haga clic sobre una franja para afinar las horas de inicio y fin o borrarla.</li>
+  <li>Establezca un máximo de <b>dos franjas por día</b> (límite físico de la estufa). Los días sin franjas indican que la estufa permanecerá apagada ese día.</li>
+</ol>
+
+<h3>2. Asigne el horario en la integración</h3>
+<ol>
+  <li>Abra <b>Ajustes &gt; Dispositivos y servicios &gt; Open Firenet</b> y pulse <b>Configurar</b>.</li>
+  <li>En el campo „Horario a copiar a la estufa“, seleccione el ayudante creado y valide.</li>
+</ol>
+<p>Este ajuste solo se realiza una vez.</p>
+
+<h3>3. Transfiera el horario a la estufa</h3>
+<ol>
+  <li>Abra la ficha de dispositivo de su estufa (<b>Ajustes &gt; Dispositivos y servicios &gt; Open Firenet</b> &gt; su estufa).</li>
+  <li>En el panel „Configuración“, presione <b>Copiar horario a la estufa</b>.</li>
+</ol>
+<p>La semana completa se transfiere en un solo comando y reemplaza la programación guardada en la estufa, incluidos los días vacíos. Puede verificar el resultado en la interfaz web del pincho (pestaña Estufa &gt; „Horario“).</p>
+
+<h3>4. Active la programación</h3>
+<p>La transferencia rellena la memoria de la estufa; el interruptor <b>Programación</b> decide si la estufa sigue ese calendario. Actívelo en su panel o mediante automatizaciones.</p>
+
+<div class="note">
+  <p><b>Tras modificar el horario en Home Assistant, vuelva a pulsar el botón:</b> los cambios no se transfieren de forma automática; la estufa mantiene siempre la última programación recibida.</p>
+</div>
+
+<h3>Aspectos importantes</h3>
+<ul>
+  <li><b>Más de dos franjas en un día:</b> la transferencia se rechaza informando del día infractor y no se aplica ningún cambio a la estufa.</li>
+  <li><b>Franja horaria hasta medianoche:</b> se ajusta automáticamente a las 23:59 para adecuarse al formato de la estufa.</li>
+  <li><b>Borrar la programación de la estufa:</b> elimine las franjas en Home Assistant y pulse el botón de transferencia.</li>
+  <li><b>El ayudante Horario no enciende por sí mismo:</b> sirve únicamente como plantilla de configuración estática para la estufa; su estado encendido/apagado en tiempo real no es utilizado por la integración.</li>
+  <li><b>Uso en automatizaciones:</b> cada franja horaria dispone de entidades separadas de inicio y fin con acciones para aplicar o cancelar cambios. Están desactivadas por defecto y pueden habilitarse en la vista de dispositivo.</li>
+</ul>
+
+<h2>Estufas sin sonda de ambiente RIKA</h2>
+<p>Si la estufa carece de sonda de ambiente oficial RIKA, la temperatura ambiente no se mide directamente. En Home Assistant puede mostrar en el termostato el valor de cualquier otro sensor térmico de la vivienda: abra <b>Configurar</b> en la integración y seleccione la entidad correspondiente.</p>
+<div class="note">
+  <p>Esta opción altera únicamente la lectura de temperatura mostrada en el termostato de Home Assistant. La estufa sigue modulando según sus sensores internos. Para controlar el encendido según un sensor externo, utilice el termostato genérico de Home Assistant o automatizaciones dedicadas.</p>
+</div>
+
+<h2>Solución de problemas</h2>
+<p>Si las entidades aparecen como no disponibles, compruebe primero que <code>http://open-firenet.local</code> responda en el navegador mostrando la estufa conectada. Revise la sección de <a href="troubleshooting.html">Solución de problemas</a> o abra una issue en el <a href="https://github.com/openfirenet/open-firenet-ha/issues">repositorio de la integración</a>.</p>

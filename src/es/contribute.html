@@ -1,0 +1,64 @@
+<!-- source: 1a672d0430c0 -->
+<!-- title: Contribuir - Open Firenet -->
+<!-- description: Cómo ayudar a Open Firenet: compartir qué funciona en su estufa, probar, traducir, mejorar la documentación o el código. -->
+<h1>Contribuir</h1>
+<p class="lead">Open Firenet es un proyecto comunitario. No hace falta saber programar para ayudar: hasta ahora, las contribuciones más útiles han sido los informes y pruebas de usuarios con estufas a las que nosotros no tenemos acceso.</p>
+
+<h2>Cuéntenos qué funciona en su estufa</h2>
+<p>Solo podemos realizar pruebas en nuestras propias estufas. Si el pincho funciona en la suya, un informe de dos minutos añade a las listas el modelo de su estufa, su versión de firmware y su placa, ayudando a otros usuarios en su elección.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new/choose">Abrir un informe « It works on my stove »</a></p>
+<p>Informes más esperados:</p>
+<ul>
+  <li>estufas con firmware <b>2.30</b> (un único informe por ahora), con <b>2.25</b> (una sola estufa hasta ahora; el encendido aún no se ha probado) y con firmwares <b>más antiguos</b>, que nadie ha probado todavía;</li>
+  <li>modelos que no figuran en la <a href="compatibility.html">lista de compatibilidad</a>;</li>
+  <li>placas que no figuran en la <a href="hardware.html">lista de hardware</a>.</li>
+</ul>
+
+<h2 id="heating-cycle">Grabar un ciclo de calefacción</h2>
+<p>El pincho muestra lo que comunica la estufa: su estado, sus temperaturas, su potencia. El desarrollo de un ciclo varía entre modelos y versiones de firmware, y nosotros solo conocemos los nuestros. Una grabación de su estufa nos muestra lo que ocurre en la realidad, para que la página web y Home Assistant lo reflejen con total fidelidad.</p>
+<ol>
+  <li>Abra el <a href="https://github.com/openfirenet/open-firenet-installer/releases">instalador</a> (versión 1.10.0 o posterior) en un ordenador de su red, pestaña <b>Grabar</b>, y pulse <b>Iniciar</b> antes de encender la estufa.</li>
+  <li>Durante la fase de calentamiento, anote lo que muestra la pantalla de la estufa en los momentos destacados («Limpieza», «Poner leña»...).</li>
+  <li>Pulse <b>Detener</b> al finalizar el ciclo y luego <b>Enviarnos este archivo</b>.</li>
+</ol>
+<p>La estufa solo se lee, no se le envía ninguna orden y el archivo no incluye ni el nombre de su red Wi-Fi ni sus direcciones. Mantenga el ordenador activo sin suspensión durante la grabación. En máquinas que permanecen siempre encendidas, como una Raspberry Pi, el comando <code>open-firenet-installer record --ip</code> seguido de la dirección del pincho realiza exactamente lo mismo.</p>
+<p><a class="btn" href="https://github.com/openfirenet/open-firenet/issues/new?template=heating_cycle.yml">Compartir un ciclo de calefacción</a></p>
+<p>Casos más solicitados: un ciclo completo desde arranque en frío, el funcionamiento con leña en una estufa mixta y cualquier modelo o versión de firmware diferente a una DOMO en 2.29.</p>
+
+<h2>Informar de un problema</h2>
+<p>Un buen informe ahorra múltiples consultas: el modelo y versión de firmware de la estufa, la versión del pincho y el archivo de diagnóstico del pincho. La plantilla de incidencias solicita cada uno de estos datos, y la página <a href="troubleshooting.html#report">Solución de problemas</a> indica dónde localizarlos.</p>
+<p>Si está dispuesto a probar una versión de prueba en su estufa durante la búsqueda de una solución, indíquelo en la issue: así se obtuvo la compatibilidad con los firmwares 2.26, 2.27 y 2.28.</p>
+
+<h2>Traducir</h2>
+<p>La página web del pincho, la integración de Home Assistant y el instalador están disponibles en inglés, francés, alemán, italiano y español. Añadir un idioma no requiere conocimientos de programación: se copian los textos en inglés, se traducen y una herramienta de comprobación indica las cadenas que faltan.</p>
+<p><a href="https://github.com/openfirenet/open-firenet/blob/main/docs/TRANSLATING.md">Guía de traducción</a></p>
+<p>Este sitio web está disponible en inglés y francés. Una revisión de las páginas o la aportación de un nuevo idioma son siempre bienvenidas: cada página es un archivo HTML individual para traducir y el <a href="https://github.com/openfirenet/openfirenet.github.io">README</a> explica los pasos.</p>
+
+<h2>Mejorar la documentación</h2>
+<p>Este sitio web dispone de su propio repositorio: <a href="https://github.com/openfirenet/openfirenet.github.io">openfirenet.github.io</a>. Las páginas son archivos HTML directos en la carpeta <code>src/</code>; su README describe cómo compilarlas. Cualquier corrección, explicación más clara o paso que falte es bienvenido en forma de pull request o abriendo una issue explicativa.</p>
+
+<h2>Contribuir al código</h2>
+<p>El proyecto cuenta con tres repositorios:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Repositorio</th><th>Descripción</th><th>Lenguajes</th></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet">open-firenet</a></td><td>El firmware del pincho, con su página web y API</td><td>C++ (Arduino, ESP32-S3), HTML / JavaScript</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-ha">open-firenet-ha</a></td><td>La integración para Home Assistant</td><td>Python</td></tr>
+  <tr><td><a href="https://github.com/openfirenet/open-firenet-installer">open-firenet-installer</a></td><td>El instalador de escritorio</td><td>Rust (Tauri), JavaScript</td></tr>
+</table>
+</div>
+<p>Nuestra metodología de trabajo:</p>
+<ol>
+  <li><b>Abra primero una issue</b>, o comente en una ya existente, para consensuar el enfoque antes de dedicarle tiempo.</li>
+  <li><b>Una rama por cambio</b>, nombrada según la issue: <code>fix/42-short-description</code> o <code>feat/42-short-description</code>.</li>
+  <li><b>Ejecute las pruebas.</b> En el repositorio del firmware, <code>./test/build_and_test.sh</code> las ejecuta todas en su equipo sin necesidad de hardware: el protocolo, un simulador de estufa, la especificación de la API y las traducciones.</li>
+  <li><b>Añada una línea en <code>CHANGELOG.md</code></b> bajo « Non publié », en inglés, redactada pensando en los usuarios: qué cambia para ellos, no cómo está programado.</li>
+  <li><b>Abra una pull request</b> cuya descripción comience por <code>Fixes #42</code> (o <code>Refs #42</code> en cambios parciales). Las comprobaciones automáticas se ejecutan solas.</li>
+</ol>
+<p>Los mensajes de confirmación de git (commit) comienzan por <code>feat:</code>, <code>fix:</code>, <code>docs:</code> o <code>chore:</code>: el script de publicación los interpreta para determinar el siguiente número de versión.</p>
+<div class="note">
+  <p><b>Sobre el protocolo de la estufa:</b> fue obtenido mediante ingeniería inversa y un mensaje erróneo puede hacer que la estufa rechace el pincho. Cualquier cambio en la comunicación con la estufa debe probarse en una estufa real, idealmente en cada familia de firmware, antes de integrarse. Detalle en su pull request lo que pudo probar y lo que no.</p>
+</div>
+
+<h2>Preguntas</h2>
+<p>¿No sabe por dónde empezar o si una propuesta encaja? <a href="https://github.com/openfirenet/open-firenet/issues">Abra una issue</a> y pregunte: no hay preguntas incorrectas.</p>

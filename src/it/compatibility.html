@@ -1,0 +1,83 @@
+<!-- source: e55dd64ee274 -->
+<!-- title: Compatibilità stufe - Open Firenet -->
+<!-- description: Quali stufe a pellet RIKA e quali versioni di firmware funzionano con Open Firenet, e quali parametri possono essere letti e regolati. -->
+<h1>Compatibilità delle stufe</h1>
+<p class="lead">La compatibilità dipende dalla versione del firmware della scheda madre della stufa e non dal nome commerciale del modello. Ogni generazione software adotta una variante specifica del protocollo; il bridge riconosce e seleziona automaticamente quella corretta.</p>
+
+<h2>Per versione di firmware</h2>
+<p>La versione è riportata nel menu Info sul display della stufa.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Firmware stufa</th><th>Stato</th><th>Lettura</th><th>Comandi</th></tr>
+  <tr>
+    <td><b>2.30</b><br>es. INDUO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente. Il funzionamento a legna è monitorato passo dopo passo (con firmware del bridge 4.1 o successivo). Finora è stata verificata una stufa INDUO con funzionamento sia a pellet che a legna.</td>
+  </tr>
+  <tr>
+    <td><b>2.29</b><br>es. DOMO, DOMO BACK, PRIMO MULTIAIR, SUMO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Supporto completo: accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente, ventilatori MultiAir, forno (DOMO BACK)</td>
+  </tr>
+  <tr>
+    <td><b>2.28</b><br>es. LIVO, INDUO II, SONO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente, ventilatori MultiAir</td>
+  </tr>
+  <tr>
+    <td><b>2.26 / 2.27</b><br>es. INDUO</td>
+    <td><span class="badge ok">Compatibile</span></td>
+    <td>Tutti i parametri e le regolazioni</td>
+    <td>Accensione/spegnimento, modalità, potenza, temperatura, programmazione, antigelo, calibrazione sonda ambiente</td>
+  </tr>
+  <tr>
+    <td><b>2.25</b><br>es. SUMO</td>
+    <td><span class="badge partial">Parziale</span></td>
+    <td>Stato, temperature, ingressi e regolazioni. Temperatura ambiente in gradi interi</td>
+    <td>Modalità, potenza manuale, temperatura impostata, spegnimento e programmazione oraria con <b>una fascia al giorno</b> (verificati su stufa reale). <b>Non ancora provati su stufa:</b> accensione, temperatura ridotta, antigelo, livello di potenza comfort. Richiede firmware del bridge 4.9 o successivo. Inviateci pure il file di diagnostica se effettuate dei test.</td>
+  </tr>
+  <tr>
+    <td><b>Precedente a 2.25</b></td>
+    <td><span class="badge unknown">Non testato</span></td>
+    <td colspan="2">Nessun riscontro finora pervenuto. Le prove della comunità sono benvenute.</td>
+  </tr>
+</table>
+</div>
+
+<div class="note">
+  <p><b>Il firmware 2.28</b> richiede il firmware del bridge 4.0 o successivo per tutte le funzioni: con versioni precedenti alla 3.6.1 la stufa poteva visualizzare l'avviso „FIRENET UPDATE“ o il codice UW29 invece di collegarsi, e prima della 4.0 il bridge supportava solo accensione/spegnimento, modalità, potenza e temperatura.</p>
+</div>
+
+<h2>Primo avvio</h2>
+<p>Al primo collegamento con una stufa, il bridge prova in sequenza le tre varianti note del protocollo e memorizza quella a cui la stufa risponde. Questo processo richiede circa sei secondi; successivamente il bridge si avvierà direttamente con la variante corretta. Non è necessaria alcuna configurazione manuale.</p>
+
+<h2>Ventilatori MultiAir</h2>
+<p>I comandi per i ventilatori MultiAir compaiono automaticamente nella pagina web quando la stufa si identifica con uno dei seguenti modelli:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modello</th><th>MultiAir</th></tr>
+  <tr><td>ROCO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>DOMO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>PARO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>SONO</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>CONNECT</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>DOMO BACK</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>SUMO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+  <tr><td>PRIMO MULTIAIR</td><td>Ventilatori 1 e 2</td></tr>
+</table>
+</div>
+<p>Su qualunque altro modello, la scheda Stufa mostra il collegamento „La mia stufa ha MultiAir: mostra i controlli“. Utilizzatelo se la stufa ne è provvista e segnalatecelo in modo da aggiungerla alla lista.</p>
+
+<h2>Hardware del bridge</h2>
+<p>Il firmware è testato sull'ESP32-S3. La scheda deve esporre l'USB nativo del chip (USB OTG): la stufa opera come host USB e il bridge si comporta come periferica seriale USB (CDC-ACM).</p>
+<ul>
+  <li>ESP32-S3 con USB nativo: pienamente supportato.</li>
+  <li>ESP32-S2: dispone di USB nativo e potrebbe funzionare; non testato.</li>
+  <li>ESP32 classico, ESP32-C3 e schede con solo convertitore seriale: non possono funzionare.</li>
+</ul>
+
+<h2>Segnalateci la vostra stufa</h2>
+<p>Se la vostra stufa o versione di firmware non compare nell'elenco, o manifesta anomalie, aprite una <a href="https://github.com/openfirenet/open-firenet/issues">issue</a> indicando modello, versione firmware, log della scheda Diagnostica e la risposta restituita da <code>http://open-firenet.local/api/state</code>.</p>

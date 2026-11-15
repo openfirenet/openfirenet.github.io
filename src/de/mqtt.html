@@ -1,0 +1,85 @@
+<!-- source: d6358ed95530 -->
+<!-- title: MQTT - Open Firenet -->
+<!-- description: Den Zustand eines RIKA-Pelletofens an einen MQTT-Broker senden und über Jeedom, openHAB, Node-RED, Domoticz oder beliebige MQTT-Clients steuern. -->
+<h1>MQTT</h1>
+<p class="lead">Der Stick kann den Zustand des Ofens an Ihren MQTT-Broker senden und Steuerbefehle empfangen. Dies ist die Schnittstelle für Hausautomationssysteme abseits von Home Assistant: Jeedom, openHAB, Node-RED, Domoticz und alle MQTT-Clients.</p>
+
+<div class="note">
+  <p>MQTT ist optional und standardmäßig deaktiviert. Es erfordert Stick-Firmware 3.3 oder neuer sowie einen Broker in Ihrem Netzwerk (beispielsweise Mosquitto). Für Home Assistant bleibt die <a href="home-assistant.html">Integration</a> die vollständigste Lösung; die <a href="#discovery">MQTT-Erkennung</a> ist die Alternative, für die nichts installiert werden muss.</p>
+</div>
+
+<h2>Einrichtung</h2>
+<ol>
+  <li>Öffnen Sie die Webseite des Sticks und wechseln Sie in den Reiter <b>Stick</b> (<code>http://open-firenet.local/#bridge</code>) und dort in den Bereich <b>MQTT</b>.</li>
+  <li>Geben Sie <b>Broker-Adresse</b> und <b>Port</b> (standardmäßig 1883) ein, sowie Benutzername und Passwort, falls Ihr Broker danach fragt.</li>
+  <li>Aktivieren Sie <b>MQTT aktivieren</b> und speichern Sie. Der Status wechselt innerhalb weniger Sekunden auf „Verbunden“.</li>
+</ol>
+<figure>
+  <img class="shot" src="assets/img/ui-desktop-bridge-mqtt.png" alt="Reiter Stick, MQTT-Einstellungen" width="760">
+</figure>
+
+<h2>Was der Stick sendet</h2>
+<p>Alle Topics beginnen mit einem Basis-Topic, standardmäßig <code>openfirenet</code>. Ändern Sie dieses in den Einstellungen, wenn Sie mehrere Sticks betreiben.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Inhalt</th></tr>
+  <tr><td><code>openfirenet/availability</code></td><td><code>online</code> oder <code>offline</code>. Der Broker setzt diesen Wert selbstständig auf <code>offline</code>, sobald der Stick nicht mehr erreichbar ist.</td></tr>
+  <tr><td><code>openfirenet/state</code></td><td>Eine JSON-Nachricht mit den Objekten <code>device</code>, <code>stove</code>, <code>sensors</code> und <code>controls</code>, mit denselben Bezeichnungen und Einheiten wie in der <a href="api.html">REST-API</a>. Wird bei jeder Änderung gesendet, maximal alle 5 Sekunden und mindestens einmal pro Minute.</td></tr>
+  <tr><td><code>openfirenet/&lt;section&gt;/&lt;name&gt;</code></td><td>Dieselben Werte einzeln pro Topic für Systeme, die einfache Werte bevorzugen: <code>openfirenet/sensors/room_temperature</code>, <code>openfirenet/stove/state</code>, <code>openfirenet/controls/on</code>...</td></tr>
+</table>
+</div>
+<p>Alles wird mit gesetztem Retain-Flag gesendet, sodass ein Client unmittelbar nach dem Abonnieren die aktuellen Werte erhält. <code>openfirenet/device/connected</code> gibt an, ob der Stick mit dem Ofen verbunden ist; solange dies nicht der Fall ist, werden nur die Werte für <code>device</code> und <code>health</code> veröffentlicht.</p>
+<p>Seit Firmware 3.7 liefert <code>openfirenet/health/&lt;name&gt;</code> den Betriebszustand des Sticks selbst: <code>restart_reason</code> (Ursache des letzten Neustarts), <code>min_free_heap</code>, <code>chip_temperature</code>, <code>wifi_disconnects</code>, <code>stove_detections</code>, <code>stove_link_losses</code> und <code>mqtt_disconnects</code>. Die Zähler starten bei jedem Start bei null. Ein Alarm bei <code>stove_link_losses</code> oder bei einer Änderung von <code>restart_reason</code> informiert Sie, wenn etwas schiefgegangen ist.</p>
+
+<h2>Befehle senden</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>Topic</th><th>Nutzlast</th></tr>
+  <tr><td><code>openfirenet/set/on</code></td><td><code>true</code> / <code>false</code>, oder <code>ON</code> / <code>OFF</code></td></tr>
+  <tr><td><code>openfirenet/set/mode</code></td><td><code>manual</code>, <code>auto</code> oder <code>comfort</code></td></tr>
+  <tr><td><code>openfirenet/set/power_percent</code></td><td>30 bis 100</td></tr>
+  <tr><td><code>openfirenet/set/target_temperature</code></td><td>14 bis 28, in ganzen Graden</td></tr>
+  <tr><td><code>openfirenet/set</code></td><td>Mehrere Einstellungen auf einmal im JSON-Format: <code>{"mode": "comfort", "target_temperature": 21}</code></td></tr>
+</table>
+</div>
+<p>Die übrigen Einstellungen der <a href="api.html">REST-API</a> (Frostschutz, MultiAir-Gebläse, Zeitplan...) werden auf die gleiche Weise unter den gleichen Namen akzeptiert.</p>
+<pre><code># 21 °C mit dem Mosquitto-Befehlszeilen-Client senden
+mosquitto_pub -h 192.168.1.10 -u meinuser -P meinpasswort \
+  -t openfirenet/set/target_temperature -m 21
+
+# Alle Meldungen des Sticks beobachten
+mosquitto_sub -h 192.168.1.10 -u meinuser -P meinpasswort -t 'openfirenet/#' -v</code></pre>
+
+<div class="note">
+  <p><b>Veröffentlichen Sie Befehle nicht mit gesetztem Retain-Flag.</b> Der Broker würde sie bei jeder Neuverbindung erneut senden und könnte den Ofen eigenständig einschalten; aus diesem Grund ignoriert der Stick solche Befehle. Befehle werden zudem ignoriert, solange der Ofen nicht verbunden ist.</p>
+</div>
+
+<h2 id="discovery">Home-Assistant-Erkennung</h2>
+<p>Seit Firmware 3.4 kann der Stick den Ofen auch der MQTT-Integration von Home Assistant ankündigen: Aktivieren Sie <b>Home-Assistant-Erkennung</b> in der MQTT-Karte und speichern Sie. Der Ofen erscheint daraufhin automatisch in Home Assistant als ein Gerät mit:</p>
+<ul>
+  <li>einem Thermostat: Ein / Aus, Zieltemperatur und die Betriebsmodi manuell / auto / Komfort als Voreinstellungen;</li>
+  <li>der Heizleistung, der Absenk- und Frostschutztemperatur sowie der Raumfühler-Kalibrierung;</li>
+  <li>Schaltern für Zeitplan, Frostschutz und Eco-Modus;</li>
+  <li>den Sensoren: Temperaturen, verbrauchte Pellets, Service-Countdown, Status sowie Fehler- und Warncodes.</li>
+</ul>
+<p>Home Assistant muss seine MQTT-Integration mit demselben Broker verbunden haben. Wird die Option deaktiviert, werden die Entitäten wieder entfernt.</p>
+<div class="note">
+  <p><b>Verwenden Sie nur eine der beiden Methoden.</b> Wenn Sie bereits die <a href="home-assistant.html">Open-Firenet-Integration</a> nutzen, lassen Sie die Erkennung deaktiviert: Der Ofen wäre sonst doppelt vorhanden. Die Integration bleibt die umfassendste Lösung: Sie enthält zusätzlich die MultiAir-Gebläse, den Wochenplan (kopiert von einem Home-Assistant-Zeitplan) und den Außentemperaturfühler. Über MQTT können die Zeitfenster zwar geschrieben, aber nicht ausgelesen werden.</p>
+</div>
+
+<h2 id="tls">Verschlüsselte Verbindung (TLS)</h2>
+<p>Seit Firmware 3.5 kann der Stick einen Broker erreichen, der TLS nutzt (üblicherweise auf Port 8883): Aktivieren Sie <b>Verschlüsselte Verbindung (TLS)</b> in der MQTT-Karte. Der Stick überprüft das Zertifikat des Brokers auf eine von zwei Arten:</p>
+<ul>
+  <li><b>Keine weiteren Eingaben erforderlich</b>, wenn das Zertifikat von einer öffentlichen Zertifizierungsstelle für den als Broker-Adresse eingetragenen Namen signiert ist: ein gehosteter Broker oder ein Broker im Heimnetz mit Let's-Encrypt-Zertifikat.</li>
+  <li><b>Fügen Sie das Zertifikat Ihrer eigenen Zertifizierungsstelle</b> in das erscheinende Feld ein, wenn es sich um einen lokalen Broker mit selbstsigniertem Zertifikat handelt. Es handelt sich um den Text, der mit <code>-----BEGIN CERTIFICATE-----</code> beginnt. Der Name im Broker-Zertifikat wird dann nicht überprüft, da ein solcher Broker üblicherweise über seine IP-Adresse aufgerufen wird.</li>
+</ul>
+<div class="note">
+  <p><b>Nur wenn nötig.</b> Verschlüsselung ist anspruchsvoll für diesen kleinen Chip: Sie belegt bei bestehender Verbindung etwa 50 kB Arbeitsspeicher. Bei einem Broker im eigenen Netzwerk bleibt unverschlüsseltes MQTT die einfachste Wahl. Verwenden Sie TLS, wenn der Broker es erfordert oder sich außerhalb Ihres Netzwerks befindet.</p>
+</div>
+
+<h2>Gut zu wissen</h2>
+<ul>
+  <li>Ohne TLS ist die Verbindung unverschlüsselt: Für einen Broker im lokalen Netzwerk völlig ausreichend, darüber hinaus jedoch nicht.</li>
+  <li>Ist der Broker nicht erreichbar, versucht der Stick die Verbindung selbstständig alle 10 Sekunden erneut (alle 30 Sekunden mit TLS). Die Verbindung zum Ofen bleibt davon unberührt.</li>
+</ul>
+<p>Funktioniert etwas nicht? Siehe <a href="troubleshooting.html">Fehlerbehebung</a>.</p>

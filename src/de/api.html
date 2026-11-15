@@ -1,0 +1,80 @@
+<!-- source: d8c9b6634705 -->
+<!-- title: REST-API - Open Firenet -->
+<!-- description: Übersicht über die lokale REST-API des Open-Firenet-Sticks: Ofenstatus abfragen und Steuerbefehle über einfaches HTTP und JSON senden. -->
+<h1>REST-API</h1>
+<p class="lead">Der Stick stellt eine JSON-API im lokalen Netzwerk bereit, mit natürlichen Einheiten: Temperaturen in °C, Leistung in Prozent, lesbare Modusnamen. Ohne API-Schlüssel oder Benutzerkonto.</p>
+
+<div class="actions" style="margin:18px 0">
+  <a class="btn" href="api-reference.html">Vollständige API-Referenz</a>
+  <a class="btn ghost" href="openapi.yaml">OpenAPI-Datei</a>
+</div>
+
+<h2>Endpunkte</h2>
+<p>Klicken Sie auf einen Endpunkt oder eine Methode, um die Details in der <a href="api-reference.html">API-Referenz</a> anzuzeigen.</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Endpunkt</th><th>Methode</th><th>Zweck</th></tr>
+  <tr><td><a href="api-reference.html#get-api-state"><code>/api/state</code></a></td><td><a href="api-reference.html#get-api-state"><span class="method get">GET</span></a></td><td>Alles auf einmal: Stick, Ofen, Sensoren, Steuerung, Verbindungsdiagnose</td></tr>
+  <tr><td><a href="api-reference.html#get-api-controls"><code>/api/controls</code></a></td><td><a href="api-reference.html#get-api-controls"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-controls"><span class="method post">POST</span></a></td><td>Einstellungen auslesen oder ändern (partielle Änderungen werden akzeptiert)</td></tr>
+  <tr><td><a href="api-reference.html#get-api-schedule"><code>/api/schedule</code></a></td><td><a href="api-reference.html#get-api-schedule"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-schedule"><span class="method post">POST</span></a></td><td>Wöchentlicher Heizplan: 14 Zeitfenster und die Absenktemperatur</td></tr>
+  <tr><td><a href="api-reference.html#get-api-version"><code>/api/version</code></a></td><td><a href="api-reference.html#get-api-version"><span class="method get">GET</span></a></td><td>Firmware-Version und Build-Datum</td></tr>
+  <tr><td><a href="api-reference.html#get-api-mqtt"><code>/api/mqtt</code></a></td><td><a href="api-reference.html#get-api-mqtt"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-mqtt"><span class="method post">POST</span></a></td><td>MQTT-Einstellungen und Verbindungsstatus, siehe <a href="mqtt.html">MQTT</a></td></tr>
+  <tr><td><a href="api-reference.html#get-api-txgap"><code>/api/txgap</code></a></td><td><a href="api-reference.html#get-api-txgap"><span class="method get">GET</span></a> <a href="api-reference.html#post-api-txgap"><span class="method post">POST</span></a></td><td>Verzögerung zwischen an den Ofen gesendeten Nachrichten (50 bis 600 ms, Standard: 150)</td></tr>
+  <tr><td><a href="api-reference.html#post-api-restart"><code>/api/restart</code></a></td><td><a href="api-reference.html#post-api-restart"><span class="method post">POST</span></a></td><td>Stick neu starten</td></tr>
+  <tr><td><a href="api-reference.html#post-api-forget"><code>/api/forget</code></a></td><td><a href="api-reference.html#post-api-forget"><span class="method post">POST</span></a></td><td>WLAN-Einstellungen löschen und in den Einrichtungsmodus zurückkehren</td></tr>
+  <tr><td><a href="api-reference.html#get-log"><code>/log</code></a></td><td><a href="api-reference.html#get-log"><span class="method get">GET</span></a></td><td>Klartext-Protokoll der Kommunikation mit dem Ofen</td></tr>
+</table>
+</div>
+
+<h2>Zugriffsberechtigungen</h2>
+<p>Programme in Ihrem lokalen Netzwerk: Home Assistant, Skripte, <code>curl</code>, Node-RED. Sowie die Webseite des Sticks selbst. Seit Firmware 4.0 können Webseiten anderer Server in einem Browser die API nicht mehr aufrufen: Der Stick antwortet mit 403 auf Anfragen, die eine fremde Seite als Herkunft (Origin) angeben, und sendet keine Cross-Origin-Freigaben.</p>
+<p>Der Stick antwortet unter seiner IP-Adresse, unter Namen ohne Punkt und unter <code>open-firenet.local</code>. Jeder andere Hostname muss zuvor im Reiter Stick, Netzwerk, Bereich „Zugriff auf die Webseite“ (oder über <code>/api/access</code>) hinterlegt werden; andernfalls antwortet der Stick mit 403 und einem JSON-Inhalt, der seine IP-Adresse nennt.</p>
+
+<h2>Status abfragen</h2>
+<pre><code>curl http://open-firenet.local/api/state</code></pre>
+<p>Die Antwort ist thematisch gegliedert. Die am häufigsten genutzten Bereiche:</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Feld</th><th>Bedeutung</th></tr>
+  <tr><td><code>stove.state</code>, <code>stove.model_name</code>, <code>stove.mainboard_version</code></td><td>Betriebszustand, Modell und Firmware-Version des Ofens</td></tr>
+  <tr><td><code>stove.error_code</code>, <code>stove.warning_code</code></td><td>Aktueller Fehler- und Warncode, 0 falls keine vorliegen</td></tr>
+  <tr><td><code>sensors.room_temperature</code></td><td>Raumtemperatur, <code>null</code> wenn kein RIKA-Raumfühler angeschlossen ist</td></tr>
+  <tr><td><code>sensors.pellets_total_kg</code>, <code>sensors.service_countdown_kg</code></td><td>Insgesamt verbrauchte Pellets und Restmenge bis zur nächsten Wartung</td></tr>
+  <tr><td><code>controls.on</code>, <code>controls.mode</code>, <code>controls.target_temperature</code>, <code>controls.power_percent</code></td><td>Die aktuellen Einstellungen</td></tr>
+  <tr><td><code>version_ack</code>, <code>version_frame</code></td><td>Ob der Ofen den Stick akzeptiert hat und welche Protokollvariante er beantwortet hat: <code>V3</code> (Firmware 2.29), <code>V28</code> (2.28), <code>V1</code> (2.26 / 2.27); <code>?</code> für Öfen mit Firmware 2.25, die numerische Telegramme nutzen</td></tr>
+  <tr><td><code>usb.host_connected</code>, <code>usb.rx_bytes</code></td><td>Ob der Ofen den Stick über USB erkennt und wie viele Bytes empfangen wurden</td></tr>
+  <tr><td><code>raw_sensors</code></td><td>Alle vom Ofen gemeldeten Rohwerte unter ihren originalen RIKA-Namen</td></tr>
+</table>
+</div>
+
+<h2>Befehle senden</h2>
+<p>Senden Sie per POST ein JSON-Objekt, das nur die zu ändernden Felder enthält:</p>
+<pre><code># 21 °C im Komfortmodus
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"target_temperature": 21, "mode": "comfort"}'
+
+# Bei 80 % Leistung einschalten
+curl -X POST http://open-firenet.local/api/controls \
+  -H "Content-Type: application/json" \
+  -d '{"on": true, "power_percent": 80}'</code></pre>
+<div class="table-wrap">
+<table>
+  <tr><th>Feld</th><th>Werte</th></tr>
+  <tr><td><code>on</code></td><td><code>true</code> / <code>false</code></td></tr>
+  <tr><td><code>mode</code></td><td><code>"manual"</code>, <code>"auto"</code>, <code>"comfort"</code></td></tr>
+  <tr><td><code>power_percent</code></td><td>30 bis 100</td></tr>
+  <tr><td><code>target_temperature</code></td><td>14 bis 28 °C, in ganzen Graden (halbe Grade werden gerundet)</td></tr>
+  <tr><td><code>frost_protection_active</code>, <code>frost_protection_temperature</code></td><td><code>true</code> / <code>false</code>, 4 bis 10 °C</td></tr>
+  <tr><td><code>room_temperature_offset</code></td><td>-4,0 bis +4,0 °C</td></tr>
+  <tr><td><code>convectionFan1Active</code>, <code>convectionFan1Level</code>, <code>convectionFan1Area</code> (und <code>Fan2</code>)</td><td>MultiAir: Ein/Aus, 0 = Auto oder 1 bis 5, Anpassung -30 bis +30 %</td></tr>
+</table>
+</div>
+
+<div class="note">
+  <p>Seit Firmware 4.0 werden Befehle nur noch per POST und PUT akzeptiert. Ein Befehl, der gesendet wird, bevor der Ofen seine Einstellungen übermittelt hat (der Stick ist nicht verbunden oder startet gerade), wird mit <code>503</code> und <code>"error": "stove_not_ready"</code> abgelehnt. Es wurde nichts an den Ofen gesendet: Versuchen Sie es einige Sekunden später erneut.</p>
+</div>
+
+<h2>Vollständige Referenz</h2>
+<p>Jeder Endpunkt und jedes Feld mit Typ, Einheit und Wertebereich ist in der <a href="api-reference.html">API-Referenz</a> dokumentiert. Diese wird aus der <a href="openapi.yaml">OpenAPI-Spezifikation</a> der Firmware generiert, die Sie in Ihre eigenen Tools laden können (Dokumentations-Viewer, Client-Generatoren).</p>
+<p>Das Format des Heizplans und die Protokollnotizen finden sich ebenfalls im Firmware-Repository: <a href="https://github.com/openfirenet/open-firenet#rest-api-v2">README, REST-API</a> und <a href="https://github.com/openfirenet/open-firenet/blob/main/PROTOCOL.md">PROTOCOL.md</a>.</p>
