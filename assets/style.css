@@ -240,3 +240,7 @@ html.splash-handoff .splash-logo { animation: none; }
 @keyframes splash-wave { from { background-position: 50% 0%; } to { background-position: 50% 100%; } }
 @keyframes splash-wave-x { from { background-position: 100% 50%; } to { background-position: 0% 50%; } }
 @keyframes splash-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+
+/* Format column of the hardware table: USB dongle or development board. */
+td.fmt { white-space: nowrap; }
+.fmt-icon { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; color: var(--primary); }

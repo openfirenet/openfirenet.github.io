@@ -118,69 +118,80 @@
 <h2>Cartes</h2>
 <div class="table-wrap">
 <table>
-  <tr><th>Carte</th><th>État</th><th>Connecteur</th><th>Remarques</th></tr>
-  <tr>
-    <td><b>ESP32-S3-DevKitC-1</b>, module N16R8</td>
-    <td><span class="badge ok">Testée</span></td>
-    <td>2 × USB-C</td>
-    <td>La carte de développement courante à deux ports USB-C et 44 broches, vendue sous de nombreuses marques. C'est la carte sur laquelle Open Firenet est développé. Branchez le poêle sur le port « USB », pas « UART » / « COM ».</td>
-  </tr>
-  <tr>
-    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 avec boîtier</b> et connecteur d'antenne externe</td>
-    <td><span class="badge ok">Signalée</span></td>
-    <td>2 × USB-C</td>
-    <td>La même carte vendue en kit avec un boîtier gris vissé et un connecteur pour antenne externe (par exemple par Heemol). Pas de soudure, et l'antenne aide quand le poêle est loin du point d'accès Wi-Fi. Un utilisateur s'en sert sur son poêle. Même règle : le poêle va sur le port « USB ».</td>
-  </tr>
-  <tr>
-    <td><b>Freenove ESP32-S3</b> (modèle FNK0099, 16 Mo de flash, 8 Mo de PSRAM)</td>
-    <td><span class="badge ok">Signalée</span></td>
-    <td>2 ports USB</td>
-    <td>Carte de développement vendue par deux. Un utilisateur la signale comme fonctionnelle. Elle a deux ports USB : le poêle va sur le port natif (« USB » ou « USB-OTG »), pas sur le port « UART ».</td>
-  </tr>
-  <tr>
-    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
-    <td><span class="badge partial">Présumée</span></td>
-    <td>2 × USB-C</td>
-    <td>Carte de développement vendue par deux. Un utilisateur y a installé Open Firenet avec l'installeur et accède à sa page. Pas encore confirmée sur un poêle. Même règle que pour les autres cartes à deux ports : le poêle va sur le port « USB », pas « UART » / « COM ».</td>
-  </tr>
-  <tr>
-    <td><b>YD-ESP32-S3</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
-    <td><span class="badge ok">Signalée</span></td>
-    <td>2 × USB-C</td>
-    <td>Clone répandu de la DevKitC-1, avec deux ports USB-C et une LED RVB. Le poêle va sur le port « USB ». Compatible avec le boîtier magnétique imprimé en 3D présenté plus bas.</td>
-  </tr>
-  <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 Mo de flash, 2 Mo de PSRAM quad)</td>
-    <td><span class="badge ok">Signalée</span></td>
-    <td>USB-C</td>
-    <td>Carte de développement compacte (format ESP32-S3-Zero) vendue par deux, avec USB natif uniquement. Sa PSRAM de 2 Mo est quad, elle utilise donc la variante standard du firmware. Un utilisateur la signale comme fonctionnelle.</td>
-  </tr>
+  <tr><th>Carte</th><th>Format</th><th>État</th><th>Connecteur</th><th>Remarques</th></tr>
   <tr>
     <td><b>ESP32-S3 Pocket Dongle</b> (16 Mo de flash, 8 Mo de PSRAM octale, écran 0,96")</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Dongle USB</td>
     <td><span class="badge ok">Testée</span></td>
     <td>Prise USB-A</td>
     <td>Une clé avec sa propre prise USB-A, 16 Mo de flash, 8 Mo de PSRAM octale et un écran couleur ST7735 de 0,96". Testée par le projet. Utilise la variante PSRAM du firmware. Son écran affiche les mêmes écrans que la LilyGO T-Dongle-S3 : voir <a href="screen.html">l'écran de la clé</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (avec écran)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Dongle USB</td>
     <td><span class="badge ok">Testée</span></td>
     <td>Prise USB-A</td>
     <td>Une clé avec sa propre prise USB-A. <b>Elle peut nécessiter une rallonge USB</b> entre le poêle et la clé, voir plus bas. Son écran affiche l'état du poêle et les températures depuis Open Firenet 4.5 : voir <a href="screen.html">l'écran de la clé</a>. Pour la flasher, branchez-la sur votre ordinateur.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (sans écran)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Dongle USB</td>
     <td><span class="badge partial">Présumée</span></td>
     <td>Prise USB-A</td>
     <td>Même carte que la version avec écran ; non testée.</td>
   </tr>
   <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, module N16R8</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge ok">Testée</span></td>
+    <td>2 × USB-C</td>
+    <td>La carte de développement courante à deux ports USB-C et 44 broches, vendue sous de nombreuses marques. C'est la carte sur laquelle Open Firenet est développé. Branchez le poêle sur le port « USB », pas « UART » / « COM ».</td>
+  </tr>
+  <tr>
+    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 avec boîtier</b> et connecteur d'antenne externe</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 × USB-C</td>
+    <td>La même carte vendue en kit avec un boîtier gris vissé et un connecteur pour antenne externe (par exemple par Heemol). Pas de soudure, et l'antenne aide quand le poêle est loin du point d'accès Wi-Fi. Un utilisateur s'en sert sur son poêle. Même règle : le poêle va sur le port « USB ».</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (modèle FNK0099, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 ports USB</td>
+    <td>Carte de développement vendue par deux. Un utilisateur la signale comme fonctionnelle. Elle a deux ports USB : le poêle va sur le port natif (« USB » ou « USB-OTG »), pas sur le port « UART ».</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge partial">Présumée</span></td>
+    <td>2 × USB-C</td>
+    <td>Carte de développement vendue par deux. Un utilisateur y a installé Open Firenet avec l'installeur et accède à sa page. Pas encore confirmée sur un poêle. Même règle que pour les autres cartes à deux ports : le poêle va sur le port « USB », pas « UART » / « COM ».</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 Mo de flash, 8 Mo de PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>2 × USB-C</td>
+    <td>Clone répandu de la DevKitC-1, avec deux ports USB-C et une LED RVB. Le poêle va sur le port « USB ». Compatible avec le boîtier magnétique imprimé en 3D présenté plus bas.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 Mo de flash, 2 Mo de PSRAM quad)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
+    <td><span class="badge ok">Signalée</span></td>
+    <td>USB-C</td>
+    <td>Carte de développement compacte (format ESP32-S3-Zero) vendue par deux, avec USB natif uniquement. Sa PSRAM de 2 Mo est quad, elle utilise donc la variante standard du firmware. Un utilisateur la signale comme fonctionnelle.</td>
+  </tr>
+  <tr>
     <td><b>M5Stamp S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
     <td><span class="badge partial">Présumée</span></td>
     <td>USB-C</td>
     <td>USB natif uniquement. Pas encore de retour sur un poêle.</td>
   </tr>
   <tr>
     <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Carte de dev</td>
     <td><span class="badge partial">Présumée</span></td>
     <td>USB-C</td>
     <td>USB natif uniquement. Pas encore de retour sur un poêle.</td>
@@ -188,6 +199,7 @@
 </table>
 </div>
 <p><span class="badge ok">Testée</span> par le projet sur un poêle. <span class="badge ok">Signalée</span> comme fonctionnelle par un utilisateur. <span class="badge partial">Présumée</span> : devrait fonctionner d'après ses caractéristiques, sans retour confirmé.</p>
+<p><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> <b>Dongle USB</b> : se branche directement sur la prise USB-A du poêle, sans câble. <svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> <b>Carte de dev</b> : se branche sur le poêle avec un câble USB de données.</p>
 
 <div class="note">
   <p><b>LilyGO T-Dongle-S3 avec écran : gardez une rallonge USB sous la main.</b> Lors de notre essai, branchée directement sur le poêle, la clé tirait trop de courant au démarrage, à cause de son écran, et le poêle redémarrait. Avec une rallonge USB entre le poêle et la clé, cela fonctionnait : le câble limite cet appel de courant. Cela n'arrive pas forcément avec toutes les clés ni tous les poêles.</p>

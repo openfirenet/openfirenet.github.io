@@ -118,69 +118,80 @@
 <h2>Placas probadas</h2>
 <div class="table-wrap">
 <table>
-  <tr><th>Placa</th><th>Estado</th><th>Conectores</th><th>Notas</th></tr>
-  <tr>
-    <td><b>ESP32-S3-DevKitC-1</b>, módulo N16R8</td>
-    <td><span class="badge ok">Probada</span></td>
-    <td>2 × USB-C</td>
-    <td>La placa de desarrollo estándar con dos puertos USB-C y 44 pines, comercializada bajo múltiples marcas. Es la placa de referencia utilizada en el desarrollo de Open Firenet. Conectar la estufa al puerto „USB“, no a „UART“ / „COM“.</td>
-  </tr>
-  <tr>
-    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 con caja</b> y conector de antena externa</td>
-    <td><span class="badge ok">Confirmada</span></td>
-    <td>2 × USB-C</td>
-    <td>La misma placa suministrada en kit con caja atornillada y antena Wi-Fi externa (por ejemplo de Heemol). No requiere soldaduras; la antena ayuda en zonas de poca cobertura. Un usuario la utiliza habitualmente en su estufa. Misma regla: conectar la estufa al puerto „USB“.</td>
-  </tr>
-  <tr>
-    <td><b>Freenove ESP32-S3</b> (modelo FNK0099, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge ok">Confirmada</span></td>
-    <td>2 puertos USB</td>
-    <td>Placa de desarrollo vendida en paquete de dos unidades. Un usuario ha confirmado su correcto funcionamiento. Dispone de dos puertos USB: conectar al puerto nativo („USB“ o „USB-OTG“), no a „UART“.</td>
-  </tr>
-  <tr>
-    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge partial">Prevista</span></td>
-    <td>2 × USB-C</td>
-    <td>Placa vendida en pack de dos. Un usuario instaló Open Firenet con el instalador y accede a la interfaz. Aún no confirmada directamente sobre estufa. Misma regla: conectar a „USB“, no a „UART“ / „COM“.</td>
-  </tr>
-  <tr>
-    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge ok">Confirmada</span></td>
-    <td>2 × USB-C</td>
-    <td>Clon muy extendido de la DevKitC-1 con dos puertos USB-C y LED RGB. Conectar al puerto „USB“. Compatible con la caja magnética para impresión 3D mostrada abajo.</td>
-  </tr>
-  <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB de PSRAM quad)</td>
-    <td><span class="badge ok">Confirmada</span></td>
-    <td>USB-C</td>
-    <td>Placa de desarrollo ultra-compacta (formato ESP32-S3-Zero) en pack doble, únicamente con USB nativo. Su PSRAM de 2 MB es quad, por lo que utiliza la variante estándar del firmware. Funcionamiento confirmado por un usuario.</td>
-  </tr>
+  <tr><th>Placa</th><th>Formato</th><th>Estado</th><th>Conectores</th><th>Notas</th></tr>
   <tr>
     <td><b>ESP32-S3 Pocket Dongle</b> (16 MB flash, 8 MB de PSRAM octal, pantalla de 0,96")</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Pincho USB</td>
     <td><span class="badge ok">Probada</span></td>
     <td>Conector USB-A macho</td>
     <td>Un pincho con conector USB-A integrado, 16 MB de flash, 8 MB de PSRAM octal y pantalla a color ST7735 de 0,96". Probada por el proyecto. Utiliza la variante de firmware PSRAM. Su pantalla muestra las mismas pantallas que la LilyGO T-Dongle-S3: consulte <a href="screen.html">la pantalla del pincho</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (con pantalla)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Pincho USB</td>
     <td><span class="badge ok">Probada</span></td>
     <td>Conector USB-A macho</td>
     <td>Formato pincho monobloque. <b>Puede requerir un cable alargador USB</b> entre la estufa y el pincho, ver detalles abajo. La pantalla a color muestra el estado de la estufa y las temperaturas desde Open Firenet 4.5: consulte <a href="screen.html">la pantalla del pincho</a>. Para grabarla, conéctela directamente al PC.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (sin pantalla)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Pincho USB</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>Conector USB-A macho</td>
     <td>Misma placa que la variante con pantalla; no probada en estufa aún.</td>
   </tr>
   <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, módulo N16R8</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge ok">Probada</span></td>
+    <td>2 × USB-C</td>
+    <td>La placa de desarrollo estándar con dos puertos USB-C y 44 pines, comercializada bajo múltiples marcas. Es la placa de referencia utilizada en el desarrollo de Open Firenet. Conectar la estufa al puerto „USB“, no a „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 con caja</b> y conector de antena externa</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge ok">Confirmada</span></td>
+    <td>2 × USB-C</td>
+    <td>La misma placa suministrada en kit con caja atornillada y antena Wi-Fi externa (por ejemplo de Heemol). No requiere soldaduras; la antena ayuda en zonas de poca cobertura. Un usuario la utiliza habitualmente en su estufa. Misma regla: conectar la estufa al puerto „USB“.</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (modelo FNK0099, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge ok">Confirmada</span></td>
+    <td>2 puertos USB</td>
+    <td>Placa de desarrollo vendida en paquete de dos unidades. Un usuario ha confirmado su correcto funcionamiento. Dispone de dos puertos USB: conectar al puerto nativo („USB“ o „USB-OTG“), no a „UART“.</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>2 × USB-C</td>
+    <td>Placa vendida en pack de dos. Un usuario instaló Open Firenet con el instalador y accede a la interfaz. Aún no confirmada directamente sobre estufa. Misma regla: conectar a „USB“, no a „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge ok">Confirmada</span></td>
+    <td>2 × USB-C</td>
+    <td>Clon muy extendido de la DevKitC-1 con dos puertos USB-C y LED RGB. Conectar al puerto „USB“. Compatible con la caja magnética para impresión 3D mostrada abajo.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB de PSRAM quad)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
+    <td><span class="badge ok">Confirmada</span></td>
+    <td>USB-C</td>
+    <td>Placa de desarrollo ultra-compacta (formato ESP32-S3-Zero) en pack doble, únicamente con USB nativo. Su PSRAM de 2 MB es quad, por lo que utiliza la variante estándar del firmware. Funcionamiento confirmado por un usuario.</td>
+  </tr>
+  <tr>
     <td><b>M5Stamp S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>USB-C</td>
     <td>Solo USB nativo. Sin informes sobre estufa real todavía.</td>
   </tr>
   <tr>
     <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Placa de desarrollo</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>USB-C</td>
     <td>Solo USB nativo. Sin informes sobre estufa real todavía.</td>
@@ -188,6 +199,7 @@
 </table>
 </div>
 <p><span class="badge ok">Probada</span> directamente por el equipo del proyecto en una estufa real. <span class="badge ok">Confirmada</span> por usuarios de la comunidad. <span class="badge partial">Prevista</span>: compatible según sus especificaciones técnicas, a la espera de confirmación práctica.</p>
+<p><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> <b>Pincho USB</b>: se conecta directamente a la toma USB-A de la estufa, sin cable. <svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> <b>Placa de desarrollo</b>: se conecta a la estufa con un cable USB de datos.</p>
 
 <div class="note">
   <p><b>LilyGO T-Dongle-S3 con pantalla: tenga a mano un alargador USB.</b> Durante nuestras pruebas, conectada directamente a la estufa, la placa demandaba un pico de corriente al arrancar debido a la pantalla, provocando el reinicio de la estufa. Intercalando un cable alargador USB estándar, el problema desapareció, ya que el cable amortigua el pico de consumo inicial. Esto puede no suceder en todos los modelos de estufa.</p>
