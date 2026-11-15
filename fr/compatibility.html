@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Compatibilité des poêles - Open Firenet</title>
-<meta name="description" content="Quels poêles à granulés RIKA et quelles versions de firmware fonctionnent avec Open Firenet, et ce qu'on peut lire et piloter sur chacun.">
+<meta name="description" content="Quels poêles à granulés RIKA et ANIMO et quelles versions de firmware fonctionnent avec Open Firenet, et ce qu'on peut lire et piloter sur chacun.">
 <link rel="alternate" hreflang="en" href="https://openfirenet.github.io/compatibility.html">
 <link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/compatibility.html">
 <link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/compatibility.html">
@@ -166,6 +166,26 @@
 </table>
 </div>
 <p>Sur tout autre modèle, l'onglet Poêle affiche un lien « Mon poêle a MultiAir : afficher ses réglages ». Utilisez-le si votre poêle en est équipé sans figurer dans cette liste, et signalez-le-nous pour que nous l'ajoutions.</p>
+
+<h2>Poêles ANIMO (Wi-Fire)</h2>
+<p>ANIMO est la marque sœur de RIKA, fabriquée par RIKA Innovative Ofentechnik GmbH en Autriche. Les deux marques partagent la même électronique de commande, les mêmes firmwares de carte mère (2.25 à 2.30) et le même protocole série.</p>
+<p>Sur les poêles ANIMO, la prise USB est commercialisée sous le nom <b>Wi-Fire</b> (au lieu de Firenet). Open Firenet fonctionne de manière identique sur les poêles ANIMO équipés de ce port.</p>
+<p>Modèles ANIMO répertoriés :</p>
+<div class="table-wrap">
+<table>
+  <tr><th>Modèle</th><th>Type</th></tr>
+  <tr><td><b>AVITO</b></td><td>Poêle à granulés</td></tr>
+  <tr><td><b>AVITO SLIM</b></td><td>Poêle à granulés plat</td></tr>
+  <tr><td><b>AVITO RAO</b></td><td>Poêle à granulés (sortie supérieure)</td></tr>
+  <tr><td><b>ADEVO</b></td><td>Poêle à granulés</td></tr>
+  <tr><td><b>PURE</b></td><td>Poêle à granulés</td></tr>
+  <tr><td><b>ADUO</b></td><td>Poêle mixte granulés et bûches</td></tr>
+  <tr><td><b>AMITO</b></td><td>Poêle à granulés</td></tr>
+  <tr><td><b>ARONDO</b></td><td>Poêle à granulés rond</td></tr>
+  <tr><td><b>ADUO 2</b></td><td>Poêle mixte granulés et bûches</td></tr>
+</table>
+</div>
+<p>Le poêle indique s'il est configuré sous la marque RIKA ou ANIMO dans ses données de diagnostic (capteur <code>fabNumber</code> : 1 pour RIKA, 2 pour ANIMO).</p>
 
 <h2>La carte</h2>
 <p>Le firmware est testé sur l'ESP32-S3. La carte doit donner accès à l'USB natif de la puce (USB OTG) sur un connecteur : le poêle joue le rôle d'hôte USB et la clé celui de périphérique série USB.</p>
