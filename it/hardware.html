@@ -118,69 +118,80 @@
 <h2>Schede</h2>
 <div class="table-wrap">
 <table>
-  <tr><th>Scheda</th><th>Stato</th><th>Connettore</th><th>Note</th></tr>
-  <tr>
-    <td><b>ESP32-S3-DevKitC-1</b>, modulo N16R8</td>
-    <td><span class="badge ok">Testata</span></td>
-    <td>2 × USB-C</td>
-    <td>La comune scheda di sviluppo con due porte USB-C e 44 pin, distribuita con numerosi marchi. È la scheda di riferimento utilizzata per lo sviluppo di Open Firenet. Collegare la stufa alla porta „USB“, non „UART“ / „COM“.</td>
-  </tr>
-  <tr>
-    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 con custodia</b> e connettore per antenna esterna</td>
-    <td><span class="badge ok">Segnalata</span></td>
-    <td>2 × USB-C</td>
-    <td>La stessa scheda fornita in kit con custodia grigia chiusa a vite e antenna Wi-Fi esterna (ad es. da Heemol). Nessuna saldatura richiesta; l'antenna aiuta molto in caso di segnale debole. Un utente la utilizza regolarmente sulla propria stufa. Stessa regola: la stufa va collegata alla porta „USB“.</td>
-  </tr>
-  <tr>
-    <td><b>Freenove ESP32-S3</b> (modello FNK0099, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge ok">Segnalata</span></td>
-    <td>2 porte USB</td>
-    <td>Scheda di sviluppo venduta in confezione da due. Un utente ne ha confermato il corretto funzionamento. Dispone di due porte USB: la stufa va collegata alla porta nativa („USB“ o „USB-OTG“), non alla porta „UART“.</td>
-  </tr>
-  <tr>
-    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge partial">Prevista</span></td>
-    <td>2 × USB-C</td>
-    <td>Scheda di sviluppo venduta in confezione doppia. Un utente ha installato Open Firenet tramite l'installer e accede regolarmente alla pagina web. Non ancora provata direttamente su stufa. Stessa regola: collegare a „USB“, non a „UART“ / „COM“.</td>
-  </tr>
-  <tr>
-    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
-    <td><span class="badge ok">Segnalata</span></td>
-    <td>2 × USB-C</td>
-    <td>Diffuso clone della DevKitC-1 con due porte USB-C e LED RGB integrato. La stufa va alla porta „USB“. Pienamente compatibile con la custodia magnetica 3D presentata sotto.</td>
-  </tr>
-  <tr>
-    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM quad)</td>
-    <td><span class="badge ok">Segnalata</span></td>
-    <td>USB-C</td>
-    <td>Scheda ultra-compatta (formato ESP32-S3-Zero) con solo USB nativo. La sua PSRAM da 2 MB è quad, quindi utilizza la variante standard del firmware. Funzionamento confermato da un utente.</td>
-  </tr>
+  <tr><th>Scheda</th><th>Formato</th><th>Stato</th><th>Connettore</th><th>Note</th></tr>
   <tr>
     <td><b>ESP32-S3 Pocket Dongle</b> (16 MB flash, 8 MB PSRAM ottale, schermo 0,96")</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Chiavetta USB</td>
     <td><span class="badge ok">Testata</span></td>
     <td>Spina USB-A maschio</td>
     <td>Una chiavetta con connettore USB-A integrato, 16 MB di flash, 8 MB di PSRAM ottale e schermo a colori ST7735 da 0,96". Testata dal progetto. Utilizza la variante PSRAM del firmware. Il suo schermo mostra le stesse schermate del LilyGO T-Dongle-S3: vedere <a href="screen.html">lo schermo della chiave</a>.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (con schermo)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Chiavetta USB</td>
     <td><span class="badge ok">Testata</span></td>
     <td>Spina USB-A maschio</td>
     <td>Formato chiavetta monoblocco. <b>Può richiedere una prolunga USB</b> tra la stufa e la chiavetta, vedi dettagli sotto. Lo schermo a colori mostra lo stato della stufa e le temperature a partire da Open Firenet 4.5: consultate <a href="screen.html">lo schermo della chiavetta</a>. Per l'installazione, collegarla direttamente al computer.</td>
   </tr>
   <tr>
     <td><b>LilyGO T-Dongle-S3</b> (senza schermo)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Chiavetta USB</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>Spina USB-A maschio</td>
     <td>Stessa scheda della versione con schermo; non ancora testata su stufa.</td>
   </tr>
   <tr>
+    <td><b>ESP32-S3-DevKitC-1</b>, modulo N16R8</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge ok">Testata</span></td>
+    <td>2 × USB-C</td>
+    <td>La comune scheda di sviluppo con due porte USB-C e 44 pin, distribuita con numerosi marchi. È la scheda di riferimento utilizzata per lo sviluppo di Open Firenet. Collegare la stufa alla porta „USB“, non „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>Kit ESP32-S3-DevKitC-1 N16R8 con custodia</b> e connettore per antenna esterna</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 × USB-C</td>
+    <td>La stessa scheda fornita in kit con custodia grigia chiusa a vite e antenna Wi-Fi esterna (ad es. da Heemol). Nessuna saldatura richiesta; l'antenna aiuta molto in caso di segnale debole. Un utente la utilizza regolarmente sulla propria stufa. Stessa regola: la stufa va collegata alla porta „USB“.</td>
+  </tr>
+  <tr>
+    <td><b>Freenove ESP32-S3</b> (modello FNK0099, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 porte USB</td>
+    <td>Scheda di sviluppo venduta in confezione da due. Un utente ne ha confermato il corretto funzionamento. Dispone di due porte USB: la stufa va collegata alla porta nativa („USB“ o „USB-OTG“), non alla porta „UART“.</td>
+  </tr>
+  <tr>
+    <td><b>AYWHP ESP32-S3 DevC-1</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge partial">Prevista</span></td>
+    <td>2 × USB-C</td>
+    <td>Scheda di sviluppo venduta in confezione doppia. Un utente ha installato Open Firenet tramite l'installer e accede regolarmente alla pagina web. Non ancora provata direttamente su stufa. Stessa regola: collegare a „USB“, non a „UART“ / „COM“.</td>
+  </tr>
+  <tr>
+    <td><b>YD-ESP32-S3</b> (N16R8, 16 MB flash, 8 MB PSRAM)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>2 × USB-C</td>
+    <td>Diffuso clone della DevKitC-1 con due porte USB-C e LED RGB integrato. La stufa va alla porta „USB“. Pienamente compatibile con la custodia magnetica 3D presentata sotto.</td>
+  </tr>
+  <tr>
+    <td><b>diymore ESP32-S3 Mini</b> (4 MB flash, 2 MB PSRAM quad)</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
+    <td><span class="badge ok">Segnalata</span></td>
+    <td>USB-C</td>
+    <td>Scheda ultra-compatta (formato ESP32-S3-Zero) con solo USB nativo. La sua PSRAM da 2 MB è quad, quindi utilizza la variante standard del firmware. Funzionamento confermato da un utente.</td>
+  </tr>
+  <tr>
     <td><b>M5Stamp S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>USB-C</td>
     <td>Solo USB nativo. Ancora nessun riscontro su stufa reale.</td>
   </tr>
   <tr>
     <td><b>Seeed Studio XIAO ESP32-S3</b></td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> Scheda di sviluppo</td>
     <td><span class="badge partial">Prevista</span></td>
     <td>USB-C</td>
     <td>Solo USB nativo. Ancora nessun riscontro su stufa reale.</td>
@@ -188,6 +199,7 @@
 </table>
 </div>
 <p><span class="badge ok">Testata</span> dal team di sviluppo su una stufa reale. <span class="badge ok">Segnalata</span> come funzionante da un utente. <span class="badge partial">Prevista</span>: dovrebbe funzionare in base alle caratteristiche tecniche, senza conferme pratiche al momento.</p>
+<p><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> <b>Chiavetta USB</b>: si inserisce direttamente nella presa USB-A della stufa, senza cavo. <svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 20H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-.8M10.8 20h2.4"/><rect x="9.5" y="6" width="5" height="5" rx="0.8"/><path d="M5 5.5H3.5M5 9H3.5M5 12.5H3.5M19 5.5h1.5M19 9h1.5M19 12.5h1.5"/><rect x="6.8" y="16.5" width="4" height="5" rx="0.8"/><rect x="13.2" y="16.5" width="4" height="5" rx="0.8"/></svg> <b>Scheda di sviluppo</b>: si collega alla stufa con un cavo USB dati.</p>
 
 <div class="note">
   <p><b>LilyGO T-Dongle-S3 con schermo: tenete a portata di mano una prolunga USB.</b> Durante le nostre prove, collegata direttamente alla presa della stufa, la chiavetta richiedeva troppa corrente all'avvio a causa dello schermo, provocando il riavvio della stufa. Interponendo una breve prolunga USB tra stufa e chiavetta, il sistema funzionava regolarmente poiché il cavo attenua il picco di assorbimento. Ciò non si verifica necessariamente con ogni modello di stufa.</p>
