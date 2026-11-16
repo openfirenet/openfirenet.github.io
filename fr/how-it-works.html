@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr" data-page="how-it-works">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comment fonctionne Open Firenet</title>
+<meta name="description" content="Ce que fait Open Firenet pour un poêle à granulés RIKA ou ANIMO, ce qu'il vous faut et ce que vous avez à faire.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/how-it-works.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/how-it-works.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/how-it-works.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/how-it-works.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/how-it-works.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/how-it-works.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Navigation principale">
+      <a href="../fr/how-it-works.html" class="active" aria-current="page">Comment ça marche</a>
+      <a href="../fr/download.html">Télécharger</a>
+      <a href="../fr/get-started.html">Démarrer</a>
+      <details class="nav-group">
+        <summary>Poêle et matériel</summary>
+        <div class="nav-menu">
+          <a href="../fr/compatibility.html">Compatibilité des poêles</a>
+          <a href="../fr/hardware.html">Matériel</a>
+          <a href="../fr/screen.html">Écran de la clé</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Intégrations</summary>
+        <div class="nav-menu">
+          <a href="../fr/home-assistant.html">Home Assistant</a>
+          <a href="../fr/mqtt.html">MQTT</a>
+          <a href="../fr/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../fr/troubleshooting.html">Dépannage</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Langue"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</summary>
+        <div class="nav-menu">
+          <a href="../how-it-works.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/how-it-works.html" hreflang="fr" lang="fr" data-lang="fr" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/how-it-works.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/how-it-works.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/how-it-works.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Comment ça marche</h1>
+<p class="lead">Open Firenet permet de piloter votre poêle à granulés RIKA ou ANIMO depuis votre téléphone ou votre ordinateur, chez vous, sans passer par le service internet du fabricant.</p>
+
+<figure class="scene" aria-label="La clé est branchée sur le poêle par une rallonge USB et communique avec votre téléphone par le Wi-Fi de la maison">
+  <svg viewBox="0 0 520 230" aria-hidden="true">
+    <rect class="body" x="40" y="20" width="120" height="180" rx="8"/>
+    <rect class="part" x="58" y="36" width="40" height="14" rx="2"/>
+    <rect class="part" x="58" y="64" width="84" height="96" rx="4"/>
+    <path class="flame" d="M86 148c0-14 11-18 12-34 7 10 15 18 15 34"/>
+    <path class="part" d="M52 200v10M148 200v10"/>
+    <path class="cable" d="M160 176c30 0 26 34 60 34h14"/>
+    <rect class="part" x="234" y="204" width="16" height="12" rx="2"/>
+    <rect class="hot" x="250" y="202" width="44" height="16" rx="4"/>
+    <path class="wave" d="M262 186a22 22 0 0 1 20 0M254 176a36 36 0 0 1 36 0M246 166a50 50 0 0 1 52 0"/>
+    <rect class="body" x="380" y="40" width="96" height="170" rx="14"/>
+    <rect class="screen" x="390" y="58" width="76" height="130" rx="4"/>
+    <text class="big" x="428" y="118">21°</text>
+    <path class="flame" d="M418 150c0-7 5-9 6-17 4 5 8 9 8 17"/>
+    <path class="part" d="M418 200h20"/>
+    <path class="wave thin" d="M306 150c30-40 50-50 70-60"/>
+    <text class="dimt" x="304" y="124">Wi-Fi de la maison</text>
+    <text x="100" y="226">Votre poêle</text>
+    <text x="272" y="236">La clé</text>
+    <text x="428" y="226">Votre téléphone</text>
+  </svg>
+</figure>
+
+<h2>Qu'est-ce que c'est ?</h2>
+<p>Votre poêle a une prise USB, comme celles d'un ordinateur. RIKA vend une petite clé à y brancher, la « RIKA Firenet » (sur les poêles ANIMO, la « Wi-Fire »). Avec elle, vous pilotez le poêle depuis l'application de RIKA : vos commandes passent par internet et par les serveurs de RIKA avant d'arriver au poêle.</p>
+<p>Open Firenet fait la même chose sans les serveurs de RIKA. C'est un programme gratuit que vous mettez sur une petite clé, de la taille d'une clé USB, que vous achetez vous-même. Branchée sur le poêle, la clé se connecte au Wi-Fi de votre maison, et vous pilotez le poêle depuis votre téléphone ou votre ordinateur. Pas de compte à créer, pas d'abonnement.</p>
+<div class="note">
+  <p><b>« Dongle », « clé », « bridge », « passerelle » :</b> sur ce site et dans les forums, ces mots désignent tous la même chose : le petit appareil branché sur la prise USB du poêle.</p>
+</div>
+
+<h2>Rien ne s'installe sur le poêle</h2>
+<p>Le poêle n'est pas modifié : rien ne s'installe dessus et il n'y a rien à ouvrir. Le programme est uniquement sur la clé. Débranchez la clé, et le poêle fonctionne exactement comme avant.</p>
+
+<h2>Ce qu'il vous faut</h2>
+<ul>
+  <li><b>Un poêle à granulés RIKA ou ANIMO avec le logiciel 2.25 ou plus récent.</b> Pour le savoir : sur l'écran du poêle, ouvrez <b>Info &gt; Paramètres &gt; Logiciel poêle</b> (par exemple 2.27 ou 2.29). Détails sur la <a href="compatibility.html">page de compatibilité</a>.</li>
+  <li><b>Une clé :</b> nous conseillons l'<b>ESP32-S3 Pocket Dongle</b>, vendue en ligne. D'autres clés fonctionnent aussi : voir la <a href="hardware.html">page Matériel</a>.</li>
+  <li><b>Une rallonge USB</b> (USB-A, mâle vers femelle). Elle est nécessaire entre le poêle et la clé.</li>
+  <li><b>Un ordinateur</b> (Windows, Mac ou Linux), une seule fois, pendant une dizaine de minutes, pour mettre le programme sur la clé.</li>
+  <li><b>Le Wi-Fi de votre maison</b> et son mot de passe. La clé utilise le Wi-Fi 2,4 GHz, que fournissent la plupart des box internet.</li>
+</ul>
+
+<h2>Ce que vous avez à faire</h2>
+<ol class="steps">
+  <li>
+    <h3>Acheter la clé et la rallonge</h3>
+    <p>Voir « Ce qu'il vous faut » ci-dessus.</p>
+  </li>
+  <li>
+    <h3>Mettre le programme sur la clé</h3>
+    <p>Téléchargez l'<a href="download.html">installeur Open Firenet</a>, gratuit, sur votre ordinateur, branchez la clé sur l'ordinateur et lancez l'installeur. Il met le programme sur la clé, puis vous demande le nom et le mot de passe de votre Wi-Fi. Windows ou macOS peuvent afficher un avertissement au premier lancement de l'installeur : c'est normal, le <a href="get-started.html">guide pas à pas</a> montre sur quoi cliquer.</p>
+  </li>
+  <li>
+    <h3>Brancher la clé sur le poêle</h3>
+    <p>Branchez la rallonge sur la prise USB, à l'arrière du poêle, et la clé au bout de la rallonge. Si une clé RIKA est branchée, débranchez-la d'abord.</p>
+<figure class="stove-fig" aria-label="Le poêle vu de côté : sa prise USB est à l’arrière ; une rallonge USB la relie à la clé">
+  <svg viewBox="0 0 420 215" aria-hidden="true">
+    <rect class="body" x="60" y="20" width="110" height="172" rx="6"/>
+    <path class="part" d="M60 60h-6v80h6"/>
+    <path class="part" d="M70 192v8M160 192v8"/>
+    <rect class="hot" x="170" y="150" width="7" height="12" rx="1"/>
+    <path class="lead" d="M184 150l22-30"/>
+    <text x="209" y="116">Prise USB (à l’arrière)</text>
+    <path class="cable" d="M177 156c26 0 20 36 50 36h20"/>
+    <rect class="part" x="247" y="186" width="18" height="12" rx="2"/>
+    <rect class="hot" x="265" y="184" width="44" height="16" rx="4"/>
+    <text x="212" y="214">Rallonge USB</text>
+    <text x="270" y="176">Clé</text>
+    <text class="dim" x="20" y="14">Avant</text>
+    <text class="dim" x="150" y="14">Arrière</text>
+  </svg>
+</figure>
+  </li>
+  <li>
+    <h3>Ouvrir la page du poêle</h3>
+    <p>Une minute plus tard, sur un téléphone ou un ordinateur connecté au même Wi-Fi, ouvrez <code>http://open-firenet.local</code> dans le navigateur internet. Si cette adresse ne s'ouvre pas, l'installeur peut trouver la clé sur votre réseau et vous donner son adresse. Ajoutez la page à l'écran d'accueil de votre téléphone pour la retrouver facilement.</p>
+  </li>
+</ol>
+
+<h2>Ce que vous pouvez faire ensuite</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Piloter le poêle</h3>
+    <p>L'allumer ou l'éteindre, régler la température, la puissance de chauffe et le mode.</p>
+  </div>
+  <div class="card">
+    <h3>Programmer le chauffage</h3>
+    <p>Régler la programmation hebdomadaire du poêle depuis votre téléphone.</p>
+  </div>
+  <div class="card">
+    <h3>Le surveiller</h3>
+    <p>Voir la température de la pièce, l'état du poêle, les granulés consommés, la date du prochain entretien et les messages d'erreur du poêle.</p>
+  </div>
+  <div class="card">
+    <h3>La domotique, si vous en avez une</h3>
+    <p>Home Assistant, Jeedom et les systèmes du même genre peuvent aussi piloter le poêle. Si vous ne savez pas ce que c'est, vous n'en avez pas besoin.</p>
+  </div>
+</div>
+
+<h2>Questions fréquentes</h2>
+<details>
+  <summary>Dois-je installer quelque chose sur le poêle ?</summary>
+  <p>Non. Tout est sur la clé. Le poêle n'est pas modifié.</p>
+</details>
+<details>
+  <summary>Ai-je besoin d'internet ?</summary>
+  <p>Seulement pour télécharger l'installeur et le programme, et plus tard pour les mises à jour si vous le souhaitez. Ensuite, le poêle se pilote par le Wi-Fi de la maison, et cela continue de fonctionner quand internet est coupé.</p>
+</details>
+<details>
+  <summary>Puis-je piloter le poêle quand je ne suis pas chez moi ?</summary>
+  <p>Pas directement : la page du poêle ne s'ouvre que depuis le Wi-Fi de la maison. Les systèmes de domotique comme Home Assistant peuvent vous donner un accès depuis l'extérieur.</p>
+</details>
+<details>
+  <summary>Puis-je encore utiliser l'application RIKA ?</summary>
+  <p>Non. Avec Open Firenet, le poêle ne passe plus par les serveurs de RIKA, et l'application de RIKA ne le voit donc plus. Pour revenir en arrière, rebranchez la clé RIKA.</p>
+</details>
+<details>
+  <summary>Combien ça coûte ?</summary>
+  <p>Le programme est gratuit. Vous n'achetez que la clé.</p>
+</details>
+<details>
+  <summary>Qui le fait ?</summary>
+  <p>Des bénévoles, dans un projet open source. Il n'est ni fait ni approuvé par RIKA : vous l'utilisez à vos propres risques.</p>
+</details>
+<details>
+  <summary>Je suis bloqué, qui peut m'aider ?</summary>
+  <p>Consultez la <a href="troubleshooting.html">page Dépannage</a>, ou posez votre question sur <a href="https://github.com/openfirenet/open-firenet/issues">GitHub</a>, dans votre langue.</p>
+</details>
+
+<div class="actions">
+  <a class="btn" href="get-started.html">Guide pas à pas</a>
+  <a class="btn ghost" href="compatibility.html">Mon poêle est-il compatible ?</a>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet est un projet open source indépendant, sans affiliation avec RIKA Innovative Ofentechnik GmbH ni approbation de sa part. Le protocole a été rétro-ingénié à des fins d'interopérabilité uniquement. Utilisation sous votre propre responsabilité, sans garantie.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuer</a> · Questions et support: <a href="https://github.com/openfirenet/open-firenet/issues">issues de la clé et du firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de l'intégration Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

@@ -44,7 +44,7 @@ img { max-width: 100%; height: auto; }
   border-bottom: 1px solid var(--border);
 }
 .site-header .inner {
-  max-width: var(--max); margin: 0 auto; padding: 10px 16px;
+  max-width: 1240px; margin: 0 auto; padding: 10px 16px;
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); }
@@ -244,3 +244,46 @@ html.splash-handoff .splash-logo { animation: none; }
 /* Format column of the hardware table: USB dongle or development board. */
 td.fmt { white-space: nowrap; }
 .fmt-icon { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; color: var(--primary); }
+
+
+/* How it works: where the stove's USB socket is */
+.stove-fig { margin: 16px 0 0; }
+.stove-fig svg { width: 100%; max-width: 540px; height: auto; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; color: var(--text-dim); }
+.stove-fig .back { stroke-dasharray: 5 4; }
+.stove-fig .body { fill: var(--surface); }
+.stove-fig .flame { stroke: var(--primary); }
+.stove-fig .hot { stroke: var(--primary); fill: var(--primary); fill-opacity: 0.2; }
+.stove-fig .cable { stroke: var(--text); stroke-width: 3; }
+.stove-fig .lead { stroke-width: 1.5; }
+.stove-fig text { fill: var(--text); stroke: none; font-size: 13px; font-weight: 600; }
+.stove-fig text.dim { fill: var(--text-dim); font-weight: 400; }
+
+/* How it works: the stove, the stick and the phone */
+.scene { margin: 24px 0; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.scene svg { width: 100%; max-width: 620px; height: auto; display: block; margin: 0 auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; color: var(--text-dim); overflow: visible; }
+.scene .body { fill: var(--surface-2); }
+.scene .screen { fill: var(--bg); }
+.scene .flame { stroke: var(--primary); fill: var(--primary); fill-opacity: 0.15; }
+.scene .hot { stroke: var(--primary); fill: var(--primary); fill-opacity: 0.2; }
+.scene .cable { stroke: var(--text); stroke-width: 3; }
+.scene .wave { stroke: var(--primary); }
+.scene .wave.thin { stroke-dasharray: 2 6; }
+.scene text { fill: var(--text); stroke: none; font-size: 14px; font-weight: 600; text-anchor: middle; }
+.scene text.big { font-size: 26px; font-weight: 700; }
+.scene text.dimt { fill: var(--text-dim); font-weight: 400; font-size: 13px; text-anchor: end; }
+
+/* Download page */
+.dl-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+.dl { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); text-decoration: none; }
+.dl:hover { border-color: var(--primary); text-decoration: none; }
+.dl svg { width: 32px; height: 32px; fill: currentColor; color: var(--text-dim); margin-bottom: 4px; }
+.dl-name { font-weight: 700; }
+.dl-file { font-size: 0.8rem; color: var(--text-dim); overflow-wrap: anywhere; }
+.dl-rec { font-size: 0.8rem; font-weight: 600; color: var(--primary); }
+.dl.primary { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 16px; padding: 20px 24px; border: 2px solid var(--primary); }
+.dl.primary svg { width: 48px; height: 48px; color: var(--primary); margin: 0; }
+.dl.primary .dl-name { font-size: 1.25rem; }
+.dl.primary .dl-text { display: flex; flex-direction: column; gap: 2px; }
+.dl-text { display: flex; flex-direction: column; gap: 2px; }
+.dl-version { color: var(--text-dim); font-size: 0.9rem; }
+.hero-more { margin-top: 14px; font-size: 0.95rem; color: var(--text-dim); }

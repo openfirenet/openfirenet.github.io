@@ -1,0 +1,139 @@
+<!-- title: How Open Firenet works -->
+<!-- description: What Open Firenet does for a RIKA or ANIMO pellet stove, what you need and what you have to do. -->
+<h1>How it works</h1>
+<p class="lead">Open Firenet lets you control your RIKA or ANIMO pellet stove from your phone or computer, at home, without going through the manufacturer's internet service.</p>
+
+<figure class="scene" aria-label="The stick is plugged into the stove with a USB extension cable and talks to your phone over your home Wi-Fi">
+  <svg viewBox="0 0 520 230" aria-hidden="true">
+    <rect class="body" x="40" y="20" width="120" height="180" rx="8"/>
+    <rect class="part" x="58" y="36" width="40" height="14" rx="2"/>
+    <rect class="part" x="58" y="64" width="84" height="96" rx="4"/>
+    <path class="flame" d="M86 148c0-14 11-18 12-34 7 10 15 18 15 34"/>
+    <path class="part" d="M52 200v10M148 200v10"/>
+    <path class="cable" d="M160 176c30 0 26 34 60 34h14"/>
+    <rect class="part" x="234" y="204" width="16" height="12" rx="2"/>
+    <rect class="hot" x="250" y="202" width="44" height="16" rx="4"/>
+    <path class="wave" d="M262 186a22 22 0 0 1 20 0M254 176a36 36 0 0 1 36 0M246 166a50 50 0 0 1 52 0"/>
+    <rect class="body" x="380" y="40" width="96" height="170" rx="14"/>
+    <rect class="screen" x="390" y="58" width="76" height="130" rx="4"/>
+    <text class="big" x="428" y="118">21°</text>
+    <path class="flame" d="M418 150c0-7 5-9 6-17 4 5 8 9 8 17"/>
+    <path class="part" d="M418 200h20"/>
+    <path class="wave thin" d="M306 150c30-40 50-50 70-60"/>
+    <text class="dimt" x="304" y="124">Home Wi-Fi</text>
+    <text x="100" y="226">Your stove</text>
+    <text x="272" y="236">The stick</text>
+    <text x="428" y="226">Your phone</text>
+  </svg>
+</figure>
+
+<h2>What is it?</h2>
+<p>Your stove has a USB socket, like the ones on a computer. RIKA sells a small stick to plug into it, the "RIKA Firenet" (on ANIMO stoves, the "Wi-Fire"). With it, you control the stove from RIKA's app: your commands go over the internet and through RIKA's servers before they reach the stove.</p>
+<p>Open Firenet does the same job without RIKA's servers. It is a free program that you put on a small stick, the size of a USB key, that you buy yourself. Plugged into the stove, the stick joins your home Wi-Fi, and you control the stove from your phone or computer. No account to create, no subscription.</p>
+<div class="note">
+  <p><b>"Dongle", "stick", "bridge", "key":</b> on this site and in forums, these words all mean the same thing: the small device plugged into the stove's USB socket.</p>
+</div>
+
+<h2>Nothing is installed on the stove</h2>
+<p>The stove is not changed: nothing is installed on it and nothing needs to be opened. The program lives on the stick only. Unplug the stick and the stove works exactly as before.</p>
+
+<h2>What you need</h2>
+<ul>
+  <li><b>A RIKA or ANIMO pellet stove with software 2.25 or later.</b> To check: on the stove's screen, open <b>Info &gt; Parameters &gt; Software stove</b> (for example 2.27 or 2.29). Details on the <a href="compatibility.html">compatibility page</a>.</li>
+  <li><b>A stick:</b> we recommend the <b>ESP32-S3 Pocket Dongle</b>, sold online. Other sticks work too: see the <a href="hardware.html">hardware page</a>.</li>
+  <li><b>A USB extension cable</b> (USB-A, male to female). It is needed between the stove and the stick.</li>
+  <li><b>A computer</b> (Windows, Mac or Linux), once, for about ten minutes, to put the program on the stick.</li>
+  <li><b>Your home Wi-Fi</b> and its password. The stick uses 2.4 GHz Wi-Fi, which most home internet boxes provide.</li>
+</ul>
+
+<h2>What you have to do</h2>
+<ol class="steps">
+  <li>
+    <h3>Buy the stick and the extension cable</h3>
+    <p>See "What you need" above.</p>
+  </li>
+  <li>
+    <h3>Put the program on the stick</h3>
+    <p>Download the free <a href="download.html">Open Firenet installer</a> onto your computer, plug the stick into the computer and start the installer. It puts the program on the stick, then asks for your Wi-Fi name and password. Windows or macOS may warn you the first time the installer starts: this is expected, the <a href="get-started.html">step-by-step guide</a> shows what to click.</p>
+  </li>
+  <li>
+    <h3>Plug the stick into the stove</h3>
+    <p>Plug the extension cable into the stove's USB socket, at the back of the stove, and the stick at the other end. If a RIKA stick is plugged in, unplug it first.</p>
+<figure class="stove-fig" aria-label="The stove seen from the side: its USB socket is at the back; a USB extension cable goes from it to the stick">
+  <svg viewBox="0 0 420 215" aria-hidden="true">
+    <rect class="body" x="60" y="20" width="110" height="172" rx="6"/>
+    <path class="part" d="M60 60h-6v80h6"/>
+    <path class="part" d="M70 192v8M160 192v8"/>
+    <rect class="hot" x="170" y="150" width="7" height="12" rx="1"/>
+    <path class="lead" d="M184 150l22-30"/>
+    <text x="209" y="116">USB socket (at the back)</text>
+    <path class="cable" d="M177 156c26 0 20 36 50 36h20"/>
+    <rect class="part" x="247" y="186" width="18" height="12" rx="2"/>
+    <rect class="hot" x="265" y="184" width="44" height="16" rx="4"/>
+    <text x="212" y="214">USB extension</text>
+    <text x="270" y="176">Stick</text>
+    <text class="dim" x="20" y="14">Front</text>
+    <text class="dim" x="150" y="14">Back</text>
+  </svg>
+</figure>
+  </li>
+  <li>
+    <h3>Open the stove's page</h3>
+    <p>About a minute later, on a phone or computer connected to the same Wi-Fi, open <code>http://open-firenet.local</code> in the web browser. If that address does not open, the installer can find the stick on your network and show its address. Add the page to your phone's home screen to find it easily.</p>
+  </li>
+</ol>
+
+<h2>What you can do then</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Control the stove</h3>
+    <p>Switch it on or off, set the temperature, the heating power and the mode.</p>
+  </div>
+  <div class="card">
+    <h3>Plan the heating</h3>
+    <p>Set the weekly schedule of the stove from your phone.</p>
+  </div>
+  <div class="card">
+    <h3>Keep an eye on it</h3>
+    <p>See the room temperature, the state of the stove, the pellets used, when the next service is due and the stove's error messages.</p>
+  </div>
+  <div class="card">
+    <h3>Home automation, if you have one</h3>
+    <p>Home Assistant, Jeedom and similar systems can control the stove too. If you don't know what these are, you don't need them.</p>
+  </div>
+</div>
+
+<h2>Common questions</h2>
+<details>
+  <summary>Do I have to install something on the stove?</summary>
+  <p>No. Everything is on the stick. The stove is not changed.</p>
+</details>
+<details>
+  <summary>Do I need the internet?</summary>
+  <p>Only to download the installer and the program, and later for updates if you want them. Then the stove is controlled over your home Wi-Fi, and it keeps working when the internet is down.</p>
+</details>
+<details>
+  <summary>Can I control the stove when I'm away from home?</summary>
+  <p>Not on its own: the stove's page only opens from your home Wi-Fi. Home automation systems such as Home Assistant can give you access from outside.</p>
+</details>
+<details>
+  <summary>Can I still use the RIKA app?</summary>
+  <p>No. With Open Firenet the stove no longer goes through RIKA's servers, so RIKA's app does not see it. To go back, plug the RIKA stick in again.</p>
+</details>
+<details>
+  <summary>How much does it cost?</summary>
+  <p>The program is free. You only buy the stick.</p>
+</details>
+<details>
+  <summary>Who makes it?</summary>
+  <p>Volunteers, as an open-source project. It is not made or endorsed by RIKA: you use it at your own risk.</p>
+</details>
+<details>
+  <summary>I'm stuck, who can help?</summary>
+  <p>Have a look at the <a href="troubleshooting.html">troubleshooting page</a>, or ask your question on <a href="https://github.com/openfirenet/open-firenet/issues">GitHub</a>, in your own language.</p>
+</details>
+
+<div class="actions">
+  <a class="btn" href="get-started.html">Step-by-step guide</a>
+  <a class="btn ghost" href="compatibility.html">Is my stove supported?</a>
+</div>
