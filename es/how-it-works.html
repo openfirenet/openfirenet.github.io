@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es" data-page="how-it-works">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo funciona Open Firenet</title>
+<meta name="description" content="Qué hace Open Firenet para una estufa de pellets RIKA o ANIMO, qué necesita y qué tiene que hacer.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/how-it-works.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/how-it-works.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/how-it-works.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/how-it-works.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/how-it-works.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/how-it-works.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="../assets/img/brand-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="../assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menú</button>
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <a href="../es/how-it-works.html" class="active" aria-current="page">Cómo funciona</a>
+      <a href="../es/download.html">Descargar</a>
+      <a href="../es/get-started.html">Primeros pasos</a>
+      <details class="nav-group">
+        <summary>Estufa y hardware</summary>
+        <div class="nav-menu">
+          <a href="../es/compatibility.html">Compatibilidad de estufas</a>
+          <a href="../es/hardware.html">Hardware</a>
+          <a href="../es/screen.html">Pantalla del pincho</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integraciones</summary>
+        <div class="nav-menu">
+          <a href="../es/home-assistant.html">Home Assistant</a>
+          <a href="../es/mqtt.html">MQTT</a>
+          <a href="../es/api.html">API REST</a>
+        </div>
+      </details>
+      <a href="../es/troubleshooting.html">Solución de problemas</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Idioma"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</summary>
+        <div class="nav-menu">
+          <a href="../how-it-works.html" hreflang="en" lang="en" data-lang="en"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="../fr/how-it-works.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="../de/how-it-works.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="../it/how-it-works.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="../es/how-it-works.html" hreflang="es" lang="es" data-lang="es" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Cómo funciona</h1>
+<p class="lead">Open Firenet le permite controlar su estufa de pellets RIKA o ANIMO desde el móvil o el ordenador, en casa, sin pasar por el servicio de internet del fabricante.</p>
+
+<figure class="scene" aria-label="El pincho está conectado a la estufa con un alargador USB y se comunica con su móvil por el Wi-Fi de casa">
+  <svg viewBox="0 0 520 230" aria-hidden="true">
+    <rect class="body" x="40" y="20" width="120" height="180" rx="8"/>
+    <rect class="part" x="58" y="36" width="40" height="14" rx="2"/>
+    <rect class="part" x="58" y="64" width="84" height="96" rx="4"/>
+    <path class="flame" d="M86 148c0-14 11-18 12-34 7 10 15 18 15 34"/>
+    <path class="part" d="M52 200v10M148 200v10"/>
+    <path class="cable" d="M160 176c30 0 26 34 60 34h14"/>
+    <rect class="part" x="234" y="204" width="16" height="12" rx="2"/>
+    <rect class="hot" x="250" y="202" width="44" height="16" rx="4"/>
+    <path class="wave" d="M262 186a22 22 0 0 1 20 0M254 176a36 36 0 0 1 36 0M246 166a50 50 0 0 1 52 0"/>
+    <rect class="body" x="380" y="40" width="96" height="170" rx="14"/>
+    <rect class="screen" x="390" y="58" width="76" height="130" rx="4"/>
+    <text class="big" x="428" y="118">21°</text>
+    <path class="flame" d="M418 150c0-7 5-9 6-17 4 5 8 9 8 17"/>
+    <path class="part" d="M418 200h20"/>
+    <path class="wave thin" d="M306 150c30-40 50-50 70-60"/>
+    <text class="dimt" x="304" y="124">Wi-Fi de casa</text>
+    <text x="100" y="226">Su estufa</text>
+    <text x="272" y="236">El pincho</text>
+    <text x="428" y="226">Su móvil</text>
+  </svg>
+</figure>
+
+<h2>¿Qué es?</h2>
+<p>Su estufa tiene una toma USB, como las de un ordenador. RIKA vende un pequeño pincho para conectarlo ahí, el «RIKA Firenet» (en las estufas ANIMO, el «Wi-Fire»). Con él, controla la estufa desde la app de RIKA: sus órdenes pasan por internet y por los servidores de RIKA antes de llegar a la estufa.</p>
+<p>Open Firenet hace lo mismo sin los servidores de RIKA. Es un programa gratuito que se pone en un pequeño pincho, del tamaño de una memoria USB, que usted compra. Conectado a la estufa, el pincho se une al Wi-Fi de su casa y usted controla la estufa desde el móvil o el ordenador. Sin cuenta que crear, sin suscripción.</p>
+<div class="note">
+  <p><b>«Dongle», «pincho», «puente», «bridge»:</b> en este sitio y en los foros, estas palabras significan lo mismo: el pequeño aparato conectado a la toma USB de la estufa.</p>
+</div>
+
+<h2>No se instala nada en la estufa</h2>
+<p>La estufa no se modifica: no se instala nada en ella y no hay que abrir nada. El programa está solo en el pincho. Desconecte el pincho y la estufa funciona exactamente como antes.</p>
+
+<h2>Qué necesita</h2>
+<ul>
+  <li><b>Una estufa de pellets RIKA o ANIMO con el software 2.25 o posterior.</b> Para comprobarlo: en la pantalla de la estufa, abra <b>Info &gt; Parámetros &gt; Software estufa</b> (por ejemplo 2.27 o 2.29). Detalles en la página <a href="compatibility.html">Compatibilidad de estufas</a>.</li>
+  <li><b>Un pincho:</b> recomendamos el <b>ESP32-S3 Pocket Dongle</b>, a la venta en internet. Otros pinchos también funcionan: vea la página <a href="hardware.html">Hardware</a>.</li>
+  <li><b>Un alargador USB</b> (USB-A, macho a hembra). Es necesario entre la estufa y el pincho.</li>
+  <li><b>Un ordenador</b> (Windows, Mac o Linux), una sola vez, unos diez minutos, para poner el programa en el pincho.</li>
+  <li><b>El Wi-Fi de su casa</b> y su contraseña. El pincho usa el Wi-Fi de 2,4 GHz, que ofrecen la mayoría de los routers domésticos.</li>
+</ul>
+
+<h2>Qué tiene que hacer</h2>
+<ol class="steps">
+  <li>
+    <h3>Comprar el pincho y el alargador</h3>
+    <p>Vea «Qué necesita» más arriba.</p>
+  </li>
+  <li>
+    <h3>Poner el programa en el pincho</h3>
+    <p>Descargue en su ordenador el <a href="download.html">instalador de Open Firenet</a>, gratuito, conecte el pincho al ordenador e inicie el instalador. Pone el programa en el pincho y después le pide el nombre y la contraseña de su Wi-Fi. Windows o macOS pueden mostrar un aviso la primera vez que se inicia el instalador: es normal, la <a href="get-started.html">guía paso a paso</a> indica dónde hacer clic.</p>
+  </li>
+  <li>
+    <h3>Conectar el pincho a la estufa</h3>
+    <p>Conecte el alargador a la toma USB, en la parte trasera de la estufa, y el pincho al otro extremo. Si hay un pincho RIKA conectado, desconéctelo primero.</p>
+<figure class="stove-fig" aria-label="La estufa vista de lado: la toma USB está detrás; un alargador USB la une al pincho">
+  <svg viewBox="0 0 420 215" aria-hidden="true">
+    <rect class="body" x="60" y="20" width="110" height="172" rx="6"/>
+    <path class="part" d="M60 60h-6v80h6"/>
+    <path class="part" d="M70 192v8M160 192v8"/>
+    <rect class="hot" x="170" y="150" width="7" height="12" rx="1"/>
+    <path class="lead" d="M184 150l22-30"/>
+    <text x="209" y="116">Toma USB (detrás)</text>
+    <path class="cable" d="M177 156c26 0 20 36 50 36h20"/>
+    <rect class="part" x="247" y="186" width="18" height="12" rx="2"/>
+    <rect class="hot" x="265" y="184" width="44" height="16" rx="4"/>
+    <text x="212" y="214">Alargador USB</text>
+    <text x="270" y="176">Pincho</text>
+    <text class="dim" x="20" y="14">Delante</text>
+    <text class="dim" x="150" y="14">Detrás</text>
+  </svg>
+</figure>
+  </li>
+  <li>
+    <h3>Abrir la página de la estufa</h3>
+    <p>Un minuto después, en un móvil o un ordenador conectado al mismo Wi-Fi, abra <code>http://open-firenet.local</code> en el navegador. Si esa dirección no se abre, el instalador puede encontrar el pincho en su red y mostrar su dirección. Añada la página a la pantalla de inicio del móvil para encontrarla fácilmente.</p>
+  </li>
+</ol>
+
+<h2>Qué puede hacer después</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Controlar la estufa</h3>
+    <p>Encenderla o apagarla, ajustar la temperatura, la potencia y el modo.</p>
+  </div>
+  <div class="card">
+    <h3>Programar la calefacción</h3>
+    <p>Ajustar la programación semanal de la estufa desde el móvil.</p>
+  </div>
+  <div class="card">
+    <h3>Vigilarla</h3>
+    <p>Ver la temperatura de la habitación, el estado de la estufa, los pellets consumidos, cuándo toca el próximo mantenimiento y los mensajes de error de la estufa.</p>
+  </div>
+  <div class="card">
+    <h3>La domótica, si la tiene</h3>
+    <p>Home Assistant, Jeedom y sistemas parecidos también pueden controlar la estufa. Si no sabe qué son, no los necesita.</p>
+  </div>
+</div>
+
+<h2>Preguntas frecuentes</h2>
+<details>
+  <summary>¿Tengo que instalar algo en la estufa?</summary>
+  <p>No. Todo está en el pincho. La estufa no se modifica.</p>
+</details>
+<details>
+  <summary>¿Necesito internet?</summary>
+  <p>Solo para descargar el instalador y el programa, y más adelante para las actualizaciones si las quiere. Después, la estufa se controla por el Wi-Fi de casa, y sigue funcionando cuando no hay internet.</p>
+</details>
+<details>
+  <summary>¿Puedo controlar la estufa cuando no estoy en casa?</summary>
+  <p>No por sí solo: la página de la estufa solo se abre desde el Wi-Fi de casa. Los sistemas de domótica como Home Assistant pueden darle acceso desde fuera.</p>
+</details>
+<details>
+  <summary>¿Puedo seguir usando la app de RIKA?</summary>
+  <p>No. Con Open Firenet la estufa ya no pasa por los servidores de RIKA, así que la app de RIKA no la ve. Para volver atrás, vuelva a conectar el pincho de RIKA.</p>
+</details>
+<details>
+  <summary>¿Cuánto cuesta?</summary>
+  <p>El programa es gratuito. Solo compra el pincho.</p>
+</details>
+<details>
+  <summary>¿Quién lo hace?</summary>
+  <p>Voluntarios, en un proyecto de código abierto. No lo hace ni lo respalda RIKA: lo usa bajo su propio riesgo.</p>
+</details>
+<details>
+  <summary>Me he atascado, ¿quién me ayuda?</summary>
+  <p>Consulte la página <a href="troubleshooting.html">Solución de problemas</a>, o haga su pregunta en <a href="https://github.com/openfirenet/open-firenet/issues">GitHub</a>, en su idioma.</p>
+</details>
+
+<div class="actions">
+  <a class="btn" href="get-started.html">Guía paso a paso</a>
+  <a class="btn ghost" href="compatibility.html">¿Es compatible mi estufa?</a>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet es un proyecto de código abierto independiente, no afiliado ni respaldado por RIKA Innovative Ofentechnik GmbH. El protocolo fue obtenido por ingeniería inversa únicamente con fines de interoperabilidad. Úselo bajo su propio riesgo, sin garantía.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribuir</a> · Preguntas y soporte: <a href="https://github.com/openfirenet/open-firenet/issues">issues del pincho y del firmware</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">issues de la integración de Home Assistant</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

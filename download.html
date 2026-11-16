@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-page="download">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download the Open Firenet installer</title>
+<meta name="description" content="The latest Open Firenet installer for Windows, Mac and Linux: it puts the program on the stick and connects it to your Wi-Fi.">
+<link rel="alternate" hreflang="en" href="https://openfirenet.github.io/download.html">
+<link rel="alternate" hreflang="fr" href="https://openfirenet.github.io/fr/download.html">
+<link rel="alternate" hreflang="de" href="https://openfirenet.github.io/de/download.html">
+<link rel="alternate" hreflang="it" href="https://openfirenet.github.io/it/download.html">
+<link rel="alternate" hreflang="es" href="https://openfirenet.github.io/es/download.html">
+<link rel="alternate" hreflang="x-default" href="https://openfirenet.github.io/download.html">
+<script>
+// Language: a visitor arriving from outside the site gets the language they chose before, or else the first language of
+// their browser that the site is written in. On the home page, a first visit shows the animated logo meanwhile.
+(function () {
+  var html = document.documentElement, here = html.lang, stored = null, target = null, chosen = null;
+  try { stored = localStorage.getItem('site-lang'); } catch (e) {}
+  var handoff = false;
+  try { handoff = sessionStorage.getItem('site-splash') === '1'; sessionStorage.removeItem('site-splash'); } catch (e) {}
+  var inside = document.referrer.indexOf(location.origin + '/') === 0;
+  function alt(code) {
+    var l = document.querySelector('link[rel="alternate"][hreflang="' + code + '"]');
+    return l ? new URL(l.href).pathname : null;   // same site, whatever host serves it
+  }
+  if (!inside) {
+    var wanted = stored ? [stored] : (navigator.languages || [navigator.language || '']);
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).slice(0, 2).toLowerCase();
+      if (code === here) { chosen = here; break; }
+      if (alt(code)) { chosen = code; target = alt(code); break; }
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var splash = !still && html.getAttribute('data-page') === 'index' && (handoff || (!stored && !inside));
+  if (chosen && !stored) { try { localStorage.setItem('site-lang', chosen); } catch (e) {} }
+  if (!splash) { if (target) location.replace(target); return; }
+  // How long the logo shows, then fades; one colour wave crosses it in that time, whatever the durations.
+  var SHOW = 900, FADE = 400;
+  html.style.setProperty('--splash-fade', FADE + 'ms');
+  html.style.setProperty('--splash-wave', (SHOW + FADE) + 'ms');
+  html.classList.add('splash');
+  if (handoff) html.classList.add('splash-handoff');
+  // The logo shows briefly, then fades out on this page, or goes on to the page in the right language, which fades it out.
+  setTimeout(function () {
+    if (target) {
+      try { sessionStorage.setItem('site-splash', '1'); } catch (e) {}
+      location.replace(target);
+      return;
+    }
+    html.classList.add('splash-out');
+    setTimeout(function () { html.classList.remove('splash', 'splash-out', 'splash-handoff'); }, FADE);
+  }, handoff ? 100 : SHOW);
+})();
+</script>
+<link rel="icon" href="assets/img/brand-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="splash-screen" aria-hidden="true"><div class="splash-logo"><span class="splash-emblem"></span><span class="splash-words"><span class="splash-open">Open</span><span class="splash-fire">Firenet</span></span></div></div>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><img src="assets/img/brand-icon.png" alt="">Open Firenet</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="how-it-works.html">How it works</a>
+      <a href="download.html" class="active" aria-current="page">Download</a>
+      <a href="get-started.html">Get started</a>
+      <details class="nav-group">
+        <summary>Stove & board</summary>
+        <div class="nav-menu">
+          <a href="compatibility.html">Stove compatibility</a>
+          <a href="hardware.html">Hardware</a>
+          <a href="screen.html">Stick screen</a>
+        </div>
+      </details>
+      <details class="nav-group">
+        <summary>Integrations</summary>
+        <div class="nav-menu">
+          <a href="home-assistant.html">Home Assistant</a>
+          <a href="mqtt.html">MQTT</a>
+          <a href="api.html">REST API</a>
+        </div>
+      </details>
+      <a href="troubleshooting.html">Troubleshooting</a>
+      <details class="nav-group nav-lang">
+        <summary aria-label="Language"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</summary>
+        <div class="nav-menu">
+          <a href="download.html" hreflang="en" lang="en" data-lang="en" class="active" aria-current="page"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#012169"/><path d="M0 0L3 2M3 0L0 2" stroke="#fff" stroke-width="0.4"/><path d="M0 0L3 2M3 0L0 2" stroke="#c8102e" stroke-width="0.14"/><path d="M1.5 0V2M0 1H3" stroke="#fff" stroke-width="0.66"/><path d="M1.5 0V2M0 1H3" stroke="#c8102e" stroke-width="0.4"/></svg>English</a>
+          <a href="fr/download.html" hreflang="fr" lang="fr" data-lang="fr"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>Français</a>
+          <a href="de/download.html" hreflang="de" lang="de" data-lang="de"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="0.67" fill="#000"/><rect y="0.67" width="3" height="0.67" fill="#dd0000"/><rect y="1.33" width="3" height="0.67" fill="#ffce00"/></svg>Deutsch</a>
+          <a href="it/download.html" hreflang="it" lang="it" data-lang="it"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>Italiano</a>
+          <a href="es/download.html" hreflang="es" lang="es" data-lang="es"><svg class="flag" viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="2" fill="#c60b1e"/><rect y="0.5" width="3" height="1" fill="#ffc400"/></svg>Español</a>
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+<main>
+<h1>Download the installer</h1>
+<p class="lead">The installer puts the Open Firenet program on the stick and connects it to your Wi-Fi. It runs on a computer, once.</p>
+
+<div class="note dl-phone" hidden>
+  <p>You are on a phone or a tablet: the installer runs on a computer (Windows, Mac or Linux).</p>
+</div>
+
+<div class="dl-list">
+  <a class="dl" data-os="windows" href="https://github.com/openfirenet/open-firenet-installer/releases/latest/download/open-firenet-installer-windows-x86_64.exe">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.5l8-1.1v7.7H2zM11 3.3L22 2v9.1H11zM2 12.1h8v7.7l-8-1.1zM11 12.1h11V22l-11-1.4z"/></svg>
+    <span class="dl-text"><span class="dl-name">Windows</span><span class="dl-file">open-firenet-installer-windows-x86_64.exe</span><span class="dl-rec" hidden>Recommended for this computer</span></span>
+  </a>
+  <a class="dl" data-os="mac" href="https://github.com/openfirenet/open-firenet-installer/releases/latest/download/open-firenet-installer-macos-arm64.dmg">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 1.5c.1 1.3-.4 2.5-1.2 3.4-.8.9-2 1.5-3.1 1.4-.1-1.2.4-2.5 1.2-3.3.8-.9 2.1-1.5 3.1-1.5zM19.6 17.4c-.5 1.2-.8 1.7-1.5 2.8-.9 1.4-2.2 3.2-3.9 3.2-1.4 0-1.8-.9-3.7-.9s-2.4.9-3.8.9c-1.6 0-2.8-1.6-3.8-3-2.6-3.9-2.9-8.4-1.3-10.9 1.1-1.8 2.9-2.8 4.6-2.8 1.7 0 2.8.9 4.2.9 1.4 0 2.2-.9 4.2-.9 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.8 8.5z"/></svg>
+    <span class="dl-text"><span class="dl-name">Mac with an Apple chip (M1 and later)</span><span class="dl-file">open-firenet-installer-macos-arm64.dmg</span><span class="dl-rec" hidden>Recommended for this computer</span></span>
+  </a>
+  <a class="dl" data-os="mac-intel" href="https://github.com/openfirenet/open-firenet-installer/releases/latest/download/open-firenet-installer-macos-x86_64.dmg">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 1.5c.1 1.3-.4 2.5-1.2 3.4-.8.9-2 1.5-3.1 1.4-.1-1.2.4-2.5 1.2-3.3.8-.9 2.1-1.5 3.1-1.5zM19.6 17.4c-.5 1.2-.8 1.7-1.5 2.8-.9 1.4-2.2 3.2-3.9 3.2-1.4 0-1.8-.9-3.7-.9s-2.4.9-3.8.9c-1.6 0-2.8-1.6-3.8-3-2.6-3.9-2.9-8.4-1.3-10.9 1.1-1.8 2.9-2.8 4.6-2.8 1.7 0 2.8.9 4.2.9 1.4 0 2.2-.9 4.2-.9 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.8 8.5z"/></svg>
+    <span class="dl-text"><span class="dl-name">Mac with an Intel processor</span><span class="dl-file">open-firenet-installer-macos-x86_64.dmg</span><span class="dl-rec" hidden>Recommended for this computer</span></span>
+  </a>
+  <a class="dl" data-os="linux" href="https://github.com/openfirenet/open-firenet-installer/releases/latest/download/open-firenet-installer-linux-x86_64.AppImage">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 1.6c-2.4 0-3.8 1.9-3.8 4.4 0 1.4.2 2.3-.6 3.6C6.4 11.5 4.8 13.7 4.8 16.5c0 1.9.6 3.2 1.6 4.1L5 22.4h14l-1.4-1.8c1-.9 1.6-2.2 1.6-4.1 0-2.8-1.6-5-2.8-6.9-.8-1.3-.6-2.2-.6-3.6 0-2.5-1.4-4.4-3.8-4.4zM12 10.2c-2.3 0-3.8 2.5-3.8 5.6 0 2.8 1.5 4.6 3.8 4.6s3.8-1.8 3.8-4.6c0-3.1-1.5-5.6-3.8-5.6zM10.5 4.6a1 1.2 0 1 0 0 2.4 1 1.2 0 1 0 0-2.4zM13.5 4.6a1 1.2 0 1 0 0 2.4 1 1.2 0 1 0 0-2.4zM10.6 7.8h2.8L12 9.4z"/></svg>
+    <span class="dl-text"><span class="dl-name">Linux</span><span class="dl-file">open-firenet-installer-linux-x86_64.AppImage</span><span class="dl-rec" hidden>Recommended for this computer</span></span>
+  </a>
+  <a class="dl" data-os="linux-deb" href="https://github.com/openfirenet/open-firenet-installer/releases/latest/download/open-firenet-installer-linux-amd64.deb">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 1.6c-2.4 0-3.8 1.9-3.8 4.4 0 1.4.2 2.3-.6 3.6C6.4 11.5 4.8 13.7 4.8 16.5c0 1.9.6 3.2 1.6 4.1L5 22.4h14l-1.4-1.8c1-.9 1.6-2.2 1.6-4.1 0-2.8-1.6-5-2.8-6.9-.8-1.3-.6-2.2-.6-3.6 0-2.5-1.4-4.4-3.8-4.4zM12 10.2c-2.3 0-3.8 2.5-3.8 5.6 0 2.8 1.5 4.6 3.8 4.6s3.8-1.8 3.8-4.6c0-3.1-1.5-5.6-3.8-5.6zM10.5 4.6a1 1.2 0 1 0 0 2.4 1 1.2 0 1 0 0-2.4zM13.5 4.6a1 1.2 0 1 0 0 2.4 1 1.2 0 1 0 0-2.4zM10.6 7.8h2.8L12 9.4z"/></svg>
+    <span class="dl-text"><span class="dl-name">Linux (Debian, Ubuntu, Mint)</span><span class="dl-file">open-firenet-installer-linux-amd64.deb</span><span class="dl-rec" hidden>Recommended for this computer</span></span>
+  </a>
+</div>
+<p class="dl-version" data-prefix="Latest version:" hidden></p>
+
+<h2>The first time you start it</h2>
+<p>The installer is not signed with a paid publisher certificate, so your computer may warn you the first time. This is expected.</p>
+<ul>
+  <li><b>Windows:</b> on the blue "Windows protected your PC" screen, click <b>More info</b>, then <b>Run anyway</b>.</li>
+  <li><b>Mac:</b> open the <code>.dmg</code> file and drag <b>Open Firenet Installer</b> into <b>Applications</b>. If the Mac says the app cannot be opened, open <b>System Settings &gt; Privacy &amp; Security</b> and click <b>Open Anyway</b>.</li>
+  <li><b>Linux:</b> allow the AppImage file to run as a program (in its properties, or with <code>chmod +x</code>), or install the <code>.deb</code> package. Details in the <a href="get-started.html">step-by-step guide</a>.</li>
+</ul>
+<p>Then follow <a href="how-it-works.html">How it works</a> or the <a href="get-started.html">step-by-step guide</a>. Older versions and the checksums are on the <a href="https://github.com/openfirenet/open-firenet-installer/releases">releases page</a>.</p>
+<script src="assets/download.js"></script>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <p>Open Firenet is an open-source project, not affiliated with or endorsed by RIKA Innovative Ofentechnik GmbH. The protocol was reverse-engineered for interoperability only. Use at your own risk, no warranty.</p>
+    <p><a href="https://github.com/openfirenet">GitHub</a> · <a href="contribute.html">Contribute</a> · Questions and problems: <a href="https://github.com/openfirenet/open-firenet/issues">bridge and firmware issues</a> · <a href="https://github.com/openfirenet/open-firenet-ha/issues">Home Assistant integration issues</a></p>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<script>
+// Navigation menus: only one open at a time, closed by a click elsewhere or by Escape.
+(function () {
+  var groups = document.querySelectorAll('.nav-group');
+  function closeAll(except) { groups.forEach(function (g) { if (g !== except) g.open = false; }); }
+  var phone = window.matchMedia('(max-width: 760px)');
+  groups.forEach(function (g) { g.addEventListener('toggle', function () { if (g.open && !phone.matches) closeAll(g); }); });
+  document.addEventListener('click', function (e) { if (!phone.matches && !e.target.closest('.nav-group')) closeAll(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
+  // On a phone the whole bar folds behind a Menu button.
+  var toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('site-nav');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    groups.forEach(function (g) { g.open = open; });   // on a phone the groups are shown in full
+  });
+})();
+// Languages: a click on a language in the menu remembers it.
+document.querySelectorAll('.nav-lang a[data-lang]').forEach(function (a) {
+  a.addEventListener('click', function () { try { localStorage.setItem('site-lang', a.getAttribute('data-lang')); } catch (e) {} });
+});
+// Screenshots open full size on click; click again or press Escape to close.
+(function () {
+  var box = document.getElementById('lightbox'), big = box.querySelector('img');
+  function close() { box.hidden = true; big.removeAttribute('src'); }
+  document.querySelectorAll('img.shot').forEach(function (img) {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    function open() { big.src = img.currentSrc || img.src; big.alt = img.alt; box.hidden = false; }
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

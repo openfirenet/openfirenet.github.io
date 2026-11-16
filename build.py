@@ -17,27 +17,28 @@ ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
 SITE = "https://openfirenet.github.io/"
 # Every page built from src/<name>.html.
-PAGES = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
+PAGES = ["index", "how-it-works", "download", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
          "contribute", "screen"]
 # Languages of the site. English is the reference, at the root; each other language lives in <code>/, built from
 # src/<code>/<name>.html. A page left out of TRANSLATED is only in English, and the translated pages link to it.
 LANGS = ["en", "fr", "de", "it", "es"]
 LANG_NAMES = {"en": "English", "fr": "Français", "de": "Deutsch", "it": "Italiano", "es": "Español"}
-TRANSLATED = ["index", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
+TRANSLATED = ["index", "how-it-works", "download", "get-started", "hardware", "compatibility", "home-assistant", "mqtt", "api", "troubleshooting",
               "contribute", "screen", "api-reference"]
 # The navigation bar: a page (file name, label key), or a group (label key, [pages]) shown as a drop-down menu. The
 # home page is reached through the logo.
 NAV = [
+    ("how-it-works", "nav_how_it_works"),
+    ("download", "nav_download"),
     ("get-started", "nav_get_started"),
     ("nav_stove_board", [("compatibility", "nav_compatibility"), ("hardware", "nav_hardware"), ("screen", "nav_screen")]),
     ("nav_integrations", [("home-assistant", "nav_home_assistant"), ("mqtt", "nav_mqtt"), ("api", "nav_api")]),
     ("troubleshooting", "nav_troubleshooting"),
-    ("contribute", "nav_contribute"),
 ]
 # Texts of the layout (header, navigation, footer), per language.
 TEXTS = {
     "en": {
-        "nav_get_started": "Get started", "nav_stove_board": "Stove & board", "nav_compatibility": "Stove compatibility",
+        "nav_how_it_works": "How it works", "nav_download": "Download", "nav_get_started": "Get started", "nav_stove_board": "Stove & board", "nav_compatibility": "Stove compatibility",
         "nav_hardware": "Hardware", "nav_screen": "Stick screen", "nav_integrations": "Integrations",
         "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "REST API",
         "nav_troubleshooting": "Troubleshooting", "nav_contribute": "Contribute",
@@ -50,7 +51,7 @@ TEXTS = {
         "english_only": "",
     },
     "fr": {
-        "nav_get_started": "Démarrer", "nav_stove_board": "Poêle et matériel", "nav_compatibility": "Compatibilité des poêles",
+        "nav_how_it_works": "Comment ça marche", "nav_download": "Télécharger", "nav_get_started": "Démarrer", "nav_stove_board": "Poêle et matériel", "nav_compatibility": "Compatibilité des poêles",
         "nav_hardware": "Matériel", "nav_screen": "Écran de la clé", "nav_integrations": "Intégrations",
         "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
         "nav_troubleshooting": "Dépannage", "nav_contribute": "Contribuer",
@@ -62,7 +63,7 @@ TEXTS = {
         "footer_bridge_issues": "issues de la clé et du firmware", "footer_ha_issues": "issues de l'intégration Home Assistant",
     },
     "de": {
-        "nav_get_started": "Erste Schritte", "nav_stove_board": "Ofen und Hardware", "nav_compatibility": "Ofen-Kompatibilität",
+        "nav_how_it_works": "So funktioniert es", "nav_download": "Herunterladen", "nav_get_started": "Erste Schritte", "nav_stove_board": "Ofen und Hardware", "nav_compatibility": "Ofen-Kompatibilität",
         "nav_hardware": "Hardware", "nav_screen": "Display des Sticks", "nav_integrations": "Integrationen",
         "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "REST-API",
         "nav_troubleshooting": "Fehlerbehebung", "nav_contribute": "Mitwirken",
@@ -74,7 +75,7 @@ TEXTS = {
         "footer_bridge_issues": "Issues zu Stick und Firmware", "footer_ha_issues": "Issues zur Home-Assistant-Integration",
     },
     "it": {
-        "nav_get_started": "Per iniziare", "nav_stove_board": "Stufa e hardware", "nav_compatibility": "Compatibilità stufe",
+        "nav_how_it_works": "Come funziona", "nav_download": "Scarica", "nav_get_started": "Per iniziare", "nav_stove_board": "Stufa e hardware", "nav_compatibility": "Compatibilità stufe",
         "nav_hardware": "Hardware", "nav_screen": "Schermo del bridge", "nav_integrations": "Integrazioni",
         "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
         "nav_troubleshooting": "Risoluzione problemi", "nav_contribute": "Contribuire",
@@ -86,7 +87,7 @@ TEXTS = {
         "footer_bridge_issues": "issue per il bridge e il firmware", "footer_ha_issues": "issue per l'integrazione Home Assistant",
     },
     "es": {
-        "nav_get_started": "Primeros pasos", "nav_stove_board": "Estufa y hardware", "nav_compatibility": "Compatibilidad de estufas",
+        "nav_how_it_works": "Cómo funciona", "nav_download": "Descargar", "nav_get_started": "Primeros pasos", "nav_stove_board": "Estufa y hardware", "nav_compatibility": "Compatibilidad de estufas",
         "nav_hardware": "Hardware", "nav_screen": "Pantalla del pincho", "nav_integrations": "Integraciones",
         "nav_home_assistant": "Home Assistant", "nav_mqtt": "MQTT", "nav_api": "API REST",
         "nav_troubleshooting": "Solución de problemas", "nav_contribute": "Contribuir",
