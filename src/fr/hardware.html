@@ -1,4 +1,4 @@
-<!-- source: 54f39e6437a2 -->
+<!-- source: 7c6408022163 -->
 <!-- title: Matériel - Open Firenet -->
 <!-- description: Quelles cartes ESP32-S3 fonctionnent comme clé Open Firenet pour les poêles à granulés RIKA et ANIMO : les points à vérifier, et les cartes essayées jusqu'ici. -->
 <h1>Matériel</h1>
@@ -23,6 +23,13 @@
 <div class="table-wrap">
 <table>
   <tr><th>Carte</th><th>Format</th><th>État</th><th>Connecteur</th><th>Remarques</th></tr>
+  <tr>
+    <td><b>LilyGO T-Dongle-S3 Plus</b> (16 Mo de flash, 8 Mo de PSRAM octale, écran 0,96")</td>
+    <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Dongle USB</td>
+    <td><span class="badge ok">Testée</span></td>
+    <td>Prise USB-A</td>
+    <td><b>Conseillée.</b> Une clé avec sa propre prise USB-A, 16 Mo de flash, 8 Mo de PSRAM octale et un écran couleur ST7735 de 0,96". Testée par le projet, avec une rallonge USB entre le poêle et la clé. Utilise la variante PSRAM du firmware. Pour son écran, choisissez <b>LilyGO T-Dongle-S3</b> dans Bridge &gt; Écran : voir <a href="screen.html">l'écran de la clé</a>.</td>
+  </tr>
   <tr>
     <td><b>ESP32-S3 Pocket Dongle</b> (16 Mo de flash, 8 Mo de PSRAM octale, écran 0,96")</td>
     <td class="fmt"><svg class="fmt-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="6" width="14" height="12" rx="3"/><path d="M15.5 8.5h6v7h-6"/><path d="M18 10.8v2.4"/></svg> Dongle USB</td>
@@ -123,6 +130,10 @@
   <li>
     <b><a href="https://www.printables.com/model/1892285-open-firenet-esp32-s3-magnetic-case-for-pellet-sto" target="_blank" rel="noopener">Boîtier magnétique de tatutsa888</a></b> (Printables, modèle 3D gratuit) :
     conçu spécialement pour Open Firenet sur une carte YD-ESP32-S3 ou DevKitC-1. Il se ferme par clipsage sans vis, tient sur la tôle du poêle grâce à des aimants néodyme et cache le port et le câble USB. Imprimez-le en PETG ou en ABS pour qu'il résiste à la chaleur près du poêle.
+  </li>
+  <li>
+    <b><a href="https://makerworld.com/fr/models/3655432-arduino-nano-esp32-case-for-open-firenet" target="_blank" rel="noopener">Boîtier Arduino Nano ESP32 de fhTazMan</a></b> (MakerWorld, modèle 3D) :
+    conçu pour Open Firenet sur une Arduino Nano ESP32 (ABX00092), une carte qui n'est pas encore dans la liste ci-dessus. Trois pièces : la boîte, un support et un bouton de réinitialisation. Deux aimants de 10 × 3 mm au dos le fixent au poêle, et le couvercle porte le logo Open Firenet. L'ajustement est serré : il faudra peut-être ébavurer quelques bords au cutter. Imprimé en PETG pour la résistance à la chaleur.
   </li>
   <li>
     <b>Kit Heemol avec boîtier :</b> si vous n'avez pas d'imprimante 3D, certaines cartes ESP32-S3 DevKitC-1 sont vendues en kit avec un boîtier vissé et une antenne Wi-Fi externe (voir le tableau des cartes plus haut).
